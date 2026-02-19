@@ -22,27 +22,34 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 #mainScreen{display:none}
 .topbar{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
 .topbar h2{font-size:17px}
-.ncnt{background:white;color:#f44336;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.ncnt{background:white;color:#f44336;border-radius:50%;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;padding:0 4px}
 .sndBtn{background:rgba(255,255,255,0.2);color:white;border:none;padding:6px 12px;border-radius:15px;cursor:pointer;font-size:12px}
 .tabs{display:flex;background:white;border-bottom:2px solid #e0f7e9}
-.tab{flex:1;padding:13px 5px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent}
+.tab{flex:1;padding:11px 2px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:#999;border-bottom:3px solid transparent}
 .tab.on{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff9}
 .list{padding:15px;overflow-y:auto;height:calc(100vh - 155px)}
 .card{background:white;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 3px 10px rgba(0,0,0,0.07)}
-.card.nc{border-left:5px solid #f44336}.card.ac{border-left:5px solid #2196F3}.card.dc{border-left:5px solid #4CAF50}
+.card.nc{border-left:5px solid #f44336}
+.card.ac{border-left:5px solid #2196F3}
+.card.pc{border-left:5px solid #ff9800}
+.card.dc{border-left:5px solid #4CAF50}
 .cid{font-size:11px;color:#bbb;font-weight:600;margin-bottom:5px}
 .cname{font-size:18px;font-weight:700;color:#111;margin-bottom:4px}
 .caddr{color:#555;font-size:14px;margin:7px 0;line-height:1.5}
 .cprob{background:#fff8f0;padding:11px;border-radius:10px;font-size:13px;color:#555;margin:9px 0}
 .chip{display:inline-block;padding:4px 11px;border-radius:18px;font-size:12px;font-weight:700;margin:3px}
-.cN{background:#ffebee;color:#c62828}.cA{background:#e3f2fd;color:#1565c0}.cD{background:#e8f5e9;color:#2e7d32}.cM{background:#f3e5f5;color:#6a1b9a}
+.cN{background:#ffebee;color:#c62828}
+.cA{background:#e3f2fd;color:#1565c0}
+.cP{background:#fff3cd;color:#856404}
+.cD{background:#e8f5e9;color:#2e7d32}
+.cM{background:#f3e5f5;color:#6a1b9a}
 .abtn{width:100%;padding:15px;border:none;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer;margin:4px 0}
 .acc{background:linear-gradient(135deg,#25D366,#128C7E);color:white}
 .don{background:linear-gradient(135deg,#ff6b35,#f44336);color:white}
+.pnd{background:#ff9800;color:white}
 .cal{background:#2196F3;color:white}
 .empty{text-align:center;padding:60px 20px;color:#ccc}
 .empty div{font-size:55px;margin-bottom:12px}
-/* POPUP */
 #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;justify-content:center;align-items:center;padding:20px}
 #popup.on{display:flex;animation:popIn 0.35s ease}
 @keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
@@ -57,14 +64,10 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .pacc{width:100%;padding:17px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:13px;font-size:19px;font-weight:700;cursor:pointer;margin-top:10px;animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 4px 14px rgba(37,211,102,0.4)}50%{box-shadow:0 4px 30px rgba(37,211,102,0.9)}}
 .pbusy{width:100%;padding:13px;background:#ff9800;color:white;border:none;border-radius:13px;font-size:16px;font-weight:700;cursor:pointer;margin-top:7px}
-
-/* ===== STEP MODAL ===== */
 #stepModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;justify-content:flex-end;align-items:flex-end}
 #stepModal.on{display:flex;animation:slideUp 0.3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .sbox{background:white;border-radius:22px 22px 0 0;width:100%;max-height:94vh;overflow:hidden;display:flex;flex-direction:column}
-
-/* Progress bar - 2 steps only */
 .prog-bar{display:flex;background:#f8f8f8;padding:14px 20px 11px;border-bottom:1px solid #eee}
 .prog-step{flex:1;text-align:center;font-size:12px;font-weight:700;color:#ccc;position:relative}
 .prog-step.done{color:#25D366}.prog-step.active{color:#128C7E}
@@ -73,7 +76,6 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .prog-step.active .prog-dot{background:#128C7E;box-shadow:0 0 0 3px rgba(18,140,126,0.25)}
 .prog-line{position:absolute;top:14px;left:55%;width:90%;height:3px;background:#ddd;z-index:-1}
 .prog-step.done .prog-line{background:#25D366}
-
 .sc{flex:1;overflow-y:auto;padding:18px}
 .st{font-size:17px;font-weight:700;color:#128C7E;margin-bottom:3px}
 .ss{font-size:13px;color:#888;margin-bottom:13px}
@@ -81,40 +83,28 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 label{display:block;font-weight:700;color:#333;margin:11px 0 3px;font-size:14px}
 input,select,textarea{width:100%;padding:11px;border:2px solid #e8e8e8;border-radius:9px;font-size:15px;outline:none;font-family:Arial;box-sizing:border-box}
 input:focus,select:focus,textarea:focus{border-color:#25D366}
-
-/* DONE button - big prominent */
-.done-btn-wrap{padding:20px 18px;background:white;border-top:1px solid #f0f0f0}
-.done-big{width:100%;padding:18px;background:linear-gradient(135deg,#ff6b35,#f44336);color:white;border:none;border-radius:14px;font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(244,67,54,0.4);animation:donePulse 1.5s infinite}
-@keyframes donePulse{0%,100%{box-shadow:0 6px 20px rgba(244,67,54,0.4)}50%{box-shadow:0 6px 35px rgba(244,67,54,0.7)}}
-
-/* PHOTO STEP */
 .cam-box{border:3px dashed #25D366;border-radius:13px;padding:22px;text-align:center;margin:9px 0;cursor:pointer;background:#f0fff4}
-.cam-box-rcpt{border:3px dashed #ff6b35;border-radius:13px;padding:18px;text-align:center;margin:9px 0;cursor:pointer;background:#fff8f5}
-.cam-icon{font-size:48px;margin-bottom:8px}
-.cam-text{font-weight:700;font-size:16px;color:#25D366}
-.cam-text-r{font-weight:700;font-size:16px;color:#ff6b35}
-.cam-sub{color:#aaa;font-size:12px;margin-top:4px}
+.cam-box-r{border:3px dashed #ff6b35;border-radius:13px;padding:18px;text-align:center;margin:9px 0;cursor:pointer;background:#fff8f5}
+.cam-icon{font-size:44px;margin-bottom:7px}
+.cam-text{font-weight:700;font-size:15px;color:#25D366}
+.cam-text-r{font-weight:700;font-size:15px;color:#ff6b35}
+.cam-sub{color:#aaa;font-size:12px;margin-top:3px}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
 .pthumb{position:relative;width:100%;padding-bottom:100%;border-radius:12px;overflow:hidden;background:#e0e0e0}
 .pthumb img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block}
-.pdel{position:absolute;top:5px;right:5px;z-index:5;background:rgba(220,30,30,0.9);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:15px;cursor:pointer;font-weight:700;line-height:26px;text-align:center;padding:0}
-
-/* EXPENSE STEP */
+.pdel{position:absolute;top:5px;right:5px;z-index:5;background:rgba(220,30,30,0.9);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;font-weight:700;line-height:26px;text-align:center;padding:0}
 .exp-box{background:linear-gradient(135deg,#ff6b35,#f44336);color:white;padding:18px;border-radius:13px;text-align:center;margin:11px 0}
 .exp-box label{color:rgba(255,255,255,0.85);margin-bottom:7px}
 .exp-box input{background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.5);border-radius:0;color:white;font-size:30px;font-weight:700;text-align:center;width:80%;padding:5px}
 .exp-box input::placeholder{color:rgba(255,255,255,0.5)}
-
-/* NAV */
 .step-nav{padding:14px 18px;background:white;border-top:1px solid #f0f0f0;display:flex;gap:9px}
-.bn{flex:2;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer}
-.bn-submit{flex:2;padding:15px;background:linear-gradient(135deg,#f44336,#c62828);color:white;border:none;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer}
-.bp{flex:1;padding:15px;background:#f0f0f0;color:#666;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer}
+.bn{flex:2;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer}
+.bn-red{flex:2;padding:15px;background:linear-gradient(135deg,#f44336,#c62828);color:white;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer}
+.bp{flex:1;padding:15px;background:#f0f0f0;color:#666;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer}
 .bsk{flex:1;padding:15px;background:#fff8e1;color:#e65100;border:none;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer}
 .outbtn{background:rgba(255,255,255,0.2);color:white;border:none;padding:7px 13px;border-radius:18px;cursor:pointer;font-size:12px}
 </style></head><body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
 <div class="lico">&#128295;</div>
 <h1>Technician App</h1>
@@ -126,25 +116,24 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
 <button class="rtbtn" onclick="loadTechs()">&#128260; Dobara Load Karo</button>
 </div>
 
-<!-- MAIN -->
 <div id="mainScreen">
 <div class="topbar">
 <div><div style="font-size:11px;opacity:0.8">Welcome</div><h2 id="tNm">Tech</h2></div>
 <div style="display:flex;gap:10px;align-items:center">
 <div class="ncnt" id="nCnt">0</div>
-<button class="sndBtn" onclick="testSound()">&#128276; Test</button>
+<button class="sndBtn" onclick="testSound()">&#128276;</button>
 <button class="outbtn" onclick="doLogout()">Logout</button>
 </div>
 </div>
 <div class="tabs">
 <div class="tab on" id="t-New" onclick="showTab('New')">&#128308; New</div>
-<div class="tab" id="t-Accepted" onclick="showTab('Accepted')">&#128309; Accepted</div>
+<div class="tab" id="t-Accepted" onclick="showTab('Accepted')">&#128309; Work</div>
+<div class="tab" id="t-Pending" onclick="showTab('Pending')">&#9203; Pending</div>
 <div class="tab" id="t-Done" onclick="showTab('Done')">&#9989; Done</div>
 </div>
 <div class="list" id="cList"></div>
 </div>
 
-<!-- NEW CASE POPUP -->
 <div id="popup">
 <div class="pbox">
 <span class="pico">&#128276;</span>
@@ -157,80 +146,60 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
 <button class="pbusy" onclick="closePopup()">&#9203; Baad Me</button>
 </div></div>
 
-<!-- STEP MODAL -->
 <div id="stepModal">
 <div class="sbox">
-
-<!-- Progress: Step 1=Photos, Step 2=Expense -->
 <div class="prog-bar">
 <div class="prog-step active" id="ps1">
-<div class="prog-dot">1</div>
-<div>Photos</div>
-<div class="prog-line"></div>
+<div class="prog-dot">1</div><div>Photos</div><div class="prog-line"></div>
 </div>
 <div class="prog-step" id="ps2">
-<div class="prog-dot">2</div>
-<div>Expense</div>
+<div class="prog-dot">2</div><div>Expense</div>
 </div>
 </div>
 
-<!-- STEP 1: REPORT + PHOTOS (combined) -->
 <div id="step1" class="sc">
-<div class="st">&#128247; Job Complete — Photos Lo</div>
-<div class="ss">Kaam ka photo + machine serial number</div>
+<div class="st">&#128247; Job Report + Photos</div>
+<div class="ss">Details bhari + camera ya gallery se photo lo</div>
 <div class="cc" id="cc1"></div>
-
-<label>&#128290; Machine Serial Number</label>
-<input id="rSerial" placeholder="e.g. VNB3X12345 (optional)">
-
+<label>&#128290; Serial Number (Machine)</label>
+<input id="rSerial" placeholder="VNB3X12345 (optional)">
 <label>&#9989; Kya Kaam Kiya *</label>
 <textarea id="rWork" rows="3" placeholder="Toner replace kiya, drum clean kiya..."></textarea>
-
 <label>&#128295; Parts Used</label>
 <input id="rParts" placeholder="HP 12A Toner (ya N/A)">
-
 <label>&#9201; Time Taken</label>
 <select id="rTime">
 <option>30 minutes</option><option>1 hour</option><option>1.5 hours</option>
 <option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option>
 </select>
-
 <label>&#128512; Customer Feedback</label>
-<select id="rFb">
-<option>Excellent</option><option>Good</option><option>Average</option><option>Below Average</option>
-</select>
-
+<select id="rFb"><option>Excellent</option><option>Good</option><option>Average</option><option>Below Average</option></select>
 <label>&#128221; Remarks</label>
 <textarea id="rRem" rows="2" placeholder="Extra info..."></textarea>
-
-<label>&#128247; Job Photos (Camera / Gallery)</label>
-<input type="file" id="jobCam" accept="image/*" style="display:none" onchange="addJobPhoto(event)">
+<label>&#128247; Job Photos</label>
+<input type="file" id="jobCam" accept="image/*" multiple style="display:none" onchange="addJobPhoto(event)">
 <div class="cam-box" onclick="document.getElementById('jobCam').click()">
 <div class="cam-icon">&#128247;</div>
 <div class="cam-text">Camera / Gallery se Photo Lo</div>
 <div class="cam-sub">Multiple photos le sakte ho</div>
 </div>
 <div class="pgrid" id="jobGrid"></div>
-<p id="photoCount" style="font-size:13px;color:#888;text-align:center;margin:5px 0">0 photo(s)</p>
+<p id="photoCount" style="font-size:13px;color:#888;text-align:center;margin:5px 0">0 photos</p>
 </div>
 
-<!-- STEP 2: EXPENSE -->
 <div id="step2" class="sc" style="display:none">
 <div class="st">&#128176; Expense Details</div>
-<div class="ss">Is call ka total kharcha</div>
+<div class="ss">Is call ka kharcha (skip bhi kar sakte ho)</div>
 <div class="cc" id="cc2"></div>
-
 <div class="exp-box">
-<label>Total Expense (&#8377;)</label>
+<label>Total Expense (Rs.)</label>
 <input id="expAmt" type="number" placeholder="0" inputmode="numeric">
 </div>
-
 <label>&#128221; Expense Breakdown</label>
-<textarea id="expDet" rows="3" placeholder="Parts: Rs.300&#10;Travel: Rs.100&#10;Service: Rs.200"></textarea>
-
-<label>&#129534; Receipt / Bill Photo</label>
+<textarea id="expDet" rows="3" placeholder="Parts: Rs.300, Travel: Rs.100..."></textarea>
+<label>&#129534; Receipt Photo</label>
 <input type="file" id="rcptCam" accept="image/*" style="display:none" onchange="addReceipt(event)">
-<div class="cam-box-rcpt" onclick="document.getElementById('rcptCam').click()">
+<div class="cam-box-r" onclick="document.getElementById('rcptCam').click()">
 <div class="cam-icon">&#129534;</div>
 <div class="cam-text-r">Bill / Receipt Upload</div>
 <div class="cam-sub">Camera ya Gallery se</div>
@@ -238,20 +207,17 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
 <div id="rcptPrev" style="margin:10px 0;text-align:center"></div>
 </div>
 
-<!-- NAV BUTTONS -->
-<div class="step-nav" id="stepNav">
-<button class="bp" id="btnPrev" onclick="prevStep()" style="display:none">&#8592; Back</button>
-<button class="bsk" id="btnSkip" onclick="skipStep()">Skip &#8594;</button>
-<button class="bn" id="btnNext" onclick="nextStep()">Next &#8594;</button>
+<div class="step-nav">
+<button class="bp" id="btnPrev" onclick="prevStep()" style="display:none">Back</button>
+<button class="bsk" id="btnSkip" onclick="skipExpense()" style="display:none">Skip</button>
+<button class="bn" id="btnNext" onclick="nextStep()">Next</button>
 </div>
-
 </div></div>
 
 <script>
 var db,myKey="",myName="",myCases=[],curTab="New",popKey="",repKey="",firstLoad=true;
 var alertInt=null,audioCtx=null,curStep=1,jobPhotos=[],rcptPhoto=null;
 
-// ===== FIREBASE =====
 function initFB(){
   try{
     if(!firebase.apps.length){
@@ -266,14 +232,11 @@ function initFB(){
       });
     }
     db=firebase.database();
-    setFbSt("&#9989; Firebase Connected!","rgba(0,200,80,0.3)");
+    setFbSt("Connected!","rgba(0,200,80,0.3)");
     return true;
-  }catch(e){
-    setFbSt("&#10060; Error: "+e.message,"rgba(255,0,0,0.3)");
-    return false;
-  }
+  }catch(e){setFbSt("Error: "+e.message,"rgba(255,0,0,0.3)");return false;}
 }
-function setFbSt(m,bg){var el=document.getElementById("fbStatus");if(el){el.innerHTML=m;if(bg)el.style.background=bg;}}
+function setFbSt(m,bg){var el=document.getElementById("fbStatus");if(el){el.textContent=m;if(bg)el.style.background=bg;}}
 
 window.onload=function(){
   if(!initFB())return;
@@ -283,23 +246,23 @@ window.onload=function(){
 };
 
 function loadTechs(){
-  setFbSt("&#128260; Load ho rahe hain...","");
+  setFbSt("Load ho rahe hain...","");
   document.getElementById("lerr").textContent="";
-  if(!db){setFbSt("&#10060; DB nahi mila","rgba(255,0,0,0.3)");return;}
+  if(!db){setFbSt("DB nahi mila","rgba(255,0,0,0.3)");return;}
   db.ref("technicians").once("value").then(function(s){
     var sel=document.getElementById("tSel");
     sel.innerHTML='<option value="">-- Apna naam select karo --</option>';
     if(s.exists()){
       var cnt=0;
       s.forEach(function(c){var t=c.val();sel.add(new Option(t.name,c.key+"|"+t.name));cnt++;});
-      setFbSt("&#9989; "+cnt+" Technician(s) Ready!","rgba(0,200,80,0.3)");
+      setFbSt(cnt+" Technician(s) Ready!","rgba(0,200,80,0.3)");
     }else{
       sel.innerHTML='<option value="">Koi technician nahi</option>';
-      setFbSt("&#9888; Admin se tech add karwao","rgba(255,165,0,0.4)");
+      setFbSt("Admin se tech add karwao","rgba(255,165,0,0.4)");
     }
   }).catch(function(e){
     document.getElementById("lerr").textContent="Error: "+e.message;
-    setFbSt("&#10060; Failed","rgba(255,0,0,0.3)");
+    setFbSt("Failed - Retry karo","rgba(255,0,0,0.3)");
   });
 }
 
@@ -308,17 +271,12 @@ function doLogin(){
   if(!v||v.indexOf("|")===-1){alert("Naam select karo!");return;}
   var p=v.split("|");myKey=p[0];myName=p[1];
   localStorage.setItem("tk",myKey);localStorage.setItem("tn",myName);
-  initAudio();
-  startApp();
+  initAudio();startApp();
 }
 function doLogout(){stopAlert();localStorage.clear();location.reload();}
 
-// ===== AUDIO =====
 function initAudio(){
-  try{
-    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-    keepAlive();
-  }catch(e){}
+  try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();keepAlive();}catch(e){}
 }
 function keepAlive(){
   if(!audioCtx)return;
@@ -345,7 +303,6 @@ function playAlert(){stopAlert();beepOnce();alertInt=setInterval(beepOnce,2500);
 function stopAlert(){if(alertInt){clearInterval(alertInt);alertInt=null;}}
 function testSound(){beepOnce();}
 
-// ===== APP =====
 function startApp(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("mainScreen").style.display="block";
@@ -357,7 +314,10 @@ function startApp(){
     myCases=[];
     if(snap.exists())snap.forEach(function(c){var d=c.val();d.key=c.key;myCases.unshift(d);});
     var nc=myCases.filter(function(c){return c.status==="New";}).length;
-    document.getElementById("nCnt").textContent=nc;
+    var np=myCases.filter(function(c){return c.status==="Pending";}).length;
+    var badge=String(nc);
+    if(np>0) badge+="+"+np;
+    document.getElementById("nCnt").textContent=badge;
     if(!firstLoad){
       for(var i=0;i<myCases.length;i++){
         var c=myCases[i];
@@ -385,7 +345,10 @@ function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accep
 
 function showTab(t){
   curTab=t;
-  ["New","Accepted","Done"].forEach(function(x){document.getElementById("t-"+x).className=(x===t)?"tab on":"tab";});
+  ["New","Accepted","Pending","Done"].forEach(function(x){
+    var el=document.getElementById("t-"+x);
+    if(el) el.className=(x===t)?"tab on":"tab";
+  });
   render();
 }
 
@@ -393,42 +356,56 @@ function render(){
   var list=document.getElementById("cList");
   var f=myCases.filter(function(c){return c.status===curTab;});
   if(!f.length){
-    var ic={New:"&#127881;",Accepted:"&#128203;",Done:"&#9989;"};
-    var ms={New:"Koi naya case nahi!",Accepted:"Accepted case nahi!",Done:"Done case nahi!"};
-    list.innerHTML='<div class="empty"><div>'+ic[curTab]+'</div><p>'+ms[curTab]+'</p></div>';
+    var ic={"New":"&#127881;","Accepted":"&#128203;","Pending":"&#9203;","Done":"&#9989;"};
+    var ms={"New":"Koi naya case nahi!","Accepted":"Koi active case nahi!","Pending":"Koi pending nahi!","Done":"Koi done nahi!"};
+    list.innerHTML='<div class="empty"><div>'+(ic[curTab]||"")+'</div><p>'+(ms[curTab]||"")+'</p></div>';
     return;
   }
-  var h="";
+  list.innerHTML="";
   f.forEach(function(c){
-    var cls=c.status==="New"?"nc":c.status==="Accepted"?"ac":"dc";
-    var ch=c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
-    h+='<div class="card '+cls+'">';
-    h+='<div class="cid">'+c.id+' - '+(c.date||"")+'</div>';
-    h+='<div class="cname">&#128100; '+c.customer+'</div>';
-    h+='<div class="caddr">&#128222; '+c.mobile+'<br>&#128205; '+c.address+'</div>';
-    h+='<div class="cprob">&#9888; '+c.problem+'</div>';
-    h+='<div><span class="chip cM">&#128247; '+(c.model||"N/A")+'</span><span class="chip '+ch+'">'+c.status+'</span></div>';
-    if(c.status==="New") h+='<button class="abtn acc" onclick="accCase(\''+c.key+'\')">&#9989; ACCEPT CASE</button>';
-    if(c.status==="Accepted") h+='<button class="abtn don" onclick="openSteps(\''+c.key+'\')">&#128247; CASE DONE - REPORT</button>';
-    h+='<button class="abtn cal" onclick="window.location.href=\'tel:'+c.mobile+'\'">&#128222; Call Customer</button>';
-    h+='</div>';
+    var cls=c.status==="New"?"nc":c.status==="Accepted"?"ac":c.status==="Pending"?"pc":"dc";
+    var ch=c.status==="New"?"cN":c.status==="Accepted"?"cA":c.status==="Pending"?"cP":"cD";
+    var div=document.createElement("div");
+    div.className="card "+cls;
+    var btns="";
+    if(c.status==="New"){
+      btns='<button class="abtn acc" onclick="accCase(''+c.key+'')">Accept Case</button>';
+    }
+    if(c.status==="Accepted"){
+      btns='<button class="abtn don" onclick="openSteps(''+c.key+'')">Case Done - Report</button>';
+      btns+='<button class="abtn pnd" onclick="setPending(''+c.key+'')">Mark Pending</button>';
+    }
+    if(c.status==="Pending"){
+      btns='<button class="abtn don" onclick="openSteps(''+c.key+'')">Case Done - Report</button>';
+      btns+='<button class="abtn acc" onclick="setAccepted(''+c.key+'')">Resume Work</button>';
+    }
+    div.innerHTML=
+      '<div class="cid">'+c.id+' - '+(c.date||"")+'</div>'+
+      '<div class="cname">'+c.customer+'</div>'+
+      '<div class="caddr">'+c.mobile+'<br>'+c.address+'</div>'+
+      '<div class="cprob">'+c.problem+'</div>'+
+      '<div><span class="chip cM">'+(c.model||"N/A")+'</span><span class="chip '+ch+'">'+c.status+'</span></div>'+
+      btns+
+      '<button class="abtn cal" onclick="window.location.href='tel:'+c.mobile+''">Call Customer</button>';
+    list.appendChild(div);
   });
-  list.innerHTML=h;
 }
-function accCase(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
 
-// ===== 2-STEP FLOW =====
+function accCase(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+function setPending(k){db.ref("cases/"+k).update({status:"Pending"});showTab("Pending");}
+function setAccepted(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+
 function openSteps(k){
   repKey=k;curStep=1;jobPhotos=[];rcptPhoto=null;
   var c=myCases.find(function(x){return x.key===k;});
   if(!c)return;
-  var info='<b>'+c.id+'</b><br>&#128100; '+c.customer+' - '+c.mobile+'<br>&#128205; '+c.address+'<br>&#9888; '+c.problem;
+  var info='<b>'+c.id+'</b> - '+c.customer+' - '+c.mobile+'<br>'+c.address+'<br>'+c.problem;
   document.getElementById("cc1").innerHTML=info;
   document.getElementById("cc2").innerHTML=info;
   ["rWork","rParts","rRem","rSerial","expAmt","expDet"].forEach(function(id){document.getElementById(id).value="";});
   document.getElementById("jobGrid").innerHTML="";
   document.getElementById("rcptPrev").innerHTML="";
-  document.getElementById("photoCount").textContent="0 photo(s)";
+  document.getElementById("photoCount").textContent="0 photos";
   document.getElementById("stepModal").classList.add("on");
   updateUI();
 }
@@ -440,32 +417,31 @@ function updateUI(){
   [1,2].forEach(function(i){
     document.getElementById("ps"+i).className="prog-step"+(i<curStep?" done":i===curStep?" active":"");
   });
-  document.getElementById("btnPrev").style.display=curStep>1?"block":"none";
-  document.getElementById("btnSkip").style.display=curStep===2?"block":"none";
-  var nb=document.getElementById("btnNext");
+  var prev=document.getElementById("btnPrev");
+  var skip=document.getElementById("btnSkip");
+  var next=document.getElementById("btnNext");
+  prev.style.display=curStep>1?"block":"none";
+  skip.style.display=curStep===2?"block":"none";
   if(curStep===2){
-    nb.className="bn-submit";
-    nb.textContent="&#9989; Submit Report";
+    next.className="bn-red";
+    next.textContent="Submit Report";
   }else{
-    nb.className="bn";
-    nb.textContent="Next - Expense &#8594;";
+    next.className="bn";
+    next.textContent="Next";
   }
 }
 
 function nextStep(){
   if(curStep===1){
-    if(!document.getElementById("rWork").value.trim()){
-      alert("Kya kaam kiya fill karo!");return;
-    }
+    if(!document.getElementById("rWork").value.trim()){alert("Kya kaam kiya fill karo!");return;}
     curStep=2;updateUI();
   }else{
     submitAll();
   }
 }
 function prevStep(){if(curStep>1){curStep--;updateUI();}}
-function skipStep(){if(curStep===2){submitAll();}} // skip expense = submit with 0
+function skipExpense(){submitAll();}
 
-// ===== PHOTO =====
 function compressImg(file,cb){
   var r=new FileReader();
   r.onload=function(e){
@@ -474,8 +450,7 @@ function compressImg(file,cb){
       var cv=document.createElement("canvas"),MAX=800;
       var w=img.width,h=img.height;
       if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
-      cv.width=w;cv.height=h;
-      cv.getContext("2d").drawImage(img,0,0,w,h);
+      cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
       cb(cv.toDataURL("image/jpeg",0.6));
     };
     img.src=e.target.result;
@@ -484,27 +459,23 @@ function compressImg(file,cb){
 }
 
 function addJobPhoto(ev){
-  var files=ev.target.files;
-  if(!files||!files.length)return;
+  var files=ev.target.files;if(!files||!files.length)return;
   for(var i=0;i<files.length;i++){
     (function(f){compressImg(f,function(b64){jobPhotos.push(b64);renderGrid();});})(files[i]);
   }
   ev.target.value="";
 }
-
 function renderGrid(){
-  var grid=document.getElementById("jobGrid");
-  grid.innerHTML="";
-  document.getElementById("photoCount").textContent=jobPhotos.length+" photo(s) added";
+  var grid=document.getElementById("jobGrid");grid.innerHTML="";
+  document.getElementById("photoCount").textContent=jobPhotos.length+" photo(s)";
   jobPhotos.forEach(function(b64,idx){
     var wrap=document.createElement("div");wrap.className="pthumb";
-    var img=document.createElement("img");img.src=b64;img.alt="Photo "+(idx+1);
-    var btn=document.createElement("button");btn.className="pdel";btn.innerHTML="&#10005;";btn.type="button";
+    var img=document.createElement("img");img.src=b64;img.alt="P"+(idx+1);
+    var btn=document.createElement("button");btn.className="pdel";btn.textContent="x";btn.type="button";
     (function(i){btn.onclick=function(e){e.stopPropagation();jobPhotos.splice(i,1);renderGrid();};})(idx);
     wrap.appendChild(img);wrap.appendChild(btn);grid.appendChild(wrap);
   });
 }
-
 function addReceipt(ev){
   var f=ev.target.files[0];if(!f)return;
   compressImg(f,function(b64){
@@ -514,14 +485,13 @@ function addReceipt(ev){
     wrap.style.cssText="position:relative;width:180px;padding-bottom:180px;margin:0 auto;border-radius:12px;overflow:hidden;background:#e0e0e0;";
     var img=document.createElement("img");img.src=b64;img.alt="Receipt";
     img.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;";
-    var btn=document.createElement("button");btn.className="pdel";btn.innerHTML="&#10005;";btn.type="button";
-    btn.onclick=function(){rcptPhoto=null;prev.innerHTML='<p style="color:#aaa;font-size:13px">Removed</p>';};
+    var btn=document.createElement("button");btn.className="pdel";btn.textContent="x";btn.type="button";
+    btn.onclick=function(){rcptPhoto=null;prev.textContent="Removed";};
     wrap.appendChild(img);wrap.appendChild(btn);prev.appendChild(wrap);
   });
   ev.target.value="";
 }
 
-// ===== SUBMIT =====
 function submitAll(){
   var w=document.getElementById("rWork").value.trim();
   if(!w){alert("Kya kaam kiya fill karo!");curStep=1;updateUI();return;}
@@ -534,8 +504,7 @@ function submitAll(){
     caseId:c.id,customer:c.customer,mobile:c.mobile,address:c.address,
     problem:c.problem,model:c.model||"N/A",techName:myName,
     serialNumber:document.getElementById("rSerial").value||"N/A",
-    workDone:w,
-    partsUsed:document.getElementById("rParts").value||"N/A",
+    workDone:w,partsUsed:document.getElementById("rParts").value||"N/A",
     timeTaken:document.getElementById("rTime").value,
     customerFeedback:document.getElementById("rFb").value,
     remarks:document.getElementById("rRem").value||"N/A",
@@ -559,7 +528,7 @@ function submitAll(){
   }).then(function(){
     closeSteps();showTab("Done");
     if(navigator.vibrate)navigator.vibrate([200,100,200]);
-    alert("Report + Photos + Expense submit!\nCase DONE!");
+    alert("Report submit ho gaya! Case DONE!");
   }).catch(function(e){
     alert("Error: "+e.message);
     nb.textContent="Submit Report";nb.disabled=false;

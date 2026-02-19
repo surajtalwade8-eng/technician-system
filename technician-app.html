@@ -3,6 +3,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#25D366">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TechApp">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>My Cases</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -44,6 +50,7 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;justify-content:center;align-items:center;padding:20px}
 #popup.on{display:flex;animation:popIn 0.3s ease}
 @keyframes popIn{from{transform:scale(0.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bnc{from{transform:translateY(0)}to{transform:translateY(-10px)}}
 .pbox{background:white;border-radius:22px;padding:28px 20px;width:100%;max-width:370px;text-align:center}
 .ptitle{font-size:21px;font-weight:700;color:#f44336;margin:10px 0 4px}
 .pcust{font-size:18px;font-weight:700;margin:5px 0}
@@ -142,7 +149,6 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
       <div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div>Report+Photos</div><div class="prog-line"></div></div>
       <div class="prog-step" id="ps2"><div class="prog-dot">2</div><div>Expense</div></div>
     </div>
-
     <div id="step1" class="sc">
       <div class="st">Job Report + Photos</div>
       <div class="ss">Details + camera/gallery se photo lo</div>
@@ -174,7 +180,6 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
       <div class="pgrid" id="jobGrid"></div>
       <p id="photoCount" style="font-size:13px;color:#888;text-align:center;margin:5px 0">0 photos</p>
     </div>
-
     <div id="step2" class="sc" style="display:none">
       <div class="st">Expense Details</div>
       <div class="ss">Kharcha daalo ya Skip karo</div>
@@ -194,7 +199,6 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
       </div>
       <div id="rcptPrev" style="margin:10px 0;text-align:center"></div>
     </div>
-
     <div class="step-nav">
       <button class="bp" id="btnPrev">Back</button>
       <button class="bsk" id="btnSkip">Skip</button>
@@ -206,496 +210,296 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-// ========== GLOBALS ==========
-var db = null;
-var myKey = "";
-var myName = "";
-var myCases = [];
-var curTab = "New";
-var popKey = "";
-var repKey = "";
-var firstLoad = true;
-var alertInt = null;
-var audioCtx = null;
-var curStep = 1;
-var jobPhotos = [];
-var rcptPhoto = null;
+var db=null,myKey="",myName="",myCases=[],curTab="New",popKey="",repKey="",firstLoad=true;
+var alertInt=null,audioCtx=null,curStep=1,jobPhotos=[],rcptPhoto=null;
 
-// ========== DEBUG ==========
-function dbg(msg) {
-  var box = document.getElementById("dbg");
-  box.style.display = "block";
-  box.innerHTML += msg + "<br>";
-}
-function setFbSt(m, ok) {
-  var el = document.getElementById("fbStatus");
-  el.textContent = m;
-  el.style.background = ok ? "rgba(0,200,80,0.35)" : "rgba(255,60,60,0.4)";
-}
+function dbg(msg){var b=document.getElementById("dbg");b.style.display="block";b.innerHTML+=msg+"<br>";}
+function setFbSt(m,ok){var el=document.getElementById("fbStatus");el.textContent=m;el.style.background=ok?"rgba(0,200,80,0.35)":"rgba(255,60,60,0.4)";}
 
-// ========== FIREBASE INIT ==========
-function initFB() {
-  if (typeof firebase === "undefined") {
-    setFbSt("Firebase load nahi hua! Internet check karo.", false);
-    dbg("ERROR: firebase undefined");
-    return false;
-  }
-  try {
-    if (!firebase.apps.length) {
+function initFB(){
+  if(typeof firebase==="undefined"){setFbSt("Firebase load nahi hua!",false);return false;}
+  try{
+    if(!firebase.apps.length){
       firebase.initializeApp({
-        apiKey: "AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-        authDomain: "tech-b30b8.firebaseapp.com",
-        databaseURL: "https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-        projectId: "tech-b30b8",
-        storageBucket: "tech-b30b8.firebasestorage.app",
-        messagingSenderId: "815434648437",
-        appId: "1:815434648437:web:bd11c672f57fc24e1ba13c"
+        apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+        authDomain:"tech-b30b8.firebaseapp.com",
+        databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId:"tech-b30b8",
+        storageBucket:"tech-b30b8.firebasestorage.app",
+        messagingSenderId:"815434648437",
+        appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
       });
     }
-    db = firebase.database();
-    setFbSt("Firebase Connected!", true);
-    dbg("Firebase: OK");
+    db=firebase.database();
+    setFbSt("Firebase Connected!",true);
     return true;
-  } catch (e) {
-    setFbSt("Firebase error: " + e.message, false);
-    dbg("Firebase error: " + e.message);
-    return false;
-  }
+  }catch(e){setFbSt("Firebase error: "+e.message,false);return false;}
 }
 
-// ========== STARTUP ==========
-window.addEventListener("load", function() {
-  dbg("Page loaded");
-  if (!initFB()) return;
+window.addEventListener("load",function(){
+  if(!initFB())return;
+  document.getElementById("pAccBtn").addEventListener("click",accFromPopup);
+  document.getElementById("pBusyBtn").addEventListener("click",closePopup);
+  document.getElementById("btnNext").addEventListener("click",nextStep);
+  document.getElementById("btnPrev").addEventListener("click",prevStep);
+  document.getElementById("btnSkip").addEventListener("click",skipExpense);
+  document.getElementById("camBox").addEventListener("click",function(){document.getElementById("jobCam").click();});
+  document.getElementById("rcptBox").addEventListener("click",function(){document.getElementById("rcptCam").click();});
+  document.getElementById("jobCam").addEventListener("change",addJobPhoto);
+  document.getElementById("rcptCam").addEventListener("change",addReceipt);
 
-  // Wire up event listeners (no inline onclick for dynamic buttons)
-  document.getElementById("pAccBtn").addEventListener("click", accFromPopup);
-  document.getElementById("pBusyBtn").addEventListener("click", closePopup);
-  document.getElementById("btnNext").addEventListener("click", nextStep);
-  document.getElementById("btnPrev").addEventListener("click", prevStep);
-  document.getElementById("btnSkip").addEventListener("click", skipExpense);
-  document.getElementById("camBox").addEventListener("click", function() { document.getElementById("jobCam").click(); });
-  document.getElementById("rcptBox").addEventListener("click", function() { document.getElementById("rcptCam").click(); });
-  document.getElementById("jobCam").addEventListener("change", addJobPhoto);
-  document.getElementById("rcptCam").addEventListener("change", addReceipt);
-
-  myKey = localStorage.getItem("tk") || "";
-  myName = localStorage.getItem("tn") || "";
-  dbg("Saved user: " + (myName || "none"));
-
-  if (myKey && myName) {
-    startApp();
-  } else {
-    loadTechs();
+  // Register Service Worker for PWA
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("sw.js").then(function(){
+      dbg("SW: Registered OK");
+    }).catch(function(e){dbg("SW error: "+e.message);});
   }
+
+  myKey=localStorage.getItem("tk")||"";
+  myName=localStorage.getItem("tn")||"";
+  if(myKey&&myName){startApp();}else{loadTechs();}
 });
 
-// ========== LOAD TECHS ==========
-function loadTechs() {
-  if (!db) { setFbSt("DB nahi mila!", false); return; }
-  setFbSt("Naam load ho rahe hain...", true);
-  document.getElementById("lerr").textContent = "";
-  dbg("Loading techs...");
-
-  db.ref("technicians").once("value").then(function(snap) {
-    var sel = document.getElementById("tSel");
-    sel.innerHTML = "";
-    var opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = "-- Apna naam select karo --";
-    sel.appendChild(opt0);
-
-    if (snap.exists()) {
-      var cnt = 0;
-      snap.forEach(function(child) {
-        var t = child.val();
-        var opt = document.createElement("option");
-        opt.value = child.key + "|" + t.name;
-        opt.textContent = t.name;
-        sel.appendChild(opt);
-        cnt++;
+function loadTechs(){
+  if(!db){setFbSt("DB nahi mila!",false);return;}
+  setFbSt("Naam load ho rahe hain...",true);
+  document.getElementById("lerr").textContent="";
+  db.ref("technicians").once("value").then(function(snap){
+    var sel=document.getElementById("tSel");
+    sel.innerHTML="";
+    var opt0=document.createElement("option");opt0.value="";opt0.textContent="-- Apna naam select karo --";sel.appendChild(opt0);
+    if(snap.exists()){
+      var cnt=0;
+      snap.forEach(function(child){
+        var t=child.val();
+        var opt=document.createElement("option");
+        opt.value=child.key+"|"+t.name;
+        opt.textContent=t.name;
+        sel.appendChild(opt);cnt++;
       });
-      setFbSt(cnt + " Technician(s) Ready!", true);
-      dbg("Techs loaded: " + cnt);
-      setTimeout(function() { document.getElementById("dbg").style.display = "none"; }, 3000);
-    } else {
-      setFbSt("Koi technician nahi. Admin se add karwao.", false);
-      dbg("No techs found in Firebase");
-    }
-  }).catch(function(e) {
-    setFbSt("Load failed: " + e.message, false);
-    document.getElementById("lerr").textContent = e.message;
-    dbg("Error: " + e.message);
-  });
+      setFbSt(cnt+" Technician(s) Ready!",true);
+      setTimeout(function(){document.getElementById("dbg").style.display="none";},3000);
+    }else{setFbSt("Koi technician nahi. Admin se add karwao.",false);}
+  }).catch(function(e){setFbSt("Load failed: "+e.message,false);document.getElementById("lerr").textContent=e.message;});
 }
 
-// ========== LOGIN ==========
-function doLogin() {
-  var v = document.getElementById("tSel").value;
-  if (!v || v.indexOf("|") === -1) { alert("Pehle naam select karo!"); return; }
-  var p = v.split("|");
-  myKey = p[0];
-  myName = p[1];
-  localStorage.setItem("tk", myKey);
-  localStorage.setItem("tn", myName);
-  initAudio();
-  startApp();
+function doLogin(){
+  var v=document.getElementById("tSel").value;
+  if(!v||v.indexOf("|")===-1){alert("Pehle naam select karo!");return;}
+  var p=v.split("|");myKey=p[0];myName=p[1];
+  localStorage.setItem("tk",myKey);localStorage.setItem("tn",myName);
+  initAudio();startApp();
 }
-function doLogout() {
-  stopAlert();
-  localStorage.clear();
-  location.reload();
-}
+function doLogout(){stopAlert();localStorage.clear();location.reload();}
 
-// ========== AUDIO ==========
-function initAudio() {
-  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); keepAlive(); } catch(e) {}
+function initAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();keepAlive();}catch(e){}}
+function keepAlive(){
+  if(!audioCtx)return;
+  var buf=audioCtx.createBuffer(1,audioCtx.sampleRate,audioCtx.sampleRate);
+  var src=audioCtx.createBufferSource();src.buffer=buf;src.connect(audioCtx.destination);src.start(0);
+  src.onended=function(){if(audioCtx)keepAlive();};
 }
-function keepAlive() {
-  if (!audioCtx) return;
-  var buf = audioCtx.createBuffer(1, audioCtx.sampleRate, audioCtx.sampleRate);
-  var src = audioCtx.createBufferSource();
-  src.buffer = buf;
-  src.connect(audioCtx.destination);
-  src.start(0);
-  src.onended = function() { if (audioCtx) keepAlive(); };
-}
-function resumeAudio() { if (audioCtx && audioCtx.state === "suspended") audioCtx.resume(); }
-function beepOnce() {
-  resumeAudio();
-  if (!audioCtx) return;
-  try {
-    var t = audioCtx.currentTime;
-    [[880, t, t+0.4], [660, t+0.45, t+0.85], [1100, t+0.9, t+1.5]].forEach(function(x) {
-      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination);
-      o.type = "sine"; o.frequency.value = x[0];
-      g.gain.setValueAtTime(0.7, x[1]);
-      g.gain.exponentialRampToValueAtTime(0.001, x[2]);
-      o.start(x[1]); o.stop(x[2]);
+function resumeAudio(){if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();}
+function beepOnce(){
+  resumeAudio();if(!audioCtx)return;
+  try{
+    var t=audioCtx.currentTime;
+    [[880,t,t+0.4],[660,t+0.45,t+0.85],[1100,t+0.9,t+1.5]].forEach(function(x){
+      var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.type="sine";o.frequency.value=x[0];
+      g.gain.setValueAtTime(0.7,x[1]);g.gain.exponentialRampToValueAtTime(0.001,x[2]);
+      o.start(x[1]);o.stop(x[2]);
     });
-  } catch(e) {}
+  }catch(e){}
 }
-function playAlert() { stopAlert(); beepOnce(); alertInt = setInterval(beepOnce, 2500); }
-function stopAlert() { if (alertInt) { clearInterval(alertInt); alertInt = null; } }
-function testSound() { beepOnce(); }
+function playAlert(){stopAlert();beepOnce();alertInt=setInterval(beepOnce,2500);}
+function stopAlert(){if(alertInt){clearInterval(alertInt);alertInt=null;}}
+function testSound(){beepOnce();}
 
-// ========== START APP ==========
-function startApp() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("mainScreen").style.display = "block";
-  document.getElementById("tNm").textContent = myName;
-  if ("Notification" in window) Notification.requestPermission();
-  document.addEventListener("visibilitychange", function() { if (!document.hidden) resumeAudio(); });
-
-  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value", function(snap) {
-    var prev = myCases.map(function(c) { return c.key; });
-    myCases = [];
-    if (snap.exists()) {
-      snap.forEach(function(child) {
-        var d = child.val();
-        d.key = child.key;
-        myCases.unshift(d);
-      });
-    }
-    var nc = myCases.filter(function(c) { return c.status === "New"; }).length;
-    var np = myCases.filter(function(c) { return c.status === "Pending"; }).length;
-    document.getElementById("nCnt").textContent = nc + (np > 0 ? "+" + np : "");
-    if (!firstLoad) {
-      for (var i = 0; i < myCases.length; i++) {
-        if (myCases[i].status === "New" && prev.indexOf(myCases[i].key) === -1) {
-          showPopup(myCases[i]);
-          break;
-        }
+function startApp(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("mainScreen").style.display="block";
+  document.getElementById("tNm").textContent=myName;
+  if("Notification" in window)Notification.requestPermission();
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeAudio();});
+  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){
+    var prev=myCases.map(function(c){return c.key;});
+    myCases=[];
+    if(snap.exists())snap.forEach(function(child){var d=child.val();d.key=child.key;myCases.unshift(d);});
+    var nc=myCases.filter(function(c){return c.status==="New";}).length;
+    var np=myCases.filter(function(c){return c.status==="Pending";}).length;
+    document.getElementById("nCnt").textContent=nc+(np>0?"+"+np:"");
+    if(!firstLoad){
+      for(var i=0;i<myCases.length;i++){
+        if(myCases[i].status==="New"&&prev.indexOf(myCases[i].key)===-1){showPopup(myCases[i]);break;}
       }
     }
-    firstLoad = false;
-    render();
-  }, function(err) {
-    dbg("Listener error: " + err.message);
-  });
+    firstLoad=false;render();
+  },function(err){dbg("Error: "+err.message);});
 }
 
-// ========== POPUP ==========
-function showPopup(c) {
-  popKey = c.key;
-  document.getElementById("pCust").textContent = c.customer + " (" + c.mobile + ")";
-  document.getElementById("pAddr").textContent = c.address;
-  document.getElementById("pProb").textContent = c.problem;
-  document.getElementById("pTkt").textContent = c.id;
+function showPopup(c){
+  popKey=c.key;
+  document.getElementById("pCust").textContent=c.customer+" ("+c.mobile+")";
+  document.getElementById("pAddr").textContent=c.address;
+  document.getElementById("pProb").textContent=c.problem;
+  document.getElementById("pTkt").textContent=c.id;
   document.getElementById("popup").classList.add("on");
-  document.title = "NEW CASE! " + c.customer;
+  document.title="NEW CASE! "+c.customer;
   playAlert();
-  if (navigator.vibrate) navigator.vibrate([600, 200, 600, 200, 600]);
-  if (Notification.permission === "granted") {
-    new Notification("New Case!", { body: c.customer + " - " + c.address, requireInteraction: true });
-  }
+  if(navigator.vibrate)navigator.vibrate([600,200,600,200,600]);
+  if(Notification.permission==="granted")new Notification("New Case!",{body:c.customer+" - "+c.address,requireInteraction:true});
 }
-function closePopup() {
-  document.getElementById("popup").classList.remove("on");
-  stopAlert();
-  document.title = "My Cases";
-}
-function accFromPopup() {
-  if (popKey) {
-    db.ref("cases/" + popKey).update({ status: "Accepted" });
-    closePopup();
-    showTab("Accepted");
-  }
-}
+function closePopup(){document.getElementById("popup").classList.remove("on");stopAlert();document.title="My Cases";}
+function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accepted"});closePopup();showTab("Accepted");}}
 
-// ========== TABS ==========
-function showTab(t) {
-  curTab = t;
-  ["New", "Accepted", "Pending", "Done"].forEach(function(x) {
-    var el = document.getElementById("t-" + x);
-    if (el) el.className = (x === t) ? "tab on" : "tab";
+function showTab(t){
+  curTab=t;
+  ["New","Accepted","Pending","Done"].forEach(function(x){
+    var el=document.getElementById("t-"+x);
+    if(el)el.className=(x===t)?"tab on":"tab";
   });
   render();
 }
 
-// ========== RENDER — uses DOM (no innerHTML with quotes) ==========
-function render() {
-  var list = document.getElementById("cList");
-  list.innerHTML = "";
-  var f = myCases.filter(function(c) { return c.status === curTab; });
-
-  if (!f.length) {
-    var msgs = { New: "Koi naya case nahi!", Accepted: "Koi active case nahi!", Pending: "Koi pending nahi!", Done: "Koi done case nahi!" };
-    var empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = msgs[curTab] || "";
-    list.appendChild(empty);
-    return;
+function render(){
+  var list=document.getElementById("cList");
+  list.innerHTML="";
+  var f=myCases.filter(function(c){return c.status===curTab;});
+  if(!f.length){
+    var msgs={New:"Koi naya case nahi!",Accepted:"Koi active case nahi!",Pending:"Koi pending nahi!",Done:"Koi done case nahi!"};
+    var empty=document.createElement("div");empty.className="empty";empty.textContent=msgs[curTab]||"";
+    list.appendChild(empty);return;
   }
-
-  f.forEach(function(c) {
-    var clsMap = { New: "nc", Accepted: "ac", Pending: "pc", Done: "dc" };
-    var chipMap = { New: "cN", Accepted: "cA", Pending: "cP", Done: "cD" };
-
-    var card = document.createElement("div");
-    card.className = "card " + (clsMap[c.status] || "dc");
-
-    // ID + date
-    var cid = document.createElement("div");
-    cid.className = "cid";
-    cid.textContent = c.id + " - " + (c.date || "");
-    card.appendChild(cid);
-
-    // Name
-    var cname = document.createElement("div");
-    cname.className = "cname";
-    cname.textContent = c.customer;
-    card.appendChild(cname);
-
-    // Address
-    var caddr = document.createElement("div");
-    caddr.className = "caddr";
-    caddr.textContent = c.mobile + " | " + c.address;
-    card.appendChild(caddr);
-
-    // Problem
-    var cprob = document.createElement("div");
-    cprob.className = "cprob";
-    cprob.textContent = c.problem;
-    card.appendChild(cprob);
-
-    // Chips
-    var chips = document.createElement("div");
-    var mchip = document.createElement("span");
-    mchip.className = "chip cM";
-    mchip.textContent = c.model || "N/A";
-    var schip = document.createElement("span");
-    schip.className = "chip " + (chipMap[c.status] || "cN");
-    schip.textContent = c.status;
-    chips.appendChild(mchip);
-    chips.appendChild(schip);
+  f.forEach(function(c){
+    var clsMap={New:"nc",Accepted:"ac",Pending:"pc",Done:"dc"};
+    var chipMap={New:"cN",Accepted:"cA",Pending:"cP",Done:"cD"};
+    var card=document.createElement("div");card.className="card "+(clsMap[c.status]||"dc");
+    var cid=document.createElement("div");cid.className="cid";cid.textContent=c.id+" - "+(c.date||"");card.appendChild(cid);
+    var cname=document.createElement("div");cname.className="cname";cname.textContent=c.customer;card.appendChild(cname);
+    var caddr=document.createElement("div");caddr.className="caddr";caddr.textContent=c.mobile+" | "+c.address;card.appendChild(caddr);
+    var cprob=document.createElement("div");cprob.className="cprob";cprob.textContent=c.problem;card.appendChild(cprob);
+    var chips=document.createElement("div");
+    var mc=document.createElement("span");mc.className="chip cM";mc.textContent=c.model||"N/A";chips.appendChild(mc);
+    var sc=document.createElement("span");sc.className="chip "+(chipMap[c.status]||"cN");sc.textContent=c.status;chips.appendChild(sc);
     card.appendChild(chips);
-
-    // Buttons — using addEventListener (no inline onclick with keys)
-    if (c.status === "New") {
-      var btn = makeBtn("Accept Case", "abtn acc", c.key, accCase);
-      card.appendChild(btn);
-    }
-    if (c.status === "Accepted") {
-      card.appendChild(makeBtn("Case Done - Report", "abtn don", c.key, openSteps));
-      card.appendChild(makeBtn("Mark Pending", "abtn pnd", c.key, setPending));
-    }
-    if (c.status === "Pending") {
-      card.appendChild(makeBtn("Case Done - Report", "abtn don", c.key, openSteps));
-      card.appendChild(makeBtn("Resume Work", "abtn acc", c.key, setAccepted));
-    }
-
-    // Call button
-    var callBtn = document.createElement("button");
-    callBtn.className = "abtn cal";
-    callBtn.textContent = "Call Customer";
-    callBtn.addEventListener("click", function() { window.location.href = "tel:" + c.mobile; });
-    card.appendChild(callBtn);
-
+    if(c.status==="New")card.appendChild(makeBtn("Accept Case","abtn acc",c.key,accCase));
+    if(c.status==="Accepted"){card.appendChild(makeBtn("Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Mark Pending","abtn pnd",c.key,setPending));}
+    if(c.status==="Pending"){card.appendChild(makeBtn("Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Resume Work","abtn acc",c.key,setAccepted));}
+    var callBtn=document.createElement("button");callBtn.className="abtn cal";callBtn.textContent="Call Customer";
+    callBtn.addEventListener("click",function(){window.location.href="tel:"+c.mobile;});card.appendChild(callBtn);
     list.appendChild(card);
   });
 }
 
-// Helper: create button with event
-function makeBtn(label, cls, key, fn) {
-  var btn = document.createElement("button");
-  btn.className = cls;
-  btn.textContent = label;
-  btn.addEventListener("click", function() { fn(key); });
-  return btn;
+function makeBtn(label,cls,key,fn){
+  var btn=document.createElement("button");btn.className=cls;btn.textContent=label;
+  btn.addEventListener("click",function(){fn(key);});return btn;
 }
 
-// ========== CASE ACTIONS ==========
-function accCase(k) { db.ref("cases/" + k).update({ status: "Accepted" }); showTab("Accepted"); }
-function setPending(k) { db.ref("cases/" + k).update({ status: "Pending" }); showTab("Pending"); }
-function setAccepted(k) { db.ref("cases/" + k).update({ status: "Accepted" }); showTab("Accepted"); }
+function accCase(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+function setPending(k){db.ref("cases/"+k).update({status:"Pending"});showTab("Pending");}
+function setAccepted(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
 
-// ========== OPEN STEPS ==========
-function openSteps(k) {
-  repKey = k;
-  curStep = 1;
-  jobPhotos = [];
-  rcptPhoto = null;
-  var c = myCases.find(function(x) { return x.key === k; });
-  if (!c) return;
-  var info = document.createElement("div");
-  info.innerHTML = "<b>" + c.id + "</b> - " + c.customer + " - " + c.mobile + "<br>" + c.address + "<br>" + c.problem;
-  document.getElementById("cc1").innerHTML = "";
-  document.getElementById("cc1").appendChild(info.cloneNode(true));
-  document.getElementById("cc2").innerHTML = "";
-  document.getElementById("cc2").appendChild(info.cloneNode(true));
-  ["rWork", "rParts", "rRem", "rSerial", "expAmt", "expDet"].forEach(function(id) {
-    document.getElementById(id).value = "";
+function openSteps(k){
+  repKey=k;curStep=1;jobPhotos=[];rcptPhoto=null;
+  var c=myCases.find(function(x){return x.key===k;});if(!c)return;
+  var info=document.createElement("div");
+  info.innerHTML="<b>"+c.id+"</b> - "+c.customer+" - "+c.mobile+"<br>"+c.address+"<br>"+c.problem;
+  document.getElementById("cc1").innerHTML="";document.getElementById("cc1").appendChild(info.cloneNode(true));
+  document.getElementById("cc2").innerHTML="";document.getElementById("cc2").appendChild(info.cloneNode(true));
+  ["rWork","rParts","rRem","rSerial","expAmt","expDet"].forEach(function(id){document.getElementById(id).value="";});
+  document.getElementById("jobGrid").innerHTML="";document.getElementById("rcptPrev").innerHTML="";
+  document.getElementById("photoCount").textContent="0 photos";
+  document.getElementById("stepModal").classList.add("on");updateUI();
+}
+function closeSteps(){document.getElementById("stepModal").classList.remove("on");}
+
+function updateUI(){
+  document.getElementById("step1").style.display=curStep===1?"block":"none";
+  document.getElementById("step2").style.display=curStep===2?"block":"none";
+  [1,2].forEach(function(i){document.getElementById("ps"+i).className="prog-step"+(i<curStep?" done":i===curStep?" active":"");});
+  document.getElementById("btnPrev").style.display=curStep>1?"inline-block":"none";
+  document.getElementById("btnSkip").style.display=curStep===2?"inline-block":"none";
+  var nb=document.getElementById("btnNext");
+  if(curStep===2){nb.className="bn-red";nb.textContent="Submit Report";}
+  else{nb.className="bn";nb.textContent="Next";}
+}
+function nextStep(){if(curStep===1){if(!document.getElementById("rWork").value.trim()){alert("Kya kaam kiya fill karo!");return;}curStep=2;updateUI();}else{submitAll();}}
+function prevStep(){if(curStep>1){curStep--;updateUI();}}
+function skipExpense(){submitAll();}
+
+function compressImg(file,cb){
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var cv=document.createElement("canvas"),MAX=800,w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
+      cb(cv.toDataURL("image/jpeg",0.6));
+    };img.src=e.target.result;
+  };r.readAsDataURL(file);
+}
+function addJobPhoto(ev){
+  var files=ev.target.files;if(!files||!files.length)return;
+  for(var i=0;i<files.length;i++){(function(f){compressImg(f,function(b64){jobPhotos.push(b64);renderGrid();});})(files[i]);}
+  ev.target.value="";
+}
+function renderGrid(){
+  var grid=document.getElementById("jobGrid");grid.innerHTML="";
+  document.getElementById("photoCount").textContent=jobPhotos.length+" photo(s)";
+  jobPhotos.forEach(function(b64,idx){
+    var wrap=document.createElement("div");wrap.className="pthumb";
+    var img=document.createElement("img");img.src=b64;
+    var btn=document.createElement("button");btn.className="pdel";btn.textContent="x";btn.type="button";
+    (function(i){btn.addEventListener("click",function(e){e.stopPropagation();jobPhotos.splice(i,1);renderGrid();});})(idx);
+    wrap.appendChild(img);wrap.appendChild(btn);grid.appendChild(wrap);
   });
-  document.getElementById("jobGrid").innerHTML = "";
-  document.getElementById("rcptPrev").innerHTML = "";
-  document.getElementById("photoCount").textContent = "0 photos";
-  document.getElementById("stepModal").classList.add("on");
-  updateUI();
 }
-function closeSteps() { document.getElementById("stepModal").classList.remove("on"); }
-
-function updateUI() {
-  document.getElementById("step1").style.display = curStep === 1 ? "block" : "none";
-  document.getElementById("step2").style.display = curStep === 2 ? "block" : "none";
-  [1, 2].forEach(function(i) {
-    document.getElementById("ps" + i).className = "prog-step" + (i < curStep ? " done" : i === curStep ? " active" : "");
-  });
-  document.getElementById("btnPrev").style.display = curStep > 1 ? "inline-block" : "none";
-  document.getElementById("btnSkip").style.display = curStep === 2 ? "inline-block" : "none";
-  var nb = document.getElementById("btnNext");
-  if (curStep === 2) { nb.className = "bn-red"; nb.textContent = "Submit Report"; }
-  else { nb.className = "bn"; nb.textContent = "Next"; }
+function addReceipt(ev){
+  var f=ev.target.files[0];if(!f)return;
+  compressImg(f,function(b64){
+    rcptPhoto=b64;
+    var prev=document.getElementById("rcptPrev");prev.innerHTML="";
+    var wrap=document.createElement("div");
+    wrap.style.cssText="position:relative;width:180px;padding-bottom:180px;margin:0 auto;border-radius:12px;overflow:hidden;background:#e0e0e0;";
+    var img=document.createElement("img");img.src=b64;
+    img.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;";
+    var btn=document.createElement("button");btn.className="pdel";btn.textContent="x";btn.type="button";
+    btn.addEventListener("click",function(){rcptPhoto=null;prev.textContent="Removed";});
+    wrap.appendChild(img);wrap.appendChild(btn);prev.appendChild(wrap);
+  });ev.target.value="";
 }
 
-function nextStep() {
-  if (curStep === 1) {
-    if (!document.getElementById("rWork").value.trim()) { alert("Kya kaam kiya fill karo!"); return; }
-    curStep = 2; updateUI();
-  } else { submitAll(); }
-}
-function prevStep() { if (curStep > 1) { curStep--; updateUI(); } }
-function skipExpense() { submitAll(); }
-
-// ========== PHOTO ==========
-function compressImg(file, cb) {
-  var r = new FileReader();
-  r.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var cv = document.createElement("canvas"), MAX = 800, w = img.width, h = img.height;
-      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      cv.width = w; cv.height = h;
-      cv.getContext("2d").drawImage(img, 0, 0, w, h);
-      cb(cv.toDataURL("image/jpeg", 0.6));
-    };
-    img.src = e.target.result;
+function submitAll(){
+  var w=document.getElementById("rWork").value.trim();
+  if(!w){alert("Kya kaam kiya fill karo!");curStep=1;updateUI();return;}
+  var c=myCases.find(function(x){return x.key===repKey;});if(!c)return;
+  var today=new Date();
+  var dateStr=today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+  var now=today.toLocaleString("hi-IN");
+  var rep={
+    caseId:c.id,customer:c.customer,mobile:c.mobile,address:c.address,
+    problem:c.problem,model:c.model||"N/A",techName:myName,
+    serialNumber:document.getElementById("rSerial").value||"N/A",
+    workDone:w,partsUsed:document.getElementById("rParts").value||"N/A",
+    timeTaken:document.getElementById("rTime").value,
+    customerFeedback:document.getElementById("rFb").value,
+    remarks:document.getElementById("rRem").value||"N/A",
+    jobPhotos:jobPhotos,
+    expense:{amount:document.getElementById("expAmt").value||"0",details:document.getElementById("expDet").value||"N/A",receiptPhoto:rcptPhoto},
+    date:dateStr,completedAt:now
   };
-  r.readAsDataURL(file);
-}
-function addJobPhoto(ev) {
-  var files = ev.target.files;
-  if (!files || !files.length) return;
-  for (var i = 0; i < files.length; i++) {
-    (function(f) { compressImg(f, function(b64) { jobPhotos.push(b64); renderGrid(); }); })(files[i]);
-  }
-  ev.target.value = "";
-}
-function renderGrid() {
-  var grid = document.getElementById("jobGrid");
-  grid.innerHTML = "";
-  document.getElementById("photoCount").textContent = jobPhotos.length + " photo(s)";
-  jobPhotos.forEach(function(b64, idx) {
-    var wrap = document.createElement("div"); wrap.className = "pthumb";
-    var img = document.createElement("img"); img.src = b64;
-    var btn = document.createElement("button"); btn.className = "pdel"; btn.textContent = "x"; btn.type = "button";
-    (function(i) {
-      btn.addEventListener("click", function(e) { e.stopPropagation(); jobPhotos.splice(i, 1); renderGrid(); });
-    })(idx);
-    wrap.appendChild(img); wrap.appendChild(btn); grid.appendChild(wrap);
-  });
-}
-function addReceipt(ev) {
-  var f = ev.target.files[0]; if (!f) return;
-  compressImg(f, function(b64) {
-    rcptPhoto = b64;
-    var prev = document.getElementById("rcptPrev");
-    prev.innerHTML = "";
-    var wrap = document.createElement("div");
-    wrap.style.cssText = "position:relative;width:180px;padding-bottom:180px;margin:0 auto;border-radius:12px;overflow:hidden;background:#e0e0e0;";
-    var img = document.createElement("img"); img.src = b64;
-    img.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;";
-    var btn = document.createElement("button"); btn.className = "pdel"; btn.textContent = "x"; btn.type = "button";
-    btn.addEventListener("click", function() { rcptPhoto = null; prev.textContent = "Removed"; });
-    wrap.appendChild(img); wrap.appendChild(btn); prev.appendChild(wrap);
-  });
-  ev.target.value = "";
-}
-
-// ========== SUBMIT ==========
-function submitAll() {
-  var w = document.getElementById("rWork").value.trim();
-  if (!w) { alert("Kya kaam kiya fill karo!"); curStep = 1; updateUI(); return; }
-  var c = myCases.find(function(x) { return x.key === repKey; });
-  if (!c) return;
-  var today = new Date();
-  var dateStr = today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
-  var now = today.toLocaleString("hi-IN");
-  var rep = {
-    caseId: c.id, customer: c.customer, mobile: c.mobile, address: c.address,
-    problem: c.problem, model: c.model || "N/A", techName: myName,
-    serialNumber: document.getElementById("rSerial").value || "N/A",
-    workDone: w,
-    partsUsed: document.getElementById("rParts").value || "N/A",
-    timeTaken: document.getElementById("rTime").value,
-    customerFeedback: document.getElementById("rFb").value,
-    remarks: document.getElementById("rRem").value || "N/A",
-    jobPhotos: jobPhotos,
-    expense: {
-      amount: document.getElementById("expAmt").value || "0",
-      details: document.getElementById("expDet").value || "N/A",
-      receiptPhoto: rcptPhoto
-    },
-    date: dateStr, completedAt: now
-  };
-  var nb = document.getElementById("btnNext");
-  nb.textContent = "Saving..."; nb.disabled = true;
-  db.ref("reports/" + myName + "/" + dateStr + "/" + c.id).set(rep).then(function() {
-    return db.ref("cases/" + repKey).update({
-      status: "Done", completedAt: now,
-      expenseAmt: rep.expense.amount,
-      photoCount: jobPhotos.length,
-      serialNumber: rep.serialNumber
-    });
-  }).then(function() {
-    closeSteps(); showTab("Done");
-    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  var nb=document.getElementById("btnNext");nb.textContent="Saving...";nb.disabled=true;
+  db.ref("reports/"+myName+"/"+dateStr+"/"+c.id).set(rep).then(function(){
+    return db.ref("cases/"+repKey).update({status:"Done",completedAt:now,expenseAmt:rep.expense.amount,photoCount:jobPhotos.length,serialNumber:rep.serialNumber});
+  }).then(function(){
+    closeSteps();showTab("Done");
+    if(navigator.vibrate)navigator.vibrate([200,100,200]);
     alert("Report submit ho gaya! Case DONE!");
-  }).catch(function(e) {
-    alert("Error: " + e.message);
-    nb.textContent = "Submit Report"; nb.disabled = false;
-  });
+  }).catch(function(e){alert("Error: "+e.message);nb.textContent="Submit Report";nb.disabled=false;});
 }
 </script>
 </body></html>

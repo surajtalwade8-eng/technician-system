@@ -8,348 +8,306 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",sans-serif;background:#f0f4f8;min-height:100vh}
+body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .wrap{max-width:1300px;margin:auto;padding:20px}
-.header{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:25px 30px;border-radius:15px;text-align:center;margin-bottom:20px}
-.header h1{font-size:26px;margin-bottom:5px}
-.tabs-main{display:flex;background:white;border-radius:12px;overflow:hidden;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,0.08)}
-.tab-main{flex:1;padding:15px;text-align:center;cursor:pointer;font-size:16px;font-weight:600;color:#666;transition:0.2s;border-bottom:3px solid transparent}
-.tab-main.active{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff4}
-.card{background:white;padding:25px;border-radius:15px;box-shadow:0 3px 15px rgba(0,0,0,0.07);margin-bottom:20px}
-.card h3{color:#128C7E;margin-bottom:18px;font-size:18px}
+.header{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:25px;border-radius:15px;text-align:center;margin-bottom:20px}
+.header h1{font-size:24px;margin-bottom:5px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
-.stat{background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.06)}
-.stat h2{margin:0 0 5px;font-size:30px}
-.stat p{color:#888;font-size:13px;margin:0}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-input,select,textarea{width:100%;padding:13px 15px;margin:6px 0;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;transition:0.2s;box-sizing:border-box}
+.stat{background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.07)}
+.stat h2{font-size:28px;margin-bottom:5px}
+.stat p{color:#888;font-size:13px}
+.main-tabs{display:flex;background:white;border-radius:12px;overflow:hidden;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,0.07)}
+.mtab{flex:1;padding:16px;text-align:center;cursor:pointer;font-size:15px;font-weight:600;color:#999;border-bottom:3px solid transparent;transition:0.2s}
+.mtab.active{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff4}
+.section{display:none}
+.section.active{display:block}
+.card{background:white;padding:25px;border-radius:15px;box-shadow:0 3px 15px rgba(0,0,0,0.07);margin-bottom:20px}
+.card h3{color:#128C7E;margin-bottom:18px;font-size:17px;border-bottom:2px solid #e0f7e9;padding-bottom:10px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+input,select,textarea{width:100%;padding:13px;margin:6px 0;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;transition:0.2s;font-family:Arial}
 input:focus,select:focus,textarea:focus{border-color:#25D366}
-button{padding:13px 20px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:0.3s}
-.btn-green{background:linear-gradient(135deg,#25D366,#128C7E);color:white;width:100%}
-.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(37,211,102,0.3)}
+.btn{padding:13px 20px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:0.2s;display:inline-block}
+.btn:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-green{background:linear-gradient(135deg,#25D366,#128C7E);color:white;width:100%;margin-top:10px}
 .btn-blue{background:#2196F3;color:white}
 .btn-red{background:#f44336;color:white}
 .btn-wa{background:#00ff88;color:#000;font-weight:bold}
-.btn-sm{padding:8px 14px;font-size:13px;width:auto;margin:2px}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th{background:#f0fff4;padding:12px 14px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32;font-weight:700}
-td{padding:11px 14px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.btn-sm{padding:8px 13px;font-size:13px;margin:2px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+th{background:#f0fff4;padding:12px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32}
+td{padding:11px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
 tr:hover td{background:#f9fff9}
-.badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block}
-.badge-new{background:#fff3cd;color:#d67e00}
-.badge-accepted{background:#cce5ff;color:#0066cc}
-.badge-done{background:#d4edda;color:#28a745}
-.badge-progress{background:#ffe0b2;color:#e65100}
-.tech-tag{display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:#2e7d32;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;margin:4px}
-.search-row{display:flex;gap:10px;margin-bottom:15px;align-items:center}
-.search-row input{margin:0;flex:1}
-#toast{display:none;position:fixed;top:20px;right:20px;background:white;border-left:5px solid #25D366;padding:20px 25px;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,0.15);z-index:9999;max-width:320px;animation:slideIn 0.3s ease}
-@keyframes slideIn{from{transform:translateX(400px)}to{transform:translateX(0)}}
-.section-hidden{display:none}
-@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.wrap{padding:10px}}
+.badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.b-New{background:#fff3cd;color:#856404}
+.b-Accepted{background:#cce5ff;color:#0066cc}
+.b-Done{background:#d4edda;color:#28a745}
+.tech-tag{display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:#2e7d32;padding:8px 15px;border-radius:25px;font-size:14px;font-weight:600;margin:5px}
+.search-bar{display:flex;gap:10px;margin-bottom:15px;align-items:stretch}
+.search-bar input{margin:0;flex:1}
+#toast{display:none;position:fixed;top:20px;right:20px;background:white;border-left:5px solid #25D366;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.15);z-index:9999;max-width:300px}
+.srow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+.srow input,.srow select{margin:0;flex:1}
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.wrap{padding:10px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="header">
-    <h1>🔧 Technician Assignment Dashboard</h1>
-    <p>Admin Panel — Firebase Real-time Sync ✅</p>
+    <h1>🔧 Technician Assignment System</h1>
+    <p>Admin Panel • Firebase Real-time ✅</p>
   </div>
 
-  <!-- Stats -->
   <div class="stats">
-    <div class="stat"><h2 id="sTotal" style="color:#25D366">0</h2><p>Total Cases</p></div>
-    <div class="stat"><h2 id="sNew" style="color:#d67e00">0</h2><p>New</p></div>
-    <div class="stat"><h2 id="sAccepted" style="color:#0066cc">0</h2><p>Accepted</p></div>
-    <div class="stat"><h2 id="sDone" style="color:#28a745">0</h2><p>Done</p></div>
+    <div class="stat"><h2 id="s0" style="color:#25D366">0</h2><p>Total</p></div>
+    <div class="stat"><h2 id="s1" style="color:#d67e00">0</h2><p>New</p></div>
+    <div class="stat"><h2 id="s2" style="color:#0066cc">0</h2><p>Accepted</p></div>
+    <div class="stat"><h2 id="s3" style="color:#28a745">0</h2><p>Done</p></div>
   </div>
 
-  <!-- Main Tabs -->
-  <div class="tabs-main">
-    <div class="tab-main active" onclick="showMainTab('cases')">📋 Cases</div>
-    <div class="tab-main" onclick="showMainTab('technicians')">👥 Technicians</div>
-    <div class="tab-main" onclick="showMainTab('reports')">📊 Reports</div>
+  <div class="main-tabs">
+    <div class="mtab active" id="mtab-cases" onclick="showTab('cases')">📋 Cases</div>
+    <div class="mtab" id="mtab-tech" onclick="showTab('tech')">👥 Technicians</div>
+    <div class="mtab" id="mtab-reports" onclick="showTab('reports')">📊 Reports</div>
   </div>
 
-  <!-- CASES TAB -->
-  <div id="tab-cases">
-    <!-- New Case Form -->
+  <!-- CASES -->
+  <div id="sec-cases" class="section active">
     <div class="card">
-      <h3>➕ New Case Assign</h3>
-      <div class="grid2">
-        <input id="cCustomer" placeholder="Customer Name *">
-        <input id="cMobile" placeholder="Customer Mobile *">
+      <h3>➕ New Case Assign Karo</h3>
+      <div class="g2">
+        <input id="cName" placeholder="Customer Name *">
+        <input id="cMob" placeholder="Mobile Number *">
       </div>
-      <input id="cAddress" placeholder="📍 Full Address * (Building, Area, City)">
-      <div class="grid2">
-        <input id="cModel" placeholder="Product Model (HP 1020)">
-        <select id="cTech"><option value="">Select Technician *</option></select>
+      <input id="cAddr" placeholder="Full Address * (Building, Area, City)">
+      <div class="g2">
+        <input id="cModel" placeholder="Model (HP 1020)">
+        <select id="cTech"><option value="">Technician Select Karo *</option></select>
       </div>
-      <textarea id="cProblem" placeholder="Problem Details *" rows="3"></textarea>
-      <button class="btn-green" onclick="assignCase()">🚀 ASSIGN CASE + WhatsApp Notify</button>
+      <textarea id="cProb" placeholder="Problem Details *" rows="3"></textarea>
+      <button class="btn btn-green" onclick="assignCase()">🚀 ASSIGN + WhatsApp Notify</button>
     </div>
-
-    <!-- Cases Table -->
     <div class="card">
       <h3>📋 All Cases</h3>
-      <div class="search-row">
-        <input id="searchInput" placeholder="🔍 Search by customer, tech, status..." onkeyup="filterTable()">
-        <button class="btn-blue btn-sm" onclick="exportExcel()">📊 Export Excel</button>
-        <select id="statusFilter" onchange="filterTable()" style="width:auto;margin:0;padding:11px">
+      <div class="search-bar">
+        <input id="srch" placeholder="🔍 Search..." onkeyup="filterCases()">
+        <select id="stFilter" onchange="filterCases()" style="width:auto;flex:none;margin:0;padding:13px">
           <option value="">All Status</option>
           <option>New</option><option>Accepted</option><option>Done</option>
         </select>
+        <button class="btn btn-blue btn-sm" onclick="exportCases()">📊 Excel</button>
       </div>
       <div style="overflow-x:auto">
-        <table id="caseTable">
-          <thead><tr>
-            <th>Ticket</th><th>Date</th><th>Customer</th><th>Address</th>
-            <th>Problem</th><th>Technician</th><th>Status</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="caseBody"></tbody>
-        </table>
+        <table><thead><tr>
+          <th>Ticket</th><th>Date</th><th>Customer</th><th>Address</th><th>Problem</th><th>Tech</th><th>Status</th><th>Actions</th>
+        </tr></thead><tbody id="caseTbl"></tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- TECHNICIANS TAB -->
-  <div id="tab-technicians" class="section-hidden">
+  <!-- TECHNICIANS -->
+  <div id="sec-tech" class="section">
     <div class="card">
-      <h3>👥 Technician Add/Remove</h3>
-      <div class="grid2">
+      <h3>➕ Technician Add Karo</h3>
+      <div class="g2">
         <input id="tName" placeholder="Technician Name *">
         <input id="tNum" placeholder="WhatsApp Number (10 digits) *">
       </div>
-      <button class="btn-green" onclick="addTech()" style="margin-top:5px">➕ Add Technician</button>
-      <div id="techList" style="margin-top:20px"></div>
+      <button class="btn btn-green" onclick="addTech()">✅ Add Technician</button>
+    </div>
+    <div class="card">
+      <h3>👥 All Technicians</h3>
+      <div id="techList"><p style="color:#999">Koi technician nahi hai. Add karo upar se.</p></div>
     </div>
   </div>
 
-  <!-- REPORTS TAB -->
-  <div id="tab-reports" class="section-hidden">
+  <!-- REPORTS -->
+  <div id="sec-reports" class="section">
     <div class="card">
-      <h3>📊 Technician Reports (Date-wise)</h3>
-      <div class="grid2">
-        <select id="rTechFilter" onchange="loadReports()" style="margin:0">
-          <option value="">All Technicians</option>
-        </select>
-        <input type="date" id="rDateFilter" onchange="loadReports()" style="margin:0">
+      <h3>📊 Reports Filter</h3>
+      <div class="srow">
+        <select id="rTech" style="flex:1"><option value="">All Technicians</option></select>
+        <input type="date" id="rDate" style="flex:1;margin:0">
+        <button class="btn btn-blue btn-sm" onclick="loadReports()">🔍 Load</button>
+        <button class="btn btn-green btn-sm" onclick="exportReports()" style="width:auto">📊 Excel</button>
       </div>
-      <div style="margin-top:15px;display:flex;gap:10px">
-        <button class="btn-blue btn-sm" onclick="loadReports()">🔍 Load Reports</button>
-        <button class="btn-green btn-sm" onclick="exportReports()" style="width:auto">📊 Export Excel</button>
-      </div>
-      <div style="overflow-x:auto;margin-top:20px">
-        <table id="reportTable">
-          <thead><tr>
-            <th>Date</th><th>Technician</th><th>Case ID</th><th>Customer</th>
-            <th>Work Done</th><th>Parts</th><th>Time</th><th>Charge</th><th>Feedback</th>
-          </tr></thead>
-          <tbody id="reportBody">
-            <tr><td colspan="9" style="text-align:center;padding:30px;color:#999">Reports load karne ke liye technician/date select karo</td></tr>
-          </tbody>
-        </table>
+      <div style="overflow-x:auto">
+        <table><thead><tr>
+          <th>Date</th><th>Tech</th><th>Case</th><th>Customer</th><th>Work Done</th><th>Parts</th><th>Time</th><th>Charge</th><th>Feedback</th>
+        </tr></thead><tbody id="rptTbl"><tr><td colspan="9" style="text-align:center;padding:30px;color:#999">Reports load karne ke liye upar filter karo</td></tr></tbody></table>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast">
-  <div id="toastTitle" style="font-weight:700;font-size:16px;margin-bottom:5px"></div>
-  <div id="toastBody" style="font-size:14px;color:#555"></div>
-  <button onclick="closeToast()" style="margin-top:10px;padding:7px 15px;background:#25D366;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px">OK</button>
+<div id="toast" onclick="this.style.display='none'">
+  <div id="tTitle" style="font-weight:700;margin-bottom:6px;font-size:16px"></div>
+  <div id="tBody" style="font-size:14px;color:#555"></div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-  authDomain: "tech-b30b8.firebaseapp.com",
-  databaseURL: "https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "tech-b30b8",
-  storageBucket: "tech-b30b8.firebasestorage.app",
-  messagingSenderId: "815434648437",
-  appId: "1:815434648437:web:bd11c672f57fc24e1ba13c"
+const FB = {
+  apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+  authDomain:"tech-b30b8.firebaseapp.com",
+  databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId:"tech-b30b8",
+  storageBucket:"tech-b30b8.firebasestorage.app",
+  messagingSenderId:"815434648437",
+  appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
 };
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(FB);
 const db = firebase.database();
-let technicians = [], allCases = [], allReports = [];
+let techs=[], cases=[], reports=[];
 
-// Load Technicians
-db.ref('technicians').on('value', snap => {
-  technicians = [];
-  const sel = document.getElementById('cTech');
-  const rFilter = document.getElementById('rTechFilter');
-  sel.innerHTML = '<option value="">Select Technician *</option>';
-  rFilter.innerHTML = '<option value="">All Technicians</option>';
-  document.getElementById('techList').innerHTML = '';
+// TABS
+function showTab(t) {
+  ["cases","tech","reports"].forEach(x => {
+    document.getElementById("sec-"+x).classList.toggle("active", x===t);
+    document.getElementById("mtab-"+x).classList.toggle("active", x===t);
+  });
+  if(t==="reports") loadReports();
+}
+
+// TECHNICIANS
+db.ref("technicians").on("value", snap => {
+  techs = [];
+  const sel = document.getElementById("cTech");
+  const rsel = document.getElementById("rTech");
+  const list = document.getElementById("techList");
+  sel.innerHTML = "<option value=''>Technician Select Karo *</option>";
+  rsel.innerHTML = "<option value=''>All Technicians</option>";
   if(snap.exists()) {
-    snap.forEach(child => {
-      const t = child.val();
-      technicians.push({key: child.key, ...t});
-      sel.add(new Option(t.name + ' (' + t.number + ')', child.key));
-      rFilter.add(new Option(t.name, t.name));
-      document.getElementById('techList').innerHTML += '<span class="tech-tag">👨‍🔧 ' + t.name + ' — ' + t.number + ' <span style="cursor:pointer;color:#f44336;font-weight:bold" onclick="deleteTech('' + child.key + '')">✕</span></span>';
+    snap.forEach(c => {
+      const t = {key:c.key, ...c.val()};
+      techs.push(t);
+      sel.add(new Option(t.name+" ("+t.number+")", t.key));
+      rsel.add(new Option(t.name, t.name));
     });
+    list.innerHTML = techs.map(t =>
+      "<div class='tech-tag'>👨‍🔧 "+t.name+" — "+t.number+
+      " &nbsp;<span style='cursor:pointer;color:#f44336' onclick='delTech(""+t.key+"")'>✕</span></div>"
+    ).join("");
+  } else {
+    list.innerHTML = "<p style='color:#999'>Koi technician nahi hai. Add karo upar se.</p>";
   }
 });
 
-// Load Cases REAL-TIME
-db.ref('cases').on('value', snap => {
-  allCases = [];
-  if(snap.exists()) snap.forEach(child => allCases.unshift({key:child.key, ...child.val()}));
-  filterTable();
+function addTech() {
+  const n = document.getElementById("tName").value.trim();
+  const num = document.getElementById("tNum").value.trim();
+  if(!n || num.length!==10 || isNaN(num)) return alert("Name aur valid 10 digit number daalo!");
+  db.ref("technicians").push({name:n, number:num}).then(() => {
+    document.getElementById("tName").value="";
+    document.getElementById("tNum").value="";
+    toast("✅ Technician Added!", n+" successfully add hua!");
+  });
+}
+
+function delTech(k) { if(confirm("Delete?")) db.ref("technicians/"+k).remove(); }
+
+// CASES
+db.ref("cases").on("value", snap => {
+  cases = [];
+  if(snap.exists()) snap.forEach(c => cases.unshift({key:c.key,...c.val()}));
+  filterCases();
   updateStats();
 });
 
-// Status changed - TOAST notification
-db.ref('cases').on('child_changed', snap => {
+db.ref("cases").on("child_changed", snap => {
   const c = snap.val();
-  if(c.status==='Accepted') showToast('✅ Case Accepted!', c.techName + ' ne case ACCEPT kiya!\nCustomer: ' + c.customer);
-  if(c.status==='Done') showToast('🎉 Case Done!', c.techName + ' ne case COMPLETE kiya!\nCustomer: ' + c.customer);
+  if(c.status==="Accepted") toast("✅ Case Accepted!", c.techName+" ne ACCEPT kiya! — "+c.customer);
+  if(c.status==="Done") toast("🎉 Case Done!", c.techName+" ne DONE kiya! — "+c.customer);
 });
 
-function addTech() {
-  const name = document.getElementById('tName').value.trim();
-  const num = document.getElementById('tNum').value.trim();
-  if(!name || num.length < 10) return alert('Name aur 10 digit number daalo!');
-  db.ref('technicians').push({name, number: num});
-  document.getElementById('tName').value = '';
-  document.getElementById('tNum').value = '';
-}
-
-function deleteTech(key) {
-  if(confirm('Delete this technician?')) db.ref('technicians/' + key).remove();
-}
-
 function assignCase() {
-  const customer = document.getElementById('cCustomer').value.trim();
-  const mobile = document.getElementById('cMobile').value.trim();
-  const address = document.getElementById('cAddress').value.trim();
-  const problem = document.getElementById('cProblem').value.trim();
-  const techKey = document.getElementById('cTech').value;
-  if(!customer || !mobile || !address || !problem || !techKey) return alert('Sab * fields fill karo!');
-  const tech = technicians.find(t => t.key === techKey);
-  const caseId = 'CASE' + Date.now().toString().slice(-5);
-  const caseData = {
-    id: caseId, customer, mobile, address, problem,
-    model: document.getElementById('cModel').value || 'N/A',
-    techKey, techName: tech.name, techNumber: tech.number,
-    status: 'New',
-    timestamp: firebase.database.ServerValue.TIMESTAMP,
-    date: new Date().toLocaleString('hi-IN')
+  const n=document.getElementById("cName").value.trim();
+  const m=document.getElementById("cMob").value.trim();
+  const a=document.getElementById("cAddr").value.trim();
+  const p=document.getElementById("cProb").value.trim();
+  const tk=document.getElementById("cTech").value;
+  if(!n||!m||!a||!p||!tk) return alert("Sab * wale fields fill karo!");
+  const tech=techs.find(t=>t.key===tk);
+  const id="CASE"+Date.now().toString().slice(-5);
+  const data={
+    id,customer:n,mobile:m,address:a,problem:p,
+    model:document.getElementById("cModel").value||"N/A",
+    techKey:tk,techName:tech.name,techNumber:tech.number,
+    status:"New",date:new Date().toLocaleString("hi-IN"),
+    timestamp:firebase.database.ServerValue.TIMESTAMP
   };
-  db.ref('cases/' + caseId).set(caseData).then(() => {
-    ['cCustomer','cMobile','cAddress','cModel','cProblem'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('cTech').value = '';
-    const msg = '*🔧 NEW CASE ASSIGNED* 🔔\n\n👤 *Customer:* ' + customer + '\n📞 *Mobile:* ' + mobile + '\n📍 *Address:* ' + address + '\n🖨️ *Model:* ' + caseData.model + '\n⚠️ *Problem:* ' + problem + '\n🎫 *Ticket:* ' + caseId + '\n\n👉 App: https://surajtalwade8-eng.github.io/technician-system/technician-app.html\n\nReply: ✅ ACCEPT / ⏳ BUSY';
-    window.open('https://wa.me/91' + tech.number + '?text=' + encodeURIComponent(msg), '_blank');
-    showToast('✅ Case Assigned!', tech.name + ' ko case assign hua! WhatsApp notification gaya!');
+  db.ref("cases/"+id).set(data).then(()=>{
+    ["cName","cMob","cAddr","cModel","cProb"].forEach(x=>document.getElementById(x).value="");
+    document.getElementById("cTech").value="";
+    const msg="*🔧 NEW CASE ASSIGNED*\n\n👤 Customer: "+n+"\n📞 Mobile: "+m+"\n📍 Address: "+a+"\n🖨️ Model: "+data.model+"\n⚠️ Problem: "+p+"\n🎫 Ticket: "+id+"\n\n👉 App: https://surajtalwade8-eng.github.io/technician-system/technician-app.html\n\nReply: ✅ ACCEPT / ⏳ BUSY";
+    window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg),"_blank");
+    toast("✅ Assigned!","WhatsApp notification "+tech.name+" ko gaya!");
   });
 }
 
-function filterTable() {
-  const term = document.getElementById('searchInput').value.toLowerCase();
-  const status = document.getElementById('statusFilter').value;
-  let filtered = allCases.filter(c => {
-    const matchText = [c.customer,c.techName,c.address,c.problem,c.id,c.status].join(' ').toLowerCase().includes(term);
-    const matchStatus = !status || c.status === status;
-    return matchText && matchStatus;
+function filterCases() {
+  const s=document.getElementById("srch").value.toLowerCase();
+  const st=document.getElementById("stFilter").value;
+  const f=cases.filter(c=>{
+    const txt=[c.customer,c.techName,c.address,c.problem,c.id,c.status].join(" ").toLowerCase();
+    return txt.includes(s)&&(!st||c.status===st);
   });
-  renderTable(filtered);
+  const tb=document.getElementById("caseTbl");
+  if(!f.length){tb.innerHTML="<tr><td colspan='8' style='text-align:center;padding:30px;color:#999'>No cases</td></tr>";return;}
+  tb.innerHTML=f.map(c=>"<tr><td><b>"+c.id+"</b></td><td style='font-size:12px'>"+c.date+"</td><td>"+c.customer+"<br><small style='color:#888'>"+c.mobile+"</small></td><td style='font-size:13px'>"+c.address+"</td><td style='font-size:13px'>"+c.problem+"</td><td>"+c.techName+"</td><td><span class='badge b-"+c.status+"'>"+c.status+"</span></td><td style='white-space:nowrap'><button class='btn btn-wa btn-sm' onclick='waCase(""+c.key+"")'>📱</button><button class='btn btn-blue btn-sm' onclick='setStatus(""+c.key+"","Accepted")'>✓</button><button class='btn btn-sm' style='background:#4CAF50;color:white' onclick='setStatus(""+c.key+"","Done")'>Done</button><button class='btn btn-red btn-sm' onclick='delCase(""+c.key+"")'>🗑</button></td></tr>").join("");
 }
 
-function renderTable(data) {
-  const tbody = document.getElementById('caseBody');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:30px;color:#999">No cases found</td></tr>';return;}
-  tbody.innerHTML = data.map(c => '<tr><td><strong>' + c.id + '</strong></td><td style="font-size:12px;white-space:nowrap">' + (c.date||'') + '</td><td>' + c.customer + '<br><small style="color:#666">' + c.mobile + '</small></td><td style="font-size:13px;max-width:150px">' + c.address + '</td><td style="font-size:13px;max-width:150px">' + c.problem + '</td><td>👨‍🔧 ' + c.techName + '</td><td><span class="badge badge-' + (c.status||'new').toLowerCase() + '">' + (c.status||'New') + '</span></td><td style="white-space:nowrap"><button class="btn-wa btn-sm" onclick="sendWA('' + c.key + '')">📱</button> <button class="btn-blue btn-sm" onclick="updateStatus('' + c.key + '','Accepted')">Accept</button> <button class="btn-sm" style="background:#4CAF50;color:white" onclick="updateStatus('' + c.key + '','Done')">Done</button> <button class="btn-red btn-sm" onclick="deleteCase('' + c.key + '')">🗑</button></td></tr>').join('');
+function setStatus(k,s){db.ref("cases/"+k).update({status:s});}
+function delCase(k){if(confirm("Delete?"))db.ref("cases/"+k).remove();}
+function waCase(k){
+  const c=cases.find(x=>x.key===k);
+  const msg="*🔄 CASE UPDATE*\nCustomer: "+c.customer+"\nAddress: "+c.address+"\nProblem: "+c.problem+"\nStatus: "+c.status+"\nTicket: "+c.id;
+  window.open("https://wa.me/91"+c.techNumber+"?text="+encodeURIComponent(msg),"_blank");
 }
 
-function updateStatus(key, status) { db.ref('cases/' + key).update({status}); }
-function deleteCase(key) { if(confirm('Delete this case?')) db.ref('cases/' + key).remove(); }
-
-function sendWA(key) {
-  const c = allCases.find(x => x.key === key);
-  const msg = '*🔄 CASE REMINDER*\nCustomer: ' + c.customer + '\nAddress: ' + c.address + '\nProblem: ' + c.problem + '\nTicket: ' + c.id + '\nStatus: ' + c.status;
-  window.open('https://wa.me/91' + c.techNumber + '?text=' + encodeURIComponent(msg), '_blank');
+function updateStats(){
+  document.getElementById("s0").textContent=cases.length;
+  document.getElementById("s1").textContent=cases.filter(c=>c.status==="New").length;
+  document.getElementById("s2").textContent=cases.filter(c=>c.status==="Accepted").length;
+  document.getElementById("s3").textContent=cases.filter(c=>c.status==="Done").length;
 }
 
-function updateStats() {
-  document.getElementById('sTotal').textContent = allCases.length;
-  document.getElementById('sNew').textContent = allCases.filter(c=>c.status==='New').length;
-  document.getElementById('sAccepted').textContent = allCases.filter(c=>c.status==='Accepted').length;
-  document.getElementById('sDone').textContent = allCases.filter(c=>c.status==='Done').length;
-}
-
+// REPORTS
 function loadReports() {
-  const techName = document.getElementById('rTechFilter').value;
-  const dateVal = document.getElementById('rDateFilter').value;
-  let ref = techName ? db.ref('reports/' + techName) : db.ref('reports');
-  ref.once('value', snap => {
-    allReports = [];
-    if(snap.exists()) {
-      snap.forEach(techSnap => {
-        if(techSnap.hasChildren()) {
-          techSnap.forEach(dateSnap => {
-            if(dateSnap.hasChildren()) {
-              dateSnap.forEach(caseSnap => { allReports.unshift(caseSnap.val()); });
-            } else { allReports.unshift(dateSnap.val()); }
-          });
-        }
-      });
+  const tn=document.getElementById("rTech").value;
+  const dt=document.getElementById("rDate").value;
+  const ref=tn?db.ref("reports/"+tn):db.ref("reports");
+  ref.once("value",snap=>{
+    reports=[];
+    if(snap.exists()){
+      snap.forEach(t=>{t.forEach(d=>{d.forEach(c=>{reports.push(c.val());});});});
     }
-    let filtered = allReports;
-    if(dateVal) {
-      const d = new Date(dateVal).toLocaleDateString('hi-IN').replace(/\//g,'-');
-      filtered = allReports.filter(r => r.date === d);
-    }
-    renderReports(filtered);
+    let f=reports;
+    if(dt){const dStr=new Date(dt).toLocaleDateString("hi-IN").replace(/\//g,"-");f=reports.filter(r=>r.date===dStr);}
+    const tb=document.getElementById("rptTbl");
+    if(!f.length){tb.innerHTML="<tr><td colspan='9' style='text-align:center;padding:30px;color:#999'>No reports</td></tr>";return;}
+    tb.innerHTML=f.map(r=>"<tr><td>"+r.date+"</td><td>"+r.techName+"</td><td><b>"+r.caseId+"</b></td><td>"+r.customer+"<br><small>"+r.mobile+"</small></td><td>"+r.workDone+"</td><td>"+r.partsUsed+"</td><td>"+r.timeTaken+"</td><td>₹"+r.serviceCharge+"</td><td>"+r.customerFeedback+"</td></tr>").join("");
   });
 }
 
-function renderReports(data) {
-  const tbody = document.getElementById('reportBody');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:#999">No reports found</td></tr>';return;}
-  tbody.innerHTML = data.map(r => '<tr><td>' + (r.date||'') + '</td><td>👨‍🔧 ' + (r.techName||'') + '</td><td><strong>' + (r.caseId||'') + '</strong></td><td>' + (r.customer||'') + '<br><small>' + (r.mobile||'') + '</small></td><td>' + (r.workDone||'') + '</td><td>' + (r.partsUsed||'') + '</td><td>' + (r.timeTaken||'') + '</td><td>₹' + (r.serviceCharge||'0') + '</td><td>' + (r.customerFeedback||'') + '</td></tr>').join('');
+function exportCases(){
+  if(!cases.length)return alert("No cases!");
+  const rows=[["ID","Date","Customer","Mobile","Address","Problem","Tech","Status"],...cases.map(c=>[c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status])];
+  dlCSV(rows,"cases_"+new Date().toISOString().slice(0,10)+".csv");
 }
-
-function exportExcel() {
-  if(!allCases.length) return alert('No cases to export!');
-  const rows = [['ID','Date','Customer','Mobile','Address','Problem','Technician','Status']];
-  allCases.forEach(c => rows.push([c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status]));
-  downloadCSV(rows, 'cases_' + new Date().toISOString().slice(0,10) + '.csv');
+function exportReports(){
+  if(!reports.length)return alert("Pehle load karo!");
+  const rows=[["Date","Tech","Case","Customer","Mobile","Work","Parts","Time","Charge","Feedback"],...reports.map(r=>[r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.serviceCharge,r.customerFeedback])];
+  dlCSV(rows,"reports_"+new Date().toISOString().slice(0,10)+".csv");
 }
-
-function exportReports() {
-  if(!allReports.length) return alert('Pehle reports load karo!');
-  const rows = [['Date','Technician','Case ID','Customer','Mobile','Work Done','Parts','Time','Charge','Feedback','Remarks']];
-  allReports.forEach(r => rows.push([r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.serviceCharge,r.customerFeedback,r.remarks]));
-  downloadCSV(rows, 'reports_' + new Date().toISOString().slice(0,10) + '.csv');
+function dlCSV(rows,name){
+  const a=document.createElement("a");
+  a.href="data:text/csv;charset=utf-8,\uFEFF"+encodeURIComponent(rows.map(r=>r.map(v=>"\""+String(v||"").replace(/\"/g,'""')+"\""  ).join(",")).join("\n"));
+  a.download=name;a.click();
 }
-
-function downloadCSV(rows, filename) {
-  const csv = rows.map(r => r.map(v => '"' + (v||'').toString().replace(/"/g,'""') + '"').join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
-  a.download = filename;
-  a.click();
+function toast(t,b){
+  document.getElementById("tTitle").textContent=t;
+  document.getElementById("tBody").textContent=b;
+  document.getElementById("toast").style.display="block";
+  setTimeout(()=>document.getElementById("toast").style.display="none",5000);
 }
-
-function showMainTab(tab) {
-  ['cases','technicians','reports'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('section-hidden', t !== tab);
-    document.querySelectorAll('.tab-main')[['cases','technicians','reports'].indexOf(t)].classList.toggle('active', t === tab);
-  });
-  if(tab === 'reports') loadReports();
-}
-
-function showToast(title, body) {
-  document.getElementById('toastTitle').textContent = title;
-  document.getElementById('toastBody').textContent = body;
-  document.getElementById('toast').style.display = 'block';
-  setTimeout(closeToast, 8000);
-}
-function closeToast() { document.getElementById('toast').style.display = 'none'; }
 </script>
-</body>
-</html>
+</body></html>

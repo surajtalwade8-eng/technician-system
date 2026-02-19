@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
-<head>
+<html lang="hi"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#25D366">
@@ -14,42 +13,37 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 #loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#25D366,#128C7E);padding:30px;text-align:center}
-.login-icon{font-size:70px;margin-bottom:15px}
+.lico{font-size:70px;margin-bottom:15px}
 #loginScreen h1{color:white;font-size:28px;margin-bottom:8px}
 #loginScreen p{color:rgba(255,255,255,0.85);margin-bottom:30px}
 #loginScreen select{width:100%;max-width:350px;padding:18px;margin:10px 0;border:none;border-radius:15px;font-size:18px;outline:none}
-.login-btn{width:100%;max-width:350px;padding:18px;background:white;color:#25D366;border:none;border-radius:15px;font-size:20px;font-weight:700;cursor:pointer;margin-top:10px;box-shadow:0 10px 25px rgba(0,0,0,0.15)}
-.err{color:#ffcccc;font-size:14px;margin-top:10px}
+.lbtn{width:100%;max-width:350px;padding:18px;background:white;color:#25D366;border:none;border-radius:15px;font-size:20px;font-weight:700;cursor:pointer;margin-top:10px;box-shadow:0 10px 25px rgba(0,0,0,0.15)}
+.lerr{color:#ffcccc;font-size:14px;margin-top:10px}
 #mainScreen{display:none}
 .topbar{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
 .topbar h2{font-size:18px}
 .ncnt{background:white;color:#f44336;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
 .tabs{display:flex;background:white;border-bottom:2px solid #e0f7e9}
 .tab{flex:1;padding:14px 5px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent;transition:0.2s}
-.tab.active{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff9}
+.tab.on{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff9}
 .list{padding:15px;overflow-y:auto;height:calc(100vh - 160px)}
 .card{background:white;border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 3px 12px rgba(0,0,0,0.08)}
-.card.new-card{border-left:5px solid #f44336}
-.card.acc-card{border-left:5px solid #2196F3}
-.card.done-card{border-left:5px solid #4CAF50}
+.card.nc{border-left:5px solid #f44336}
+.card.ac{border-left:5px solid #2196F3}
+.card.dc{border-left:5px solid #4CAF50}
 .cid{font-size:11px;color:#bbb;font-weight:600;margin-bottom:6px}
 .cname{font-size:19px;font-weight:700;color:#111;margin-bottom:5px}
 .caddr{color:#555;font-size:14px;margin:8px 0;line-height:1.5}
 .cprob{background:#fff8f0;padding:12px;border-radius:10px;font-size:13px;color:#555;margin:10px 0}
 .chip{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin:3px}
-.cNew{background:#ffebee;color:#c62828}
-.cAccepted{background:#e3f2fd;color:#1565c0}
-.cDone{background:#e8f5e9;color:#2e7d32}
-.cModel{background:#f3e5f5;color:#6a1b9a}
+.cN{background:#ffebee;color:#c62828}.cA{background:#e3f2fd;color:#1565c0}.cD{background:#e8f5e9;color:#2e7d32}.cM{background:#f3e5f5;color:#6a1b9a}
 .abtn{width:100%;padding:16px;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin:5px 0;transition:0.2s}
 .abtn:active{transform:scale(0.97)}
-.accept-btn{background:linear-gradient(135deg,#25D366,#128C7E);color:white}
-.done-btn{background:linear-gradient(135deg,#4CAF50,#388E3C);color:white}
-.call-btn{background:#2196F3;color:white}
+.acc{background:linear-gradient(135deg,#25D366,#128C7E);color:white}
+.don{background:linear-gradient(135deg,#4CAF50,#388E3C);color:white}
+.cal{background:#2196F3;color:white}
 .empty{text-align:center;padding:60px 20px;color:#ccc}
 .empty div{font-size:55px;margin-bottom:15px}
-
-/* POPUP */
 #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;justify-content:center;align-items:center;padding:20px}
 #popup.on{display:flex;animation:popIn 0.4s ease}
 @keyframes popIn{from{transform:scale(0.6);opacity:0}to{transform:scale(1);opacity:1}}
@@ -64,8 +58,6 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .pacc{width:100%;padding:18px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:20px;font-weight:700;cursor:pointer;margin-top:12px;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 5px 15px rgba(37,211,102,0.4)}50%{box-shadow:0 5px 35px rgba(37,211,102,0.8)}}
 .pbusy{width:100%;padding:14px;background:#ff9800;color:white;border:none;border-radius:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px}
-
-/* REPORT MODAL */
 #repModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;justify-content:flex-end;align-items:flex-end}
 #repModal.on{display:flex;animation:slideUp 0.3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -73,234 +65,333 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .rbox h2{color:#25D366;text-align:center;font-size:20px;margin-bottom:15px}
 .rinfo{background:#f0f8ff;padding:14px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:2}
 .rbox label{display:block;font-weight:700;color:#333;margin:12px 0 4px;font-size:14px}
-.rbox input,.rbox select,.rbox textarea{width:100%;padding:13px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;font-family:Arial}
+.rbox input,.rbox select,.rbox textarea{width:100%;padding:13px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;font-family:Arial;box-sizing:border-box}
 .rbox input:focus,.rbox select:focus,.rbox textarea:focus{border-color:#25D366}
 .rsub{width:100%;padding:18px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:18px;font-weight:700;cursor:pointer;margin-top:15px}
 .rcan{width:100%;padding:14px;background:#f5f5f5;color:#888;border:none;border-radius:15px;font-size:16px;cursor:pointer;margin-top:8px}
-.lbtn{background:rgba(255,255,255,0.2);color:white;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px}
-</style>
-</head>
-<body>
-
+.outbtn{background:rgba(255,255,255,0.2);color:white;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+</style></head><body>
 <div id="loginScreen">
-  <div class="login-icon">🔧</div>
-  <h1>Technician App</h1>
-  <p>Apna naam select karke login karo</p>
-  <select id="tSel"><option value="">-- Loading techs... --</option></select>
-  <div id="loginErr" class="err"></div>
-  <button class="login-btn" onclick="doLogin()">🚀 LOGIN</button>
+<div class="lico">&#128295;</div>
+<h1>Technician App</h1>
+<p>Apna naam select karke login karo</p>
+<select id="tSel"><option value="">&#128260; Loading...</option></select>
+<div id="lerr" class="lerr"></div>
+<button class="lbtn" onclick="doLogin()">&#128640; LOGIN</button>
 </div>
-
 <div id="mainScreen">
-  <div class="topbar">
-    <div>
-      <div style="font-size:12px;opacity:0.8">Welcome 👋</div>
-      <h2 id="tNm">Tech</h2>
-    </div>
-    <div style="display:flex;gap:12px;align-items:center">
-      <div class="ncnt" id="nCnt">0</div>
-      <button class="lbtn" onclick="doLogout()">Logout</button>
-    </div>
-  </div>
-  <div class="tabs">
-    <div class="tab active" id="t-New" onclick="showTab('New')">🔴 New</div>
-    <div class="tab" id="t-Accepted" onclick="showTab('Accepted')">🔵 Accepted</div>
-    <div class="tab" id="t-Done" onclick="showTab('Done')">✅ Done</div>
-  </div>
-  <div class="list" id="cList"></div>
+<div class="topbar">
+<div><div style="font-size:12px;opacity:0.8">Welcome &#128075;</div><h2 id="tNm">Tech</h2></div>
+<div style="display:flex;gap:12px;align-items:center"><div class="ncnt" id="nCnt">0</div><button class="outbtn" onclick="doLogout()">Logout</button></div>
 </div>
-
-<!-- BIG POPUP -->
+<div class="tabs">
+<div class="tab on" id="t-New" onclick="showTab('New')">&#128308; New</div>
+<div class="tab" id="t-Accepted" onclick="showTab('Accepted')">&#128309; Accepted</div>
+<div class="tab" id="t-Done" onclick="showTab('Done')">&#9989; Done</div>
+</div>
+<div class="list" id="cList"></div>
+</div>
 <div id="popup">
-  <div class="pbox">
-    <div class="pico">🔔</div>
-    <div class="ptitle">⚡ NEW CASE!</div>
-    <div class="pcust" id="pCust"></div>
-    <div class="paddr">📍 <span id="pAddr"></span></div>
-    <div class="pprob">⚠️ <span id="pProb"></span></div>
-    <div class="pid">Ticket: <span id="pTkt"></span></div>
-    <button class="pacc" onclick="accFromPopup()">✅ ACCEPT CASE NOW</button>
-    <button class="pbusy" onclick="closePopup()">⏳ Baad Me Dekhunga</button>
-  </div>
-</div>
-
-<!-- REPORT MODAL -->
+<div class="pbox">
+<div class="pico">&#128276;</div>
+<div class="ptitle">&#9889; NEW CASE ASSIGNED!</div>
+<div class="pcust" id="pCust"></div>
+<div class="paddr">&#128205; <span id="pAddr"></span></div>
+<div class="pprob">&#9888;&#65039; <span id="pProb"></span></div>
+<div class="pid">Ticket: <span id="pTkt"></span></div>
+<button class="pacc" onclick="accFromPopup()">&#9989; ACCEPT CASE NOW</button>
+<button class="pbusy" onclick="closePopup()">&#9203; Baad Me Dekhunga</button>
+</div></div>
 <div id="repModal">
-  <div class="rbox">
-    <h2>📋 Completion Report</h2>
-    <div class="rinfo" id="rInfo"></div>
-    <label>✅ Kya Kaam Kiya? *</label>
-    <textarea id="rWork" rows="3" placeholder="Toner replace, head clean..."></textarea>
-    <label>🔧 Parts Used</label>
-    <input id="rParts" placeholder="HP 12A Toner (ya N/A)">
-    <label>⏱️ Time Taken</label>
-    <select id="rTime">
-      <option>30 minutes</option><option>1 hour</option><option>1.5 hours</option>
-      <option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option>
-    </select>
-    <label>💰 Service Charge (₹)</label>
-    <input id="rCharge" type="number" placeholder="500">
-    <label>😊 Customer Feedback</label>
-    <select id="rFb">
-      <option>⭐⭐⭐⭐⭐ Excellent</option><option>⭐⭐⭐⭐ Good</option>
-      <option>⭐⭐⭐ Average</option><option>⭐⭐ Below Average</option>
-    </select>
-    <label>📝 Remarks</label>
-    <textarea id="rRem" rows="2" placeholder="Extra information..."></textarea>
-    <button class="rsub" onclick="subReport()">✅ Submit + Mark DONE</button>
-    <button class="rcan" onclick="closeRep()">Cancel</button>
-  </div>
-</div>
+<div class="rbox">
+<h2>&#128203; Completion Report</h2>
+<div class="rinfo" id="rInfo"></div>
+<label>&#9989; Kya Kaam Kiya? *</label>
+<textarea id="rWork" rows="3" placeholder="Toner replace, head clean..."></textarea>
+<label>&#128295; Parts Used</label>
+<input id="rParts" placeholder="HP 12A Toner (ya N/A)">
+<label>&#9201;&#65039; Time Taken</label>
+<select id="rTime"><option>30 minutes</option><option>1 hour</option><option>1.5 hours</option><option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option></select>
+<label>&#128176; Service Charge (&#8377;)</label>
+<input id="rCharge" type="number" placeholder="500">
+<label>&#128512; Customer Feedback</label>
+<select id="rFb"><option>&#11088;&#11088;&#11088;&#11088;&#11088; Excellent</option><option>&#11088;&#11088;&#11088;&#11088; Good</option><option>&#11088;&#11088;&#11088; Average</option><option>&#11088;&#11088; Below Average</option></select>
+<label>&#128221; Remarks</label>
+<textarea id="rRem" rows="2" placeholder="Extra information..."></textarea>
+<button class="rsub" onclick="subReport()">&#9989; Submit + Mark DONE</button>
+<button class="rcan" onclick="closeRep()">Cancel</button>
+</div></div>
 
 <script>
-const FB={
-  apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-  authDomain:"tech-b30b8.firebaseapp.com",
-  databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId:"tech-b30b8",
-  storageBucket:"tech-b30b8.firebasestorage.app",
-  messagingSenderId:"815434648437",
-  appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
-};
-firebase.initializeApp(FB);
-const db=firebase.database();
-let myKey="",myName="",myNum="",myCases=[],curTab="New",popKey="",repKey="",firstLoad=true;
+var db, myKey="", myName="", myCases=[], curTab="New", popKey="", repKey="", firstLoad=true;
 
-// LOAD TECHS FOR LOGIN - with retry
-function loadTechs(){
-  document.getElementById("tSel").innerHTML="<option value=''>Loading...</option>";
-  db.ref("technicians").once("value").then(snap=>{
-    const sel=document.getElementById("tSel");
-    sel.innerHTML="<option value=''>-- Apna naam select karo --</option>";
-    if(snap.exists()){
-      snap.forEach(c=>{
-        const t=c.val();
-        sel.add(new Option("👨‍🔧 "+t.name+" ("+t.number+")", c.key+"|"+t.name+"|"+t.number));
+// FIREBASE
+try {
+  firebase.initializeApp({
+    apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+    authDomain:"tech-b30b8.firebaseapp.com",
+    databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId:"tech-b30b8",
+    storageBucket:"tech-b30b8.firebasestorage.app",
+    messagingSenderId:"815434648437",
+    appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
+  });
+  db = firebase.database();
+  loadTechs();
+} catch(e) {
+  document.getElementById("lerr").textContent = "Firebase Error: " + e.message;
+}
+
+// LOAD TECHS FOR LOGIN
+function loadTechs() {
+  db.ref("technicians").once("value").then(function(snap) {
+    var sel = document.getElementById("tSel");
+    sel.innerHTML = '<option value="">-- Apna naam select karo --</option>';
+    if(snap.exists()) {
+      snap.forEach(function(c) {
+        var t = c.val();
+        sel.add(new Option("&#128104; " + t.name + " (" + t.number + ")", c.key + "|" + t.name));
       });
     } else {
-      sel.innerHTML="<option value=''>Koi technician nahi (Admin se add karwao)</option>";
+      sel.innerHTML = '<option value="">Koi tech nahi (Admin se add karwao)</option>';
     }
-  }).catch(err=>{
-    document.getElementById("loginErr").textContent="Error: "+err.message+" — Page refresh karo";
+  }).catch(function(e) {
+    document.getElementById("lerr").textContent = "Load Error: " + e.message + " - Refresh karo";
   });
 }
 
-function doLogin(){
-  const v=document.getElementById("tSel").value;
-  if(!v||v.indexOf("|")===-1){alert("Apna naam select karo!");return;}
-  const p=v.split("|");
-  myKey=p[0];myName=p[1];myNum=p[2]||"";
-  localStorage.setItem("tk",myKey);
-  localStorage.setItem("tn",myName);
-  localStorage.setItem("tnum",myNum);
+function doLogin() {
+  var v = document.getElementById("tSel").value;
+  if(!v || v.indexOf("|") === -1) { alert("Naam select karo!"); return; }
+  var p = v.split("|");
+  myKey = p[0]; myName = p[1];
+  localStorage.setItem("tk", myKey);
+  localStorage.setItem("tn", myName);
   startApp();
 }
 
-window.onload=()=>{
-  myKey=localStorage.getItem("tk")||"";
-  myName=localStorage.getItem("tn")||"";
-  myNum=localStorage.getItem("tnum")||"";
-  if(myKey&&myName) startApp();
-  else loadTechs();
+window.onload = function() {
+  myKey = localStorage.getItem("tk") || "";
+  myName = localStorage.getItem("tn") || "";
+  if(myKey && myName) {
+    try {
+      firebase.initializeApp({
+        apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+        authDomain:"tech-b30b8.firebaseapp.com",
+        databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId:"tech-b30b8",
+        storageBucket:"tech-b30b8.firebasestorage.app",
+        messagingSenderId:"815434648437",
+        appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
+      });
+      db = firebase.database();
+    } catch(e) {}
+    startApp();
+  }
 };
 
-function doLogout(){
-  localStorage.clear();location.reload();
+function doLogout() {
+  localStorage.removeItem("tk");
+  localStorage.removeItem("tn");
+  location.reload();
 }
 
-function startApp(){
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("mainScreen").style.display="block";
-  document.getElementById("tNm").textContent=myName;
+function startApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("mainScreen").style.display = "block";
+  document.getElementById("tNm").textContent = myName;
   if("Notification" in window) Notification.requestPermission();
-  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",snap=>{
-    const prevIds=myCases.map(c=>c.key);
-    myCases=[];
-    if(snap.exists()) snap.forEach(c=>myCases.unshift({key:c.key,...c.val()}));
-    const newC=myCases.filter(c=>c.status==="New");
-    document.getElementById("nCnt").textContent=newC.length;
-    if(!firstLoad){
-      const latest=myCases.find(c=>c.status==="New"&&!prevIds.includes(c.key));
-      if(latest){
-        showPopup(latest);
-        if(navigator.vibrate)navigator.vibrate([500,200,500,200,500]);
-        if(Notification.permission==="granted")
-          new Notification("🔥 New Case!",{body:latest.customer+" — "+latest.address,requireInteraction:true});
+
+  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value", function(snap) {
+    var prevIds = [];
+    for(var i=0;i<myCases.length;i++) prevIds.push(myCases[i].key);
+    myCases = [];
+    if(snap.exists()) snap.forEach(function(c){ var d=c.val(); d.key=c.key; myCases.unshift(d); });
+
+    var newC = [];
+    for(var i=0;i<myCases.length;i++){ if(myCases[i].status==="New") newC.push(myCases[i]); }
+    document.getElementById("nCnt").textContent = newC.length;
+
+    if(!firstLoad) {
+      for(var i=0;i<myCases.length;i++) {
+        var c = myCases[i];
+        var isNew = true;
+        for(var j=0;j<prevIds.length;j++){ if(prevIds[j]===c.key){ isNew=false; break; } }
+        if(isNew && c.status==="New") {
+          showPopup(c);
+          break;
+        }
       }
     }
-    firstLoad=false;
+    firstLoad = false;
     render();
   });
 }
 
-function showPopup(c){
-  popKey=c.key;
-  document.getElementById("pCust").textContent="👤 "+c.customer+" ("+c.mobile+")";
-  document.getElementById("pAddr").textContent=c.address;
-  document.getElementById("pProb").textContent=c.problem;
-  document.getElementById("pTkt").textContent=c.id;
-  document.getElementById("popup").classList.add("on");
-}
-function closePopup(){document.getElementById("popup").classList.remove("on");}
-function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accepted"});closePopup();showTab("Accepted");}}
+// ===== AUDIO ALERT =====
+function playAlertSound() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-function showTab(t){
-  curTab=t;
-  ["New","Accepted","Done"].forEach(x=>document.getElementById("t-"+x).classList.toggle("active",x===t));
+    var o1 = ctx.createOscillator();
+    var g1 = ctx.createGain();
+    o1.connect(g1); g1.connect(ctx.destination);
+    o1.type = "sine"; o1.frequency.value = 880;
+    g1.gain.setValueAtTime(0.8, ctx.currentTime);
+    g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.4);
+
+    var o2 = ctx.createOscillator();
+    var g2 = ctx.createGain();
+    o2.connect(g2); g2.connect(ctx.destination);
+    o2.type = "sine"; o2.frequency.value = 660;
+    g2.gain.setValueAtTime(0.8, ctx.currentTime + 0.45);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.85);
+    o2.start(ctx.currentTime + 0.45); o2.stop(ctx.currentTime + 0.85);
+
+    var o3 = ctx.createOscillator();
+    var g3 = ctx.createGain();
+    o3.connect(g3); g3.connect(ctx.destination);
+    o3.type = "sine"; o3.frequency.value = 1100;
+    g3.gain.setValueAtTime(1.0, ctx.currentTime + 0.9);
+    g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+    o3.start(ctx.currentTime + 0.9); o3.stop(ctx.currentTime + 1.5);
+
+  } catch(e) { console.log("Audio error:", e); }
+}
+
+// ===== BIG POPUP =====
+function showPopup(c) {
+  popKey = c.key;
+  document.getElementById("pCust").textContent = c.customer + " (" + c.mobile + ")";
+  document.getElementById("pAddr").textContent = c.address;
+  document.getElementById("pProb").textContent = c.problem;
+  document.getElementById("pTkt").textContent = c.id;
+  document.getElementById("popup").classList.add("on");
+  document.title = "NEW CASE! - " + c.customer;
+
+  // SOUND + VIBRATE
+  playAlertSound();
+  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]);
+
+  // Browser notification
+  if(Notification.permission === "granted") {
+    new Notification("New Case Assigned!", {
+      body: c.customer + " - " + c.address,
+      requireInteraction: true
+    });
+  }
+}
+
+function closePopup() { document.getElementById("popup").classList.remove("on"); }
+function accFromPopup() {
+  if(popKey) {
+    db.ref("cases/" + popKey).update({status:"Accepted"});
+    closePopup();
+    showTab("Accepted");
+  }
+}
+
+// ===== TABS =====
+function showTab(t) {
+  curTab = t;
+  var tabs = ["New","Accepted","Done"];
+  for(var i=0;i<tabs.length;i++) {
+    document.getElementById("t-"+tabs[i]).className = (tabs[i]===t) ? "tab on" : "tab";
+  }
   render();
 }
 
-function render(){
-  const list=document.getElementById("cList");
-  const f=myCases.filter(c=>c.status===curTab);
-  if(!f.length){
-    const ico={New:"🎉",Accepted:"📋",Done:"✅"};
-    const msg={New:"Koi naya case nahi!",Accepted:"Koi accepted case nahi!",Done:"Koi done case nahi!"};
-    list.innerHTML="<div class='empty'><div>"+ico[curTab]+"</div><p>"+msg[curTab]+"</p></div>";return;
+// ===== RENDER CASES =====
+function render() {
+  var list = document.getElementById("cList");
+  var f = [];
+  for(var i=0;i<myCases.length;i++){ if(myCases[i].status===curTab) f.push(myCases[i]); }
+
+  if(!f.length) {
+    var icons = {New:"&#127881;", Accepted:"&#128203;", Done:"&#9989;"};
+    var msgs = {New:"Koi naya case nahi!", Accepted:"Koi accepted case nahi!", Done:"Koi completed case nahi!"};
+    list.innerHTML = '<div class="empty"><div>' + icons[curTab] + '</div><p>' + msgs[curTab] + '</p></div>';
+    return;
   }
-  list.innerHTML=f.map(c=>{
-    const cc=c.status==="New"?"new-card":c.status==="Accepted"?"acc-card":"done-card";
-    const chip="<span class='chip c"+c.status+"'>"+c.status+"</span>";
-    const mchip="<span class='chip cModel'>🖨️ "+(c.model||"N/A")+"</span>";
-    const accBtn=c.status==="New"?"<button class='abtn accept-btn' onclick='acc(\""+c.key+"\")'>✅ ACCEPT CASE</button>":"";
-    const doneBtn=c.status==="Accepted"?"<button class='abtn done-btn' onclick='openRep(\""+c.key+"\")'>📋 DONE + REPORT</button>":"";
-    return "<div class='card "+cc+"'><div class='cid'>"+c.id+" • "+(c.date||"")+"</div><div class='cname'>👤 "+c.customer+"</div><div class='caddr'>📞 "+c.mobile+"<br>📍 "+c.address+"</div><div class='cprob'>⚠️ "+c.problem+"</div><div>"+mchip+chip+"</div>"+accBtn+doneBtn+"<button class='abtn call-btn' onclick='window.location.href=\"tel:"+c.mobile+"\"'>📞 Call Customer</button></div>";
-  }).join("");
+
+  var h = "";
+  for(var j=0;j<f.length;j++) {
+    var c = f[j];
+    var cls = c.status==="New"?"nc":c.status==="Accepted"?"ac":"dc";
+    var chipCls = c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
+    h += '<div class="card ' + cls + '">';
+    h += '<div class="cid">' + c.id + ' &bull; ' + (c.date||"") + '</div>';
+    h += '<div class="cname">&#128100; ' + c.customer + '</div>';
+    h += '<div class="caddr">&#128222; ' + c.mobile + '<br>&#128205; ' + c.address + '</div>';
+    h += '<div class="cprob">&#9888;&#65039; ' + c.problem + '</div>';
+    h += '<div><span class="chip cM">&#128247; ' + (c.model||"N/A") + '</span><span class="chip ' + chipCls + '">' + c.status + '</span></div>';
+    if(c.status === "New") {
+      h += '<button class="abtn acc" onclick="accCase(\'' + c.key + '\')">&#9989; ACCEPT CASE</button>';
+    }
+    if(c.status === "Accepted") {
+      h += '<button class="abtn don" onclick="openRep(\'' + c.key + '\')">&#128203; DONE + REPORT</button>';
+    }
+    h += '<button class="abtn cal" onclick="window.location.href=\'tel:' + c.mobile + '\'">&#128222; Call Customer</button>';
+    h += '</div>';
+  }
+  list.innerHTML = h;
 }
 
-function acc(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+function accCase(k) {
+  db.ref("cases/" + k).update({status:"Accepted"});
+  showTab("Accepted");
+}
 
-function openRep(k){
-  repKey=k;
-  const c=myCases.find(x=>x.key===k);
-  document.getElementById("rInfo").innerHTML="<strong>"+c.id+"</strong><br>👤 "+c.customer+" — "+c.mobile+"<br>📍 "+c.address+"<br>⚠️ "+c.problem;
-  ["rWork","rParts","rCharge","rRem"].forEach(id=>document.getElementById(id).value="");
+// ===== REPORT MODAL =====
+function openRep(k) {
+  repKey = k;
+  var c = null;
+  for(var i=0;i<myCases.length;i++){ if(myCases[i].key===k){ c=myCases[i]; break; } }
+  if(!c) return;
+  document.getElementById("rInfo").innerHTML =
+    "<strong>" + c.id + "</strong><br>" +
+    "&#128100; " + c.customer + " &mdash; " + c.mobile + "<br>" +
+    "&#128205; " + c.address + "<br>" +
+    "&#9888;&#65039; " + c.problem;
+  document.getElementById("rWork").value = "";
+  document.getElementById("rParts").value = "";
+  document.getElementById("rCharge").value = "";
+  document.getElementById("rRem").value = "";
   document.getElementById("repModal").classList.add("on");
 }
-function closeRep(){document.getElementById("repModal").classList.remove("on");}
 
-async function subReport(){
-  const w=document.getElementById("rWork").value.trim();
-  if(!w)return alert("Kya kaam kiya - fill karo!");
-  const c=myCases.find(x=>x.key===repKey);
-  const today=new Date().toLocaleDateString("hi-IN").replace(/\//g,"-");
-  const rep={
-    caseId:c.id,customer:c.customer,mobile:c.mobile,address:c.address,
-    problem:c.problem,model:c.model||"N/A",techName:myName,
-    workDone:w,partsUsed:document.getElementById("rParts").value||"N/A",
-    timeTaken:document.getElementById("rTime").value,
-    serviceCharge:document.getElementById("rCharge").value||"0",
-    customerFeedback:document.getElementById("rFb").value,
-    remarks:document.getElementById("rRem").value||"N/A",
-    date:today,completedAt:new Date().toLocaleString("hi-IN")
+function closeRep() { document.getElementById("repModal").classList.remove("on"); }
+
+function subReport() {
+  var w = document.getElementById("rWork").value.trim();
+  if(!w) { alert("Kya kaam kiya - fill karo!"); return; }
+  var c = null;
+  for(var i=0;i<myCases.length;i++){ if(myCases[i].key===repKey){ c=myCases[i]; break; } }
+  if(!c) return;
+
+  var today = new Date().toLocaleDateString("hi-IN").split("/").join("-");
+  var rep = {
+    caseId: c.id, customer: c.customer, mobile: c.mobile, address: c.address,
+    problem: c.problem, model: c.model||"N/A", techName: myName,
+    workDone: w,
+    partsUsed: document.getElementById("rParts").value || "N/A",
+    timeTaken: document.getElementById("rTime").value,
+    serviceCharge: document.getElementById("rCharge").value || "0",
+    customerFeedback: document.getElementById("rFb").value,
+    remarks: document.getElementById("rRem").value || "N/A",
+    date: today,
+    completedAt: new Date().toLocaleString("hi-IN")
   };
-  try{
-    await db.ref("reports/"+myName+"/"+today+"/"+c.id).set(rep);
-    await db.ref("cases/"+repKey).update({status:"Done",report:rep,completedAt:rep.completedAt});
-    closeRep();showTab("Done");
-    if(navigator.vibrate)navigator.vibrate([200,100,200]);
-    alert("✅ Report submit! Case DONE!");
-  }catch(e){alert("Error: "+e.message);}
+
+  db.ref("reports/" + myName + "/" + today + "/" + c.id).set(rep).then(function() {
+    return db.ref("cases/" + repKey).update({status:"Done", report:rep, completedAt:rep.completedAt});
+  }).then(function() {
+    closeRep();
+    showTab("Done");
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    alert("Report submit ho gaya! Case DONE!");
+  }).catch(function(e) { alert("Error: " + e.message); });
 }
 </script>
 </body></html>

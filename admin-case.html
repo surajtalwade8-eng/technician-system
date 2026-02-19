@@ -5,20 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1a237e">
 <title>CWC Admin Panel</title>
+
+<!-- Firebase SABSE PEHLE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+// Firebase init HEAD mein hi karo
+var db, auth;
+firebase.initializeApp({
+  apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+  authDomain:"tech-b30b8.firebaseapp.com",
+  databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId:"tech-b30b8",
+  storageBucket:"tech-b30b8.firebasestorage.app",
+  messagingSenderId:"815434648437",
+  appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
+});
+db   = firebase.database();
+auth = firebase.auth();
+</script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f0f2f5;min-height:100vh}
-/* LOGIN */
-#loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#1a237e,#283593);padding:30px}
+#loginScreen{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#1a237e,#283593);padding:20px}
 .login-box{background:white;border-radius:20px;padding:35px 28px;width:100%;max-width:360px;text-align:center;box-shadow:0 15px 40px rgba(0,0,0,0.2)}
-.admin-logo{width:80px;height:80px;background:linear-gradient(135deg,#1a237e,#283593);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:30px;color:white;font-weight:900}
+.admin-logo{width:80px;height:80px;background:linear-gradient(135deg,#1a237e,#283593);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px}
 .login-box h2{color:#1a237e;margin-bottom:6px;font-size:22px}
 .login-box p{color:#999;font-size:13px;margin-bottom:22px}
-.inp{width:100%;padding:14px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;margin:6px 0}
+.inp{width:100%;padding:14px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;margin:6px 0;display:block}
 .inp:focus{border-color:#1a237e}
-.login-btn{width:100%;padding:15px;background:linear-gradient(135deg,#1a237e,#3949ab);color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px}
-.err{color:#f44336;font-size:12px;margin-top:8px;min-height:16px}
-/* MAIN */
+.login-btn{width:100%;padding:15px;background:linear-gradient(135deg,#1a237e,#3949ab);color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:12px}
+.err-box{background:#ffebee;color:#c62828;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
 #mainScreen{display:none}
 .topbar{background:linear-gradient(135deg,#1a237e,#283593);color:white;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
 .topbar h1{font-size:18px}
@@ -27,27 +46,24 @@ body{font-family:Arial,sans-serif;background:#f0f2f5;min-height:100vh}
 .tab{flex:1;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:#999;border-bottom:3px solid transparent}
 .tab.on{color:#1a237e;border-bottom:3px solid #1a237e;background:#f5f7ff}
 .content{padding:20px;max-width:700px;margin:0 auto}
-/* CARDS */
 .section-title{font-size:18px;font-weight:700;color:#1a237e;margin-bottom:16px}
 .form-box{background:white;border-radius:16px;padding:22px;margin-bottom:20px;box-shadow:0 3px 12px rgba(0,0,0,0.07)}
 .form-box h3{font-size:15px;font-weight:700;color:#333;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e8eaf6}
 label{display:block;font-weight:700;color:#444;font-size:13px;margin:10px 0 4px}
-input,select{width:100%;padding:12px;border:2px solid #e8e8e8;border-radius:9px;font-size:14px;outline:none}
+input,select{width:100%;padding:12px;border:2px solid #e8e8e8;border-radius:9px;font-size:14px;outline:none;display:block}
 input:focus,select:focus{border-color:#1a237e}
 .submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,#1a237e,#3949ab);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px}
-.submit-btn:hover{opacity:0.9}
-.success{background:#e8f5e9;color:#2e7d32;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
-.error-msg{background:#ffebee;color:#c62828;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
-/* TECH LIST */
+.success-box{background:#e8f5e9;color:#2e7d32;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
+.error-box{background:#ffebee;color:#c62828;padding:10px;border-radius:8px;font-size:13px;margin-top:10px;display:none}
 .tech-card{background:white;border-radius:12px;padding:16px 18px;margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;border-left:4px solid #1a237e}
 .tech-info h4{font-size:16px;font-weight:700;color:#111;margin-bottom:3px}
 .tech-info p{font-size:12px;color:#888}
-.tech-actions{display:flex;gap:8px}
+.tech-actions{display:flex;gap:8px;flex-shrink:0}
 .del-btn{background:#ffebee;color:#c62828;border:none;padding:7px 13px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700}
 .reset-btn{background:#e3f2fd;color:#1565c0;border:none;padding:7px 13px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700}
-.empty{text-align:center;padding:40px;color:#ccc;font-size:14px}
+.empty{text-align:center;padding:40px;color:#bbb;font-size:14px}
 .badge{display:inline-block;background:#e8eaf6;color:#1a237e;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-top:4px}
-.status-online{background:#e8f5e9;color:#2e7d32}
+small{color:#999;font-size:11px;display:block;margin-top:2px}
 </style>
 </head>
 <body>
@@ -58,10 +74,12 @@ input:focus,select:focus{border-color:#1a237e}
     <div class="admin-logo">⚙️</div>
     <h2>CWC Admin Panel</h2>
     <p>Sirf admin login kar sakta hai</p>
-    <input class="inp" type="email" id="adminEmail" placeholder="Admin Email">
-    <input class="inp" type="password" id="adminPass" placeholder="Password" onkeydown="if(event.key==='Enter')doAdminLogin()">
-    <div class="err" id="loginErr"></div>
-    <button class="login-btn" onclick="doAdminLogin()">LOGIN</button>
+    <input class="inp" type="email" id="adminEmail" placeholder="Admin Email" autocomplete="email">
+    <input class="inp" type="password" id="adminPass" placeholder="Password"
+           autocomplete="current-password"
+           onkeydown="if(event.key==='Enter') doAdminLogin()">
+    <div class="err-box" id="loginErr"></div>
+    <button class="login-btn" id="loginBtn" onclick="doAdminLogin()">LOGIN</button>
   </div>
 </div>
 
@@ -69,17 +87,17 @@ input:focus,select:focus{border-color:#1a237e}
 <div id="mainScreen">
   <div class="topbar">
     <div>
-      <div style="font-size:11px;opacity:0.7">CWC Admin</div>
+      <div style="font-size:11px;opacity:0.7">CWC</div>
       <h1>👑 Admin Panel</h1>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
   <div class="tabs">
-    <div class="tab on" id="tab-add" onclick="showTab('add')">➕ Technician Add</div>
+    <div class="tab on" id="tab-add" onclick="showTab('add')">➕ Add Technician</div>
     <div class="tab" id="tab-list" onclick="showTab('list')">👥 All Technicians</div>
   </div>
 
-  <!-- ADD TECHNICIAN -->
+  <!-- ADD -->
   <div id="page-add" class="content">
     <div class="section-title">Naya Technician Add Karo</div>
     <div class="form-box">
@@ -87,17 +105,18 @@ input:focus,select:focus{border-color:#1a237e}
       <label>Full Name *</label>
       <input id="tName" placeholder="Ramesh Kumar">
       <label>User ID (Login ke liye) *</label>
-      <input id="tUserId" placeholder="ramesh01" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
-      <small style="color:#999;font-size:11px">Sirf small letters, numbers, underscore (_) — koi space nahi</small>
+      <input id="tUserId" placeholder="ramesh01"
+             oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
+      <small>Sirf small letters, numbers, underscore — koi space nahi</small>
       <label>Password *</label>
       <input type="password" id="tPass" placeholder="Min 6 characters">
       <label>Mobile Number</label>
       <input id="tMobile" placeholder="9876543210" type="tel">
       <label>Area / Zone</label>
       <input id="tArea" placeholder="Pune North">
-      <div class="success" id="addSuccess">✅ Technician successfully add ho gaya!</div>
-      <div class="error-msg" id="addError"></div>
-      <button class="submit-btn" onclick="addTechnician()">ADD TECHNICIAN</button>
+      <div class="success-box" id="addSuccess"></div>
+      <div class="error-box" id="addError"></div>
+      <button class="submit-btn" onclick="addTechnician()">✅ ADD TECHNICIAN</button>
     </div>
   </div>
 
@@ -108,137 +127,153 @@ input:focus,select:focus{border-color:#1a237e}
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<!-- ALL JS AT BOTTOM -->
 <script>
-firebase.initializeApp({
-  apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-  authDomain:"tech-b30b8.firebaseapp.com",
-  databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId:"tech-b30b8",
-  storageBucket:"tech-b30b8.firebasestorage.app",
-  messagingSenderId:"815434648437",
-  appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
-});
-var db = firebase.database();
-var auth = firebase.auth();
-
-// ADMIN LOGIN
+// ===== ADMIN LOGIN =====
 function doAdminLogin(){
   var email = document.getElementById("adminEmail").value.trim();
-  var pass = document.getElementById("adminPass").value;
-  var err = document.getElementById("loginErr");
-  err.textContent = "";
-  if(!email || !pass){err.textContent="Email aur password dono bharo!";return;}
+  var pass  = document.getElementById("adminPass").value;
+  var errEl = document.getElementById("loginErr");
+  var btn   = document.getElementById("loginBtn");
+  errEl.style.display = "none";
+
+  if(!email || !pass){
+    errEl.textContent = "Email aur Password dono bharo!";
+    errEl.style.display = "block";
+    return;
+  }
+
+  btn.textContent = "Checking...";
+  btn.disabled = true;
+
   auth.signInWithEmailAndPassword(email, pass)
     .then(function(){
-      document.getElementById("loginScreen").style.display="none";
-      document.getElementById("mainScreen").style.display="block";
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("mainScreen").style.display  = "block";
       loadTechList();
     })
     .catch(function(e){
-      err.textContent = "Login failed: "+e.message;
+      btn.textContent = "LOGIN";
+      btn.disabled = false;
+      errEl.textContent = "❌ " + e.message;
+      errEl.style.display = "block";
     });
 }
 
 function doLogout(){
-  auth.signOut().then(function(){location.reload();});
+  auth.signOut().then(function(){ location.reload(); });
 }
 
-// TABS
+// ===== TABS =====
 function showTab(t){
   ["add","list"].forEach(function(x){
-    document.getElementById("tab-"+x).className=(x===t)?"tab on":"tab";
-    document.getElementById("page-"+x).style.display=(x===t)?"block":"none";
+    document.getElementById("tab-"+x).className  = (x===t) ? "tab on" : "tab";
+    document.getElementById("page-"+x).style.display = (x===t) ? "block" : "none";
   });
-  if(t==="list") loadTechList();
+  if(t === "list") loadTechList();
 }
 
-// ADD TECHNICIAN
+// ===== ADD TECHNICIAN =====
 function addTechnician(){
-  var name = document.getElementById("tName").value.trim();
+  var name   = document.getElementById("tName").value.trim();
   var userId = document.getElementById("tUserId").value.trim();
-  var pass = document.getElementById("tPass").value;
+  var pass   = document.getElementById("tPass").value;
   var mobile = document.getElementById("tMobile").value.trim();
-  var area = document.getElementById("tArea").value.trim();
-  var succ = document.getElementById("addSuccess");
-  var errEl = document.getElementById("addError");
-  succ.style.display="none"; errEl.style.display="none";
+  var area   = document.getElementById("tArea").value.trim();
+  var succEl = document.getElementById("addSuccess");
+  var errEl  = document.getElementById("addError");
+  succEl.style.display = "none";
+  errEl.style.display  = "none";
 
-  if(!name){errEl.textContent="Name required!";errEl.style.display="block";return;}
-  if(!userId||userId.length<3){errEl.textContent="User ID min 3 characters!";errEl.style.display="block";return;}
-  if(!pass||pass.length<6){errEl.textContent="Password min 6 characters!";errEl.style.display="block";return;}
+  if(!name)            { errEl.textContent="Name required!"; errEl.style.display="block"; return; }
+  if(userId.length<3)  { errEl.textContent="User ID min 3 characters!"; errEl.style.display="block"; return; }
+  if(pass.length<6)    { errEl.textContent="Password min 6 characters!"; errEl.style.display="block"; return; }
 
-  // Check if userId already exists
-  db.ref("technicians").orderByChild("userId").equalTo(userId).once("value").then(function(snap){
-    if(snap.exists()){
-      errEl.textContent="Ye User ID already exist karta hai! Dusra ID lo.";
-      errEl.style.display="block";
-      return;
-    }
-    // Hash password (simple sha256-like using btoa for demo, real app use Firebase Auth)
-    var passHash = btoa(pass + "_cwc_salt_2024");
-    var newKey = db.ref("technicians").push().key;
-    db.ref("technicians/"+newKey).set({
-      name: name,
-      userId: userId,
-      passHash: passHash,
-      mobile: mobile || "N/A",
-      area: area || "N/A",
-      active: true,
-      createdAt: new Date().toLocaleString("hi-IN")
-    }).then(function(){
-      succ.style.display="block";
-      succ.textContent="✅ "+name+" ("+userId+") successfully add ho gaya!";
-      document.getElementById("tName").value="";
-      document.getElementById("tUserId").value="";
-      document.getElementById("tPass").value="";
-      document.getElementById("tMobile").value="";
-      document.getElementById("tArea").value="";
-      setTimeout(function(){succ.style.display="none";},4000);
-    }).catch(function(e){errEl.textContent="Error: "+e.message;errEl.style.display="block";});
-  });
+  db.ref("technicians").orderByChild("userId").equalTo(userId).once("value")
+    .then(function(snap){
+      if(snap.exists()){
+        errEl.textContent = "⚠️ Ye User ID already exist karta hai!";
+        errEl.style.display = "block";
+        return;
+      }
+      var passHash = btoa(pass + "_cwc_salt_2024");
+      var key = db.ref("technicians").push().key;
+      return db.ref("technicians/"+key).set({
+        name: name,
+        userId: userId,
+        passHash: passHash,
+        mobile: mobile || "N/A",
+        area:   area   || "N/A",
+        active: true,
+        createdAt: new Date().toLocaleString("hi-IN")
+      });
+    })
+    .then(function(res){
+      if(res === undefined) return; // already returned above
+      succEl.textContent = "✅ " + name + " (" + userId + ") add ho gaya!";
+      succEl.style.display = "block";
+      ["tName","tUserId","tPass","tMobile","tArea"].forEach(function(id){
+        document.getElementById(id).value = "";
+      });
+      setTimeout(function(){ succEl.style.display="none"; }, 4000);
+    })
+    .catch(function(e){
+      errEl.textContent = "Error: " + e.message;
+      errEl.style.display = "block";
+    });
 }
 
-// LOAD TECH LIST
+// ===== LOAD LIST =====
 function loadTechList(){
   var list = document.getElementById("techList");
-  list.innerHTML="<div class='empty'>Loading...</div>";
+  list.innerHTML = "<div class='empty'>Loading...</div>";
   db.ref("technicians").once("value").then(function(snap){
-    list.innerHTML="";
-    if(!snap.exists()){list.innerHTML="<div class='empty'>Koi technician nahi hai abhi</div>";return;}
+    list.innerHTML = "";
+    if(!snap.exists()){
+      list.innerHTML = "<div class='empty'>Koi technician nahi hai abhi</div>";
+      return;
+    }
     snap.forEach(function(c){
-      var t=c.val();
-      var card=document.createElement("div");card.className="tech-card";
-      card.innerHTML='<div class="tech-info"><h4>'+t.name+'</h4><p>ID: <b>'+t.userId+'</b> &nbsp;|&nbsp; '+t.mobile+'</p><span class="badge">'+( t.area||"N/A")+'</span></div><div class="tech-actions"><button class="reset-btn" onclick="resetPass(''+c.key+'',''+t.name+'')">Reset Pass</button><button class="del-btn" onclick="deleteTech(''+c.key+'',''+t.name+'')">Delete</button></div>';
+      var t = c.val();
+      var card = document.createElement("div");
+      card.className = "tech-card";
+      card.innerHTML =
+        '<div class="tech-info">' +
+          '<h4>' + t.name + '</h4>' +
+          '<p>ID: <b>' + t.userId + '</b> &nbsp;|&nbsp; ' + (t.mobile||"") + '</p>' +
+          '<span class="badge">' + (t.area||"N/A") + '</span>' +
+        '</div>' +
+        '<div class="tech-actions">' +
+          '<button class="reset-btn" onclick="resetPass(''+c.key+'',''+t.name+'')">Reset Pass</button>' +
+          '<button class="del-btn"   onclick="deleteTech(''+c.key+'',''+t.name+'')">Delete</button>' +
+        '</div>';
       list.appendChild(card);
     });
   });
 }
 
-// DELETE
+// ===== DELETE =====
 function deleteTech(key, name){
-  if(!confirm(name+" ko delete karna chahte ho?")) return;
-  db.ref("technicians/"+key).remove().then(function(){loadTechList();});
+  if(!confirm(name + " ko delete karna chahte ho?")) return;
+  db.ref("technicians/"+key).remove().then(loadTechList);
 }
 
-// RESET PASSWORD
+// ===== RESET PASSWORD =====
 function resetPass(key, name){
-  var newPass = prompt(name+" ka naya password daalo (min 6 char):");
-  if(!newPass||newPass.length<6){alert("Password min 6 characters hona chahiye!");return;}
-  var passHash = btoa(newPass + "_cwc_salt_2024");
-  db.ref("technicians/"+key+"/passHash").set(passHash).then(function(){
-    alert("✅ "+name+" ka password reset ho gaya!
-Naya password: "+newPass);
+  var np = prompt(name + " ka naya password daalo (min 6 char):");
+  if(!np || np.length < 6){ alert("Min 6 characters!"); return; }
+  var hash = btoa(np + "_cwc_salt_2024");
+  db.ref("technicians/"+key+"/passHash").set(hash).then(function(){
+    alert("✅ " + name + " ka password reset!
+Naya: " + np);
   });
 }
 
-// AUTH CHECK
+// ===== AUTO LOGIN CHECK =====
 auth.onAuthStateChanged(function(user){
   if(user){
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("mainScreen").style.display="block";
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("mainScreen").style.display  = "block";
     loadTechList();
   }
 });

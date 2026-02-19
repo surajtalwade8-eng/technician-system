@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#25D366">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="My Cases">
+<title>My Cases - Technician</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",sans-serif;background:#f0f4f8;min-height:100vh}
+#loginScreen{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#25D366,#128C7E);padding:30px;text-align:center}
+#loginScreen h1{color:white;font-size:30px;margin-bottom:8px}
+#loginScreen p{color:rgba(255,255,255,0.85);margin-bottom:30px;font-size:16px}
+#loginScreen select,#loginScreen button{width:100%;max-width:360px;padding:18px;margin:10px 0;border:none;border-radius:15px;font-size:18px;outline:none}
+#loginScreen button{background:white;color:#25D366;font-weight:700;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+#mainScreen{display:none}
+.app-header{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+.app-header h2{font-size:18px}
+.badge-cnt{background:white;color:#f44336;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.tabs{display:flex;background:white;border-bottom:2px solid #e0f7e9}
+.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;transition:0.2s}
+.tab.active{color:#25D366;border-bottom:3px solid #25D366;margin-bottom:-2px;background:#f9fff9}
+.content{padding:15px;max-height:calc(100vh - 160px);overflow-y:auto}
+.case-card{background:white;border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 3px 15px rgba(0,0,0,0.08);border-left:5px solid #ccc}
+.case-card.status-New{border-left:5px solid #f44336}
+.case-card.status-Accepted{border-left:5px solid #2196F3}
+.case-card.status-Done{border-left:5px solid #4CAF50}
+.case-id{font-size:12px;color:#aaa;font-weight:600;margin-bottom:5px}
+.case-customer{font-size:20px;font-weight:700;color:#1a1a1a;margin:5px 0}
+.case-address{color:#555;font-size:15px;margin:8px 0;line-height:1.4}
+.case-problem{background:#fff8f0;padding:12px;border-radius:10px;margin:10px 0;font-size:14px;color:#444}
+.chip{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin:3px}
+.chip-model{background:#e8f5e9;color:#2e7d32}
+.chip-new{background:#ffebee;color:#c62828}
+.chip-accepted{background:#e3f2fd;color:#1565c0}
+.chip-done{background:#e8f5e9;color:#2e7d32}
+.btn{width:100%;padding:16px;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin:5px 0;transition:0.2s}
+.btn:active{transform:scale(0.98)}
+.btn-accept{background:linear-gradient(135deg,#25D366,#128C7E);color:white;box-shadow:0 5px 15px rgba(37,211,102,0.3)}
+.btn-done{background:linear-gradient(135deg,#4CAF50,#388E3C);color:white}
+.btn-call{background:#2196F3;color:white}
+.empty{text-align:center;padding:60px 20px;color:#bbb}
+.empty div{font-size:60px;margin-bottom:15px}
+
+/* BIG POPUP */
+#bigPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;justify-content:center;align-items:center;padding:20px}
+#bigPopup.show{display:flex;animation:popIn 0.4s ease}
+@keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.popup-box{background:white;border-radius:25px;padding:30px 25px;width:100%;max-width:400px;text-align:center}
+.popup-icon{font-size:65px;animation:bounce 0.6s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.popup-title{font-size:22px;font-weight:700;color:#f44336;margin:15px 0 5px}
+.popup-customer{font-size:20px;font-weight:700;margin:5px 0}
+.popup-address{background:#f0f8ff;padding:12px;border-radius:12px;margin:10px 0;font-size:15px;color:#444}
+.popup-problem{background:#fff3cd;padding:12px;border-radius:12px;font-size:14px;color:#555}
+.popup-ticket{font-size:12px;color:#aaa;margin:10px 0}
+.btn-popup-accept{width:100%;padding:20px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:22px;font-weight:700;cursor:pointer;margin-top:15px;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 5px 20px rgba(37,211,102,0.4)}50%{box-shadow:0 5px 40px rgba(37,211,102,0.8)}}
+.btn-popup-busy{width:100%;padding:14px;background:#ff9800;color:white;border:none;border-radius:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:10px}
+
+/* REPORT MODAL */
+#reportModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;justify-content:flex-end;align-items:flex-end}
+#reportModal.show{display:flex;animation:slideUp 0.3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.report-box{background:white;border-radius:25px 25px 0 0;padding:25px;width:100%;max-height:90vh;overflow-y:auto}
+.report-box h2{color:#25D366;margin-bottom:20px;text-align:center;font-size:20px}
+.report-case-info{background:#f0f8ff;padding:15px;border-radius:12px;margin-bottom:20px;font-size:14px;line-height:1.8}
+.report-box label{display:block;font-weight:600;color:#333;margin:12px 0 4px;font-size:14px}
+.report-box input,.report-box select,.report-box textarea{width:100%;padding:13px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;box-sizing:border-box;margin:0}
+.report-box input:focus,.report-box select:focus,.report-box textarea:focus{border-color:#25D366}
+.btn-submit{width:100%;padding:18px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:19px;font-weight:700;cursor:pointer;margin-top:15px}
+.btn-cancel-r{width:100%;padding:14px;background:#f5f5f5;color:#666;border:none;border-radius:15px;font-size:16px;cursor:pointer;margin-top:8px}
+.logout-btn{background:rgba(255,255,255,0.2);color:white;border:none;padding:8px 15px;border-radius:20px;cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div style="font-size:60px;margin-bottom:10px">🔧</div>
+  <h1>Technician App</h1>
+  <p>Apna naam select karo aur login karo</p>
+  <select id="techSelect"><option value="">Loading...</option></select>
+  <button onclick="login()">🚀 LOGIN</button>
+</div>
+
+<!-- MAIN SCREEN -->
+<div id="mainScreen">
+  <div class="app-header">
+    <div>
+      <div style="font-size:12px;opacity:0.8">Welcome 👋</div>
+      <h2 id="techNameDisplay">Technician</h2>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="badge-cnt" id="newCnt">0</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('New')" id="tab-New">🔴 New</div>
+    <div class="tab" onclick="showTab('Accepted')" id="tab-Accepted">🔵 Accepted</div>
+    <div class="tab" onclick="showTab('Done')" id="tab-Done">✅ Done</div>
+  </div>
+  <div class="content" id="caseList"></div>
+</div>
+
+<!-- BIG POPUP -->
+<div id="bigPopup">
+  <div class="popup-box">
+    <div class="popup-icon">🔔</div>
+    <div class="popup-title">⚡ NEW CASE ASSIGNED!</div>
+    <div class="popup-customer" id="pCustomer"></div>
+    <div class="popup-address">📍 <span id="pAddress"></span></div>
+    <div class="popup-problem">⚠️ <span id="pProblem"></span></div>
+    <div class="popup-ticket">Ticket: <span id="pTicket"></span></div>
+    <button class="btn-popup-accept" onclick="acceptFromPopup()">✅ ACCEPT CASE NOW</button>
+    <button class="btn-popup-busy" onclick="closePopup()">⏳ Baad Me Dekhunga</button>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div id="reportModal">
+  <div class="report-box">
+    <h2>📋 Completion Report</h2>
+    <div class="report-case-info" id="rCaseInfo"></div>
+    <label>✅ Kya Kaam Kiya? *</label>
+    <textarea id="rWorkDone" placeholder="Eg: Toner replace kiya, head clean kiya..." rows="3"></textarea>
+    <label>🔧 Parts Used</label>
+    <input id="rParts" placeholder="Eg: HP 12A Toner (ya N/A)">
+    <label>⏱️ Time Taken</label>
+    <select id="rTime">
+      <option>30 minutes</option><option>1 hour</option><option>1.5 hours</option>
+      <option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option>
+    </select>
+    <label>💰 Service Charge (₹)</label>
+    <input id="rCharge" type="number" placeholder="Eg: 500">
+    <label>😊 Customer Feedback</label>
+    <select id="rFeedback">
+      <option>⭐⭐⭐⭐⭐ Excellent</option><option>⭐⭐⭐⭐ Good</option>
+      <option>⭐⭐⭐ Average</option><option>⭐⭐ Below Average</option>
+    </select>
+    <label>📝 Remarks (Optional)</label>
+    <textarea id="rRemarks" placeholder="Extra koi baat..." rows="2"></textarea>
+    <button class="btn-submit" onclick="submitReport()">✅ Submit Report + Mark DONE</button>
+    <button class="btn-cancel-r" onclick="closeReportModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+  authDomain: "tech-b30b8.firebaseapp.com",
+  databaseURL: "https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "tech-b30b8",
+  storageBucket: "tech-b30b8.firebasestorage.app",
+  messagingSenderId: "815434648437",
+  appId: "1:815434648437:web:bd11c672f57fc24e1ba13c"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+let myName='', myKey='', myCases=[], currentTab='New', popupCaseKey='', reportCaseKey='', isFirstLoad=true;
+
+// Load techs for login
+db.ref('technicians').once('value', snap => {
+  const sel = document.getElementById('techSelect');
+  sel.innerHTML = '<option value="">Apna naam select karo</option>';
+  if(snap.exists()) snap.forEach(child => sel.add(new Option('👨‍🔧 ' + child.val().name, child.key + '|' + child.val().name)));
+});
+
+function login() {
+  const sel = document.getElementById('techSelect');
+  if(!sel.value) return alert('Naam select karo!');
+  const parts = sel.value.split('|');
+  myKey = parts[0]; myName = parts[1];
+  localStorage.setItem('tKey', myKey);
+  localStorage.setItem('tName', myName);
+  startApp();
+}
+
+window.onload = () => {
+  myKey = localStorage.getItem('tKey');
+  myName = localStorage.getItem('tName');
+  if(myKey && myName) startApp();
+};
+
+function logout() {
+  localStorage.removeItem('tKey');
+  localStorage.removeItem('tName');
+  location.reload();
+}
+
+function startApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display = 'block';
+  document.getElementById('techNameDisplay').textContent = myName;
+  if('Notification' in window) Notification.requestPermission();
+
+  db.ref('cases').orderByChild('techKey').equalTo(myKey).on('value', snap => {
+    const prev = myCases.map(c => c.key);
+    myCases = [];
+    if(snap.exists()) snap.forEach(child => myCases.unshift({key: child.key, ...child.val()}));
+    const newCases = myCases.filter(c => c.status === 'New');
+    document.getElementById('newCnt').textContent = newCases.length;
+    if(!isFirstLoad) {
+      const latest = myCases.find(c => c.status === 'New' && !prev.includes(c.key));
+      if(latest) {
+        showBigPopup(latest);
+        if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]);
+        if(Notification.permission==='granted') new Notification('🔥 New Case!', {body: latest.customer + ' — ' + latest.address, requireInteraction: true});
+      }
+    }
+    isFirstLoad = false;
+    renderCases();
+  });
+}
+
+function showBigPopup(c) {
+  popupCaseKey = c.key;
+  document.getElementById('pCustomer').textContent = '👤 ' + c.customer + ' (' + c.mobile + ')';
+  document.getElementById('pAddress').textContent = c.address;
+  document.getElementById('pProblem').textContent = c.problem;
+  document.getElementById('pTicket').textContent = c.id;
+  document.getElementById('bigPopup').classList.add('show');
+}
+
+function closePopup() { document.getElementById('bigPopup').classList.remove('show'); }
+
+function acceptFromPopup() {
+  if(popupCaseKey) { db.ref('cases/' + popupCaseKey).update({status: 'Accepted'}); closePopup(); showTab('Accepted'); }
+}
+
+function showTab(tab) {
+  currentTab = tab;
+  ['New','Accepted','Done'].forEach(t => document.getElementById('tab-' + t).classList.toggle('active', t === tab));
+  renderCases();
+}
+
+function renderCases() {
+  const list = document.getElementById('caseList');
+  const filtered = myCases.filter(c => c.status === currentTab);
+  if(!filtered.length) {
+    const icons = {New:'🎉',Accepted:'📋',Done:'✅'};
+    const msgs = {New:'Koi naya case nahi hai!',Accepted:'Koi accepted case nahi!',Done:'Koi completed case nahi!'};
+    list.innerHTML = '<div class="empty"><div>' + icons[currentTab] + '</div><p>' + msgs[currentTab] + '</p></div>';
+    return;
+  }
+  list.innerHTML = filtered.map(c => '<div class="case-card status-' + c.status + '"><div class="case-id">' + c.id + ' • ' + (c.date||'') + '</div><div class="case-customer">👤 ' + c.customer + '</div><div class="case-address">📍 ' + c.address + '</div><div class="case-problem">⚠️ ' + c.problem + '</div><div style="margin:10px 0"><span class="chip chip-model">🖨️ ' + (c.model||'N/A') + '</span><span class="chip chip-' + c.status.toLowerCase() + '">' + c.status + '</span></div>' + (c.status==='New'?'<button class="btn btn-accept" onclick="acceptCase(''+c.key+'')">✅ ACCEPT CASE</button>':'') + (c.status==='Accepted'?'<button class="btn btn-done" onclick="openReportModal(''+c.key+'')">📋 DONE + SUBMIT REPORT</button>':'') + '<button class="btn btn-call" onclick="window.location.href='tel:' + c.mobile + ''">📞 Call Customer</button></div>').join('');
+}
+
+function acceptCase(key) { db.ref('cases/' + key).update({status: 'Accepted'}); showTab('Accepted'); }
+
+function openReportModal(key) {
+  reportCaseKey = key;
+  const c = myCases.find(x => x.key === key);
+  document.getElementById('rCaseInfo').innerHTML = '<strong>' + c.id + '</strong><br>👤 ' + c.customer + ' — ' + c.mobile + '<br>📍 ' + c.address + '<br>⚠️ ' + c.problem;
+  ['rWorkDone','rParts','rCharge','rRemarks'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('reportModal').classList.add('show');
+}
+
+function closeReportModal() { document.getElementById('reportModal').classList.remove('show'); }
+
+async function submitReport() {
+  const workDone = document.getElementById('rWorkDone').value.trim();
+  if(!workDone) return alert('Kya kaam kiya - ye fill karo!');
+  const c = myCases.find(x => x.key === reportCaseKey);
+  const today = new Date().toLocaleDateString('hi-IN').replace(/\//g,'-');
+  const reportData = {
+    caseId: c.id, customer: c.customer, mobile: c.mobile, address: c.address,
+    problem: c.problem, model: c.model||'N/A', techName: myName,
+    workDone: document.getElementById('rWorkDone').value,
+    partsUsed: document.getElementById('rParts').value||'N/A',
+    timeTaken: document.getElementById('rTime').value,
+    serviceCharge: document.getElementById('rCharge').value||'0',
+    customerFeedback: document.getElementById('rFeedback').value,
+    remarks: document.getElementById('rRemarks').value||'N/A',
+    date: today, completedAt: new Date().toLocaleString('hi-IN')
+  };
+  try {
+    await db.ref('reports/' + myName + '/' + today + '/' + c.id).set(reportData);
+    await db.ref('cases/' + reportCaseKey).update({status:'Done', report: reportData, completedAt: reportData.completedAt});
+    closeReportModal();
+    showTab('Done');
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    alert('✅ Report submit ho gaya! Case DONE!');
+  } catch(err) { alert('Error: ' + err.message); }
+}
+</script>
+</body>
+</html>

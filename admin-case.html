@@ -334,8 +334,7 @@ g("LRBTN").addEventListener("click",function(){
 g("REXBTN").addEventListener("click",function(){
   var rows=document.querySelectorAll("#RTBL tr");if(!rows.length){return;}
   var hdr="Date,Tech,Case,Customer,Work Done,Parts,Time,Feedback,Expense";
-  var csv=hdr+"
-";
+  ";
   rows.forEach(function(row){var cells=row.querySelectorAll("td");if(cells.length<9){return;}var line=[];for(var i=0;i<9;i++){line.push('"'+(cells[i].textContent||"").replace(/"/g,'""')+'"');}csv+=line.join(",")+"
 ";});
   var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="reports.csv";a.click();

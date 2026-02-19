@@ -3,311 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Case Assignment</title>
+<title>Admin Panel</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
-.wrap{max-width:1300px;margin:auto;padding:20px}
-.header{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:25px;border-radius:15px;text-align:center;margin-bottom:20px}
-.header h1{font-size:24px;margin-bottom:5px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
-.stat{background:white;padding:20px;border-radius:15px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.07)}
-.stat h2{font-size:28px;margin-bottom:5px}
-.stat p{color:#888;font-size:13px}
-.main-tabs{display:flex;background:white;border-radius:12px;overflow:hidden;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,0.07)}
-.mtab{flex:1;padding:16px;text-align:center;cursor:pointer;font-size:15px;font-weight:600;color:#999;border-bottom:3px solid transparent;transition:0.2s}
-.mtab.active{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff4}
-.section{display:none}
-.section.active{display:block}
-.card{background:white;padding:25px;border-radius:15px;box-shadow:0 3px 15px rgba(0,0,0,0.07);margin-bottom:20px}
-.card h3{color:#128C7E;margin-bottom:18px;font-size:17px;border-bottom:2px solid #e0f7e9;padding-bottom:10px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-input,select,textarea{width:100%;padding:13px;margin:6px 0;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;transition:0.2s;font-family:Arial}
+body{font-family:Arial,sans-serif;background:#f0f4f8}
+.header{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:20px;text-align:center}
+.header h1{font-size:22px}
+.stats{display:flex;gap:10px;padding:15px;flex-wrap:wrap}
+.stat{flex:1;min-width:100px;background:white;padding:15px;border-radius:10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.stat h2{font-size:26px;margin-bottom:3px}
+.stat p{font-size:12px;color:#888}
+.tabs{display:flex;background:white;margin:0 15px 15px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent}
+.tab.on{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff4}
+.pg{display:none;padding:0 15px 15px}
+.pg.show{display:block}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:15px}
+.card h3{color:#128C7E;margin-bottom:15px;font-size:15px;padding-bottom:8px;border-bottom:2px solid #e0f7e9}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select,textarea{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:15px;margin:5px 0;font-family:Arial;outline:none}
 input:focus,select:focus,textarea:focus{border-color:#25D366}
-.btn{padding:13px 20px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;transition:0.2s;display:inline-block}
-.btn:hover{opacity:0.9;transform:translateY(-1px)}
-.btn-green{background:linear-gradient(135deg,#25D366,#128C7E);color:white;width:100%;margin-top:10px}
-.btn-blue{background:#2196F3;color:white}
-.btn-red{background:#f44336;color:white}
-.btn-wa{background:#00ff88;color:#000;font-weight:bold}
-.btn-sm{padding:8px 13px;font-size:13px;margin:2px}
-table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
-th{background:#f0fff4;padding:12px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32}
-td{padding:11px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
-tr:hover td{background:#f9fff9}
-.badge{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
-.b-New{background:#fff3cd;color:#856404}
-.b-Accepted{background:#cce5ff;color:#0066cc}
-.b-Done{background:#d4edda;color:#28a745}
-.tech-tag{display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:#2e7d32;padding:8px 15px;border-radius:25px;font-size:14px;font-weight:600;margin:5px}
-.search-bar{display:flex;gap:10px;margin-bottom:15px;align-items:stretch}
-.search-bar input{margin:0;flex:1}
-#toast{display:none;position:fixed;top:20px;right:20px;background:white;border-left:5px solid #25D366;padding:20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.15);z-index:9999;max-width:300px}
-.srow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
-.srow input,.srow select{margin:0;flex:1}
-@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.wrap{padding:10px}}
+.btn{padding:14px 20px;border:none;border-radius:8px;cursor:pointer;font-size:15px;font-weight:700;margin:4px 0;width:100%}
+.green{background:#25D366;color:white}
+.blue{background:#2196F3;color:white}
+.red{background:#f44336;color:white}
+.wa{background:#00ff88;color:#000}
+.sm{padding:8px 12px;font-size:13px;width:auto;margin:2px}
+.tech-pill{display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:#2e7d32;padding:8px 14px;border-radius:20px;font-size:14px;margin:4px}
+.tag{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.t-New{background:#fff3cd;color:#856404}
+.t-Accepted{background:#cce5ff;color:#0066cc}
+.t-Done{background:#d4edda;color:#28a745}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f0fff4;padding:10px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32}
+td{padding:10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+#dbStatus{padding:10px 15px;text-align:center;font-size:13px;font-weight:600}
+#toast{display:none;position:fixed;top:15px;right:15px;background:white;border-left:5px solid #25D366;padding:15px 20px;border-radius:10px;box-shadow:0 8px 25px rgba(0,0,0,0.15);z-index:9999;max-width:280px}
+@media(max-width:600px){.row2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <h1>🔧 Technician Assignment System</h1>
-    <p>Admin Panel • Firebase Real-time ✅</p>
-  </div>
 
-  <div class="stats">
-    <div class="stat"><h2 id="s0" style="color:#25D366">0</h2><p>Total</p></div>
-    <div class="stat"><h2 id="s1" style="color:#d67e00">0</h2><p>New</p></div>
-    <div class="stat"><h2 id="s2" style="color:#0066cc">0</h2><p>Accepted</p></div>
-    <div class="stat"><h2 id="s3" style="color:#28a745">0</h2><p>Done</p></div>
-  </div>
+<div class="header">
+  <h1>🔧 Technician Assignment</h1>
+  <div id="dbStatus">🔄 Firebase connecting...</div>
+</div>
 
-  <div class="main-tabs">
-    <div class="mtab active" id="mtab-cases" onclick="showTab('cases')">📋 Cases</div>
-    <div class="mtab" id="mtab-tech" onclick="showTab('tech')">👥 Technicians</div>
-    <div class="mtab" id="mtab-reports" onclick="showTab('reports')">📊 Reports</div>
-  </div>
+<div class="stats">
+  <div class="stat"><h2 id="s0" style="color:#25D366">0</h2><p>Total</p></div>
+  <div class="stat"><h2 id="s1" style="color:#d67e00">0</h2><p>New</p></div>
+  <div class="stat"><h2 id="s2" style="color:#0066cc">0</h2><p>Accepted</p></div>
+  <div class="stat"><h2 id="s3" style="color:#28a745">0</h2><p>Done</p></div>
+</div>
 
-  <!-- CASES -->
-  <div id="sec-cases" class="section active">
-    <div class="card">
-      <h3>➕ New Case Assign Karo</h3>
-      <div class="g2">
-        <input id="cName" placeholder="Customer Name *">
-        <input id="cMob" placeholder="Mobile Number *">
-      </div>
-      <input id="cAddr" placeholder="Full Address * (Building, Area, City)">
-      <div class="g2">
-        <input id="cModel" placeholder="Model (HP 1020)">
-        <select id="cTech"><option value="">Technician Select Karo *</option></select>
-      </div>
-      <textarea id="cProb" placeholder="Problem Details *" rows="3"></textarea>
-      <button class="btn btn-green" onclick="assignCase()">🚀 ASSIGN + WhatsApp Notify</button>
+<div class="tabs">
+  <div class="tab on" id="tb0" onclick="go(0)">📋 Cases</div>
+  <div class="tab" id="tb1" onclick="go(1)">👥 Technicians</div>
+  <div class="tab" id="tb2" onclick="go(2)">📊 Reports</div>
+</div>
+
+<!-- PAGE 0: CASES -->
+<div class="pg show" id="pg0">
+  <div class="card">
+    <h3>➕ New Case Assign Karo</h3>
+    <div class="row2">
+      <input id="cn" placeholder="Customer Name *">
+      <input id="cm" placeholder="Mobile Number *">
     </div>
-    <div class="card">
-      <h3>📋 All Cases</h3>
-      <div class="search-bar">
-        <input id="srch" placeholder="🔍 Search..." onkeyup="filterCases()">
-        <select id="stFilter" onchange="filterCases()" style="width:auto;flex:none;margin:0;padding:13px">
-          <option value="">All Status</option>
-          <option>New</option><option>Accepted</option><option>Done</option>
-        </select>
-        <button class="btn btn-blue btn-sm" onclick="exportCases()">📊 Excel</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table><thead><tr>
-          <th>Ticket</th><th>Date</th><th>Customer</th><th>Address</th><th>Problem</th><th>Tech</th><th>Status</th><th>Actions</th>
-        </tr></thead><tbody id="caseTbl"></tbody></table>
-      </div>
+    <input id="ca" placeholder="Full Address * (Building, Area, City)">
+    <div class="row2">
+      <input id="cmod" placeholder="Model (HP 1020)">
+      <select id="ct"><option value="">Select Technician *</option></select>
     </div>
+    <textarea id="cp" placeholder="Problem Details *" rows="3"></textarea>
+    <button class="btn green" onclick="addCase()">🚀 ASSIGN + WhatsApp Notify</button>
   </div>
 
-  <!-- TECHNICIANS -->
-  <div id="sec-tech" class="section">
-    <div class="card">
-      <h3>➕ Technician Add Karo</h3>
-      <div class="g2">
-        <input id="tName" placeholder="Technician Name *">
-        <input id="tNum" placeholder="WhatsApp Number (10 digits) *">
-      </div>
-      <button class="btn btn-green" onclick="addTech()">✅ Add Technician</button>
+  <div class="card">
+    <h3>📋 All Cases</h3>
+    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <input id="srch" placeholder="Search..." style="flex:1;margin:0" onkeyup="showCases()">
+      <select id="stf" onchange="showCases()" style="width:auto;margin:0;flex:none;padding:12px">
+        <option value="">All</option>
+        <option>New</option><option>Accepted</option><option>Done</option>
+      </select>
+      <button class="btn blue sm" onclick="expCases()">📊 Excel</button>
     </div>
-    <div class="card">
-      <h3>👥 All Technicians</h3>
-      <div id="techList"><p style="color:#999">Koi technician nahi hai. Add karo upar se.</p></div>
-    </div>
-  </div>
-
-  <!-- REPORTS -->
-  <div id="sec-reports" class="section">
-    <div class="card">
-      <h3>📊 Reports Filter</h3>
-      <div class="srow">
-        <select id="rTech" style="flex:1"><option value="">All Technicians</option></select>
-        <input type="date" id="rDate" style="flex:1;margin:0">
-        <button class="btn btn-blue btn-sm" onclick="loadReports()">🔍 Load</button>
-        <button class="btn btn-green btn-sm" onclick="exportReports()" style="width:auto">📊 Excel</button>
-      </div>
-      <div style="overflow-x:auto">
-        <table><thead><tr>
-          <th>Date</th><th>Tech</th><th>Case</th><th>Customer</th><th>Work Done</th><th>Parts</th><th>Time</th><th>Charge</th><th>Feedback</th>
-        </tr></thead><tbody id="rptTbl"><tr><td colspan="9" style="text-align:center;padding:30px;color:#999">Reports load karne ke liye upar filter karo</td></tr></tbody></table>
-      </div>
+    <div style="overflow-x:auto">
+      <table><thead><tr>
+        <th>ID</th><th>Date</th><th>Customer</th><th>Address</th><th>Problem</th><th>Tech</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="ctbl"><tr><td colspan="8" style="text-align:center;padding:20px;color:#999">No cases yet</td></tr></tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<div id="toast" onclick="this.style.display='none'">
-  <div id="tTitle" style="font-weight:700;margin-bottom:6px;font-size:16px"></div>
-  <div id="tBody" style="font-size:14px;color:#555"></div>
+<!-- PAGE 1: TECHNICIANS -->
+<div class="pg" id="pg1">
+  <div class="card">
+    <h3>➕ New Technician Add Karo</h3>
+    <div class="row2">
+      <input id="tn" placeholder="Name *">
+      <input id="tnum" placeholder="WhatsApp Number (10 digits) *" maxlength="10">
+    </div>
+    <button class="btn green" onclick="addTech()">✅ Add Technician</button>
+  </div>
+  <div class="card">
+    <h3>👥 Current Technicians</h3>
+    <div id="tlist"><p style="color:#aaa">Koi technician nahi. Add karo upar se.</p></div>
+  </div>
+</div>
+
+<!-- PAGE 2: REPORTS -->
+<div class="pg" id="pg2">
+  <div class="card">
+    <h3>📊 Reports Dekho</h3>
+    <div class="row2">
+      <select id="rtf" style="margin:0"><option value="">All Technicians</option></select>
+      <input type="date" id="rdf" style="margin:0">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="btn blue sm" onclick="loadRep()" style="width:auto">🔍 Load</button>
+      <button class="btn green sm" onclick="expRep()" style="width:auto">📊 Export</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Report List</h3>
+    <div style="overflow-x:auto">
+      <table><thead><tr>
+        <th>Date</th><th>Tech</th><th>Case</th><th>Customer</th><th>Work Done</th><th>Parts</th><th>Time</th><th>₹</th><th>Feedback</th>
+      </tr></thead>
+      <tbody id="rtbl"><tr><td colspan="9" style="text-align:center;padding:20px;color:#999">Filter karo reports dekhne ke liye</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast">
+  <div id="ttl" style="font-weight:700;margin-bottom:4px"></div>
+  <div id="tbdy" style="font-size:13px;color:#555"></div>
 </div>
 
 <script>
-const FB = {
-  apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-  authDomain:"tech-b30b8.firebaseapp.com",
-  databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId:"tech-b30b8",
-  storageBucket:"tech-b30b8.firebasestorage.app",
-  messagingSenderId:"815434648437",
-  appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
-};
-firebase.initializeApp(FB);
-const db = firebase.database();
-let techs=[], cases=[], reports=[];
-
-// TABS
-function showTab(t) {
-  ["cases","tech","reports"].forEach(x => {
-    document.getElementById("sec-"+x).classList.toggle("active", x===t);
-    document.getElementById("mtab-"+x).classList.toggle("active", x===t);
+// FIREBASE INIT
+var db;
+try {
+  firebase.initializeApp({
+    apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+    authDomain:"tech-b30b8.firebaseapp.com",
+    databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    projectId:"tech-b30b8",
+    storageBucket:"tech-b30b8.firebasestorage.app",
+    messagingSenderId:"815434648437",
+    appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
   });
-  if(t==="reports") loadReports();
+  db = firebase.database();
+  document.getElementById("dbStatus").innerHTML = "✅ Firebase Connected!";
+  document.getElementById("dbStatus").style.color = "#90EE90";
+} catch(e) {
+  document.getElementById("dbStatus").innerHTML = "❌ Firebase Error: " + e.message;
 }
 
-// TECHNICIANS
-db.ref("technicians").on("value", snap => {
+var techs = [], cases = [], reps = [];
+
+// TAB SWITCHING
+function go(n) {
+  for(var i=0;i<3;i++){
+    document.getElementById("pg"+i).style.display = (i===n) ? "block" : "none";
+    document.getElementById("pg"+i).className = (i===n) ? "pg show" : "pg";
+    document.getElementById("tb"+i).className = (i===n) ? "tab on" : "tab";
+  }
+  if(n===2) loadRep();
+}
+
+// TECHNICIANS REALTIME
+db.ref("technicians").on("value", function(snap) {
   techs = [];
-  const sel = document.getElementById("cTech");
-  const rsel = document.getElementById("rTech");
-  const list = document.getElementById("techList");
-  sel.innerHTML = "<option value=''>Technician Select Karo *</option>";
+  var sel = document.getElementById("ct");
+  var rsel = document.getElementById("rtf");
+  var list = document.getElementById("tlist");
+  sel.innerHTML = "<option value=''>Select Technician *</option>";
   rsel.innerHTML = "<option value=''>All Technicians</option>";
+
   if(snap.exists()) {
-    snap.forEach(c => {
-      const t = {key:c.key, ...c.val()};
+    snap.forEach(function(c) {
+      var t = c.val();
+      t.key = c.key;
       techs.push(t);
-      sel.add(new Option(t.name+" ("+t.number+")", t.key));
-      rsel.add(new Option(t.name, t.name));
+      var o1 = document.createElement("option");
+      o1.value = c.key;
+      o1.text = t.name + " (" + t.number + ")";
+      sel.add(o1);
+      var o2 = document.createElement("option");
+      o2.value = t.name;
+      o2.text = t.name;
+      rsel.add(o2);
     });
-    list.innerHTML = techs.map(t =>
-      "<div class='tech-tag'>👨‍🔧 "+t.name+" — "+t.number+
-      " &nbsp;<span style='cursor:pointer;color:#f44336' onclick='delTech(""+t.key+"")'>✕</span></div>"
-    ).join("");
+    list.innerHTML = techs.map(function(t){
+      return "<span class='tech-pill'>👨‍🔧 "+t.name+" — "+t.number+
+        " <span style='cursor:pointer;color:#f44336;font-weight:900' onclick='delT(""+t.key+"")'>✕</span></span>";
+    }).join("");
   } else {
-    list.innerHTML = "<p style='color:#999'>Koi technician nahi hai. Add karo upar se.</p>";
+    list.innerHTML = "<p style='color:#aaa'>Koi technician nahi. Add karo upar se.</p>";
   }
 });
 
 function addTech() {
-  const n = document.getElementById("tName").value.trim();
-  const num = document.getElementById("tNum").value.trim();
-  if(!n || num.length!==10 || isNaN(num)) return alert("Name aur valid 10 digit number daalo!");
-  db.ref("technicians").push({name:n, number:num}).then(() => {
-    document.getElementById("tName").value="";
-    document.getElementById("tNum").value="";
-    toast("✅ Technician Added!", n+" successfully add hua!");
+  var n = document.getElementById("tn").value.trim();
+  var num = document.getElementById("tnum").value.trim();
+  if(!n) { alert("Name daalo!"); return; }
+  if(num.length !== 10 || isNaN(num)) { alert("10 digit valid number daalo!"); return; }
+  db.ref("technicians").push({name:n, number:num}).then(function(){
+    document.getElementById("tn").value = "";
+    document.getElementById("tnum").value = "";
+    toast("✅ Technician Added!", n + " add ho gaya!");
   });
 }
 
-function delTech(k) { if(confirm("Delete?")) db.ref("technicians/"+k).remove(); }
+function delT(k) {
+  if(confirm("Delete?")) db.ref("technicians/"+k).remove();
+}
 
-// CASES
-db.ref("cases").on("value", snap => {
+// CASES REALTIME
+db.ref("cases").on("value", function(snap) {
   cases = [];
-  if(snap.exists()) snap.forEach(c => cases.unshift({key:c.key,...c.val()}));
-  filterCases();
+  if(snap.exists()) snap.forEach(function(c){ cases.unshift({key:c.key, ...(c.val())}); });
+  showCases();
   updateStats();
 });
 
-db.ref("cases").on("child_changed", snap => {
-  const c = snap.val();
-  if(c.status==="Accepted") toast("✅ Case Accepted!", c.techName+" ne ACCEPT kiya! — "+c.customer);
-  if(c.status==="Done") toast("🎉 Case Done!", c.techName+" ne DONE kiya! — "+c.customer);
+db.ref("cases").on("child_changed", function(snap) {
+  var c = snap.val();
+  if(c.status==="Accepted") toast("✅ Case Accepted!", c.techName + " ne ACCEPT kiya! — " + c.customer);
+  if(c.status==="Done") toast("🎉 Case Done!", c.techName + " ne DONE kiya! — " + c.customer);
 });
 
-function assignCase() {
-  const n=document.getElementById("cName").value.trim();
-  const m=document.getElementById("cMob").value.trim();
-  const a=document.getElementById("cAddr").value.trim();
-  const p=document.getElementById("cProb").value.trim();
-  const tk=document.getElementById("cTech").value;
-  if(!n||!m||!a||!p||!tk) return alert("Sab * wale fields fill karo!");
-  const tech=techs.find(t=>t.key===tk);
-  const id="CASE"+Date.now().toString().slice(-5);
-  const data={
-    id,customer:n,mobile:m,address:a,problem:p,
-    model:document.getElementById("cModel").value||"N/A",
-    techKey:tk,techName:tech.name,techNumber:tech.number,
-    status:"New",date:new Date().toLocaleString("hi-IN"),
+function addCase() {
+  var n=document.getElementById("cn").value.trim();
+  var m=document.getElementById("cm").value.trim();
+  var a=document.getElementById("ca").value.trim();
+  var p=document.getElementById("cp").value.trim();
+  var tk=document.getElementById("ct").value;
+  if(!n||!m||!a||!p||!tk){ alert("Sab * fields fill karo!"); return; }
+  var tech = techs.find(function(t){ return t.key===tk; });
+  if(!tech){ alert("Technician not found!"); return; }
+  var id = "CASE" + Date.now().toString().slice(-5);
+  var data = {
+    id:id, customer:n, mobile:m, address:a, problem:p,
+    model:document.getElementById("cmod").value||"N/A",
+    techKey:tk, techName:tech.name, techNumber:tech.number,
+    status:"New", date:new Date().toLocaleString("hi-IN"),
     timestamp:firebase.database.ServerValue.TIMESTAMP
   };
-  db.ref("cases/"+id).set(data).then(()=>{
-    ["cName","cMob","cAddr","cModel","cProb"].forEach(x=>document.getElementById(x).value="");
-    document.getElementById("cTech").value="";
-    const msg="*🔧 NEW CASE ASSIGNED*\n\n👤 Customer: "+n+"\n📞 Mobile: "+m+"\n📍 Address: "+a+"\n🖨️ Model: "+data.model+"\n⚠️ Problem: "+p+"\n🎫 Ticket: "+id+"\n\n👉 App: https://surajtalwade8-eng.github.io/technician-system/technician-app.html\n\nReply: ✅ ACCEPT / ⏳ BUSY";
-    window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg),"_blank");
-    toast("✅ Assigned!","WhatsApp notification "+tech.name+" ko gaya!");
-  });
+  db.ref("cases/"+id).set(data).then(function(){
+    ["cn","cm","ca","cmod","cp"].forEach(function(x){ document.getElementById(x).value=""; });
+    document.getElementById("ct").value="";
+    var msg = "*🔧 NEW CASE ASSIGNED*
+
+"
+      +"👤 Customer: "+n+"
+📞 Mobile: "+m+"
+📍 Address: "+a
+      +"
+🖨️ Model: "+data.model+"
+⚠️ Problem: "+p+"
+🎫 Ticket: "+id
+      +"
+
+👉 App: https://surajtalwade8-eng.github.io/technician-system/technician-app.html"
+      +"
+
+Reply: ✅ ACCEPT / ⏳ BUSY";
+    window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg), "_blank");
+    toast("✅ Assigned!", "WhatsApp notification gaya " + tech.name + " ko!");
+  }).catch(function(e){ alert("Firebase Error: "+e.message); });
 }
 
-function filterCases() {
-  const s=document.getElementById("srch").value.toLowerCase();
-  const st=document.getElementById("stFilter").value;
-  const f=cases.filter(c=>{
-    const txt=[c.customer,c.techName,c.address,c.problem,c.id,c.status].join(" ").toLowerCase();
-    return txt.includes(s)&&(!st||c.status===st);
+function showCases() {
+  var s = document.getElementById("srch").value.toLowerCase();
+  var st = document.getElementById("stf").value;
+  var f = cases.filter(function(c){
+    var txt = [c.customer||"",c.techName||"",c.address||"",c.problem||"",c.id||"",c.status||""].join(" ").toLowerCase();
+    return txt.includes(s) && (!st || c.status===st);
   });
-  const tb=document.getElementById("caseTbl");
-  if(!f.length){tb.innerHTML="<tr><td colspan='8' style='text-align:center;padding:30px;color:#999'>No cases</td></tr>";return;}
-  tb.innerHTML=f.map(c=>"<tr><td><b>"+c.id+"</b></td><td style='font-size:12px'>"+c.date+"</td><td>"+c.customer+"<br><small style='color:#888'>"+c.mobile+"</small></td><td style='font-size:13px'>"+c.address+"</td><td style='font-size:13px'>"+c.problem+"</td><td>"+c.techName+"</td><td><span class='badge b-"+c.status+"'>"+c.status+"</span></td><td style='white-space:nowrap'><button class='btn btn-wa btn-sm' onclick='waCase(""+c.key+"")'>📱</button><button class='btn btn-blue btn-sm' onclick='setStatus(""+c.key+"","Accepted")'>✓</button><button class='btn btn-sm' style='background:#4CAF50;color:white' onclick='setStatus(""+c.key+"","Done")'>Done</button><button class='btn btn-red btn-sm' onclick='delCase(""+c.key+"")'>🗑</button></td></tr>").join("");
+  var tb = document.getElementById("ctbl");
+  if(!f.length){ tb.innerHTML="<tr><td colspan='8' style='text-align:center;padding:20px;color:#999'>No cases</td></tr>"; return; }
+  tb.innerHTML = f.map(function(c){
+    return "<tr>"
+      +"<td><b>"+c.id+"</b></td>"
+      +"<td style='font-size:11px;white-space:nowrap'>"+c.date+"</td>"
+      +"<td>"+c.customer+"<br><small style='color:#888'>"+c.mobile+"</small></td>"
+      +"<td style='font-size:12px;max-width:120px'>"+c.address+"</td>"
+      +"<td style='font-size:12px;max-width:120px'>"+c.problem+"</td>"
+      +"<td>"+c.techName+"</td>"
+      +"<td><span class='tag t-"+c.status+"'>"+c.status+"</span></td>"
+      +"<td style='white-space:nowrap'>"
+      +"<button class='btn wa sm' onclick='waC(""+c.key+"")'>📱</button>"
+      +"<button class='btn blue sm' onclick='setS(""+c.key+"","Accepted")'>✓</button>"
+      +"<button class='btn sm' style='background:#4CAF50;color:white' onclick='setS(""+c.key+"","Done")'>Done</button>"
+      +"<button class='btn red sm' onclick='delC(""+c.key+"")'>🗑</button>"
+      +"</td></tr>";
+  }).join("");
 }
 
-function setStatus(k,s){db.ref("cases/"+k).update({status:s});}
-function delCase(k){if(confirm("Delete?"))db.ref("cases/"+k).remove();}
-function waCase(k){
-  const c=cases.find(x=>x.key===k);
-  const msg="*🔄 CASE UPDATE*\nCustomer: "+c.customer+"\nAddress: "+c.address+"\nProblem: "+c.problem+"\nStatus: "+c.status+"\nTicket: "+c.id;
+function setS(k,s){ db.ref("cases/"+k).update({status:s}); }
+function delC(k){ if(confirm("Delete?")) db.ref("cases/"+k).remove(); }
+function waC(k){
+  var c=cases.find(function(x){return x.key===k;});
+  if(!c) return;
+  var msg="*🔄 CASE REMINDER*
+Customer: "+c.customer+"
+Address: "+c.address+"
+Status: "+c.status+"
+Ticket: "+c.id;
   window.open("https://wa.me/91"+c.techNumber+"?text="+encodeURIComponent(msg),"_blank");
 }
 
 function updateStats(){
   document.getElementById("s0").textContent=cases.length;
-  document.getElementById("s1").textContent=cases.filter(c=>c.status==="New").length;
-  document.getElementById("s2").textContent=cases.filter(c=>c.status==="Accepted").length;
-  document.getElementById("s3").textContent=cases.filter(c=>c.status==="Done").length;
+  document.getElementById("s1").textContent=cases.filter(function(c){return c.status==="New";}).length;
+  document.getElementById("s2").textContent=cases.filter(function(c){return c.status==="Accepted";}).length;
+  document.getElementById("s3").textContent=cases.filter(function(c){return c.status==="Done";}).length;
 }
 
 // REPORTS
-function loadReports() {
-  const tn=document.getElementById("rTech").value;
-  const dt=document.getElementById("rDate").value;
-  const ref=tn?db.ref("reports/"+tn):db.ref("reports");
-  ref.once("value",snap=>{
-    reports=[];
+function loadRep(){
+  var tn=document.getElementById("rtf").value;
+  var dt=document.getElementById("rdf").value;
+  var ref=tn?db.ref("reports/"+tn):db.ref("reports");
+  ref.once("value",function(snap){
+    reps=[];
     if(snap.exists()){
-      snap.forEach(t=>{t.forEach(d=>{d.forEach(c=>{reports.push(c.val());});});});
+      snap.forEach(function(a){
+        a.forEach(function(b){
+          b.forEach(function(c){ reps.push(c.val()); });
+        });
+      });
     }
-    let f=reports;
-    if(dt){const dStr=new Date(dt).toLocaleDateString("hi-IN").replace(/\//g,"-");f=reports.filter(r=>r.date===dStr);}
-    const tb=document.getElementById("rptTbl");
-    if(!f.length){tb.innerHTML="<tr><td colspan='9' style='text-align:center;padding:30px;color:#999'>No reports</td></tr>";return;}
-    tb.innerHTML=f.map(r=>"<tr><td>"+r.date+"</td><td>"+r.techName+"</td><td><b>"+r.caseId+"</b></td><td>"+r.customer+"<br><small>"+r.mobile+"</small></td><td>"+r.workDone+"</td><td>"+r.partsUsed+"</td><td>"+r.timeTaken+"</td><td>₹"+r.serviceCharge+"</td><td>"+r.customerFeedback+"</td></tr>").join("");
+    var f=reps;
+    if(dt){
+      var ds=new Date(dt).toLocaleDateString("hi-IN").replace(/\//g,"-");
+      f=reps.filter(function(r){return r.date===ds;});
+    }
+    var tb=document.getElementById("rtbl");
+    if(!f.length){tb.innerHTML="<tr><td colspan='9' style='text-align:center;padding:20px;color:#999'>No reports found</td></tr>";return;}
+    tb.innerHTML=f.map(function(r){
+      return "<tr><td>"+r.date+"</td><td>"+r.techName+"</td><td><b>"+r.caseId+"</b></td>"
+        +"<td>"+r.customer+"<br><small>"+r.mobile+"</small></td>"
+        +"<td>"+r.workDone+"</td><td>"+r.partsUsed+"</td>"
+        +"<td>"+r.timeTaken+"</td><td>₹"+r.serviceCharge+"</td><td>"+r.customerFeedback+"</td></tr>";
+    }).join("");
   });
 }
 
-function exportCases(){
-  if(!cases.length)return alert("No cases!");
-  const rows=[["ID","Date","Customer","Mobile","Address","Problem","Tech","Status"],...cases.map(c=>[c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status])];
+function expCases(){
+  if(!cases.length){alert("No cases!");return;}
+  var rows=[["ID","Date","Customer","Mobile","Address","Problem","Tech","Status"]];
+  cases.forEach(function(c){rows.push([c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status]);});
   dlCSV(rows,"cases_"+new Date().toISOString().slice(0,10)+".csv");
 }
-function exportReports(){
-  if(!reports.length)return alert("Pehle load karo!");
-  const rows=[["Date","Tech","Case","Customer","Mobile","Work","Parts","Time","Charge","Feedback"],...reports.map(r=>[r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.serviceCharge,r.customerFeedback])];
+function expRep(){
+  if(!reps.length){alert("Pehle load karo!");return;}
+  var rows=[["Date","Tech","Case","Customer","Mobile","Work","Parts","Time","Charge","Feedback"]];
+  reps.forEach(function(r){rows.push([r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.serviceCharge,r.customerFeedback]);});
   dlCSV(rows,"reports_"+new Date().toISOString().slice(0,10)+".csv");
 }
 function dlCSV(rows,name){
-  const a=document.createElement("a");
-  a.href="data:text/csv;charset=utf-8,\uFEFF"+encodeURIComponent(rows.map(r=>r.map(v=>"\""+String(v||"").replace(/\"/g,'""')+"\""  ).join(",")).join("\n"));
+  var csv=rows.map(function(r){return r.map(function(v){return '"'+(v||"").toString().replace(/"/g,'""')+'"';}).join(",");}).join("
+");
+  var a=document.createElement("a");
+  a.href="data:text/csv;charset=utf-8,﻿"+encodeURIComponent(csv);
   a.download=name;a.click();
 }
+
 function toast(t,b){
-  document.getElementById("tTitle").textContent=t;
-  document.getElementById("tBody").textContent=b;
-  document.getElementById("toast").style.display="block";
-  setTimeout(()=>document.getElementById("toast").style.display="none",5000);
+  document.getElementById("ttl").textContent=t;
+  document.getElementById("tbdy").textContent=b;
+  var el=document.getElementById("toast");
+  el.style.display="block";
+  setTimeout(function(){el.style.display="none";},5000);
 }
 </script>
-</body></html>
+</body>
+</html>

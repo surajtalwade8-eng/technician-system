@@ -4,8 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#25D366">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="My Cases">
 <title>My Cases</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -24,23 +22,20 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .topbar h2{font-size:18px}
 .ncnt{background:white;color:#f44336;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
 .tabs{display:flex;background:white;border-bottom:2px solid #e0f7e9}
-.tab{flex:1;padding:14px 5px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent;transition:0.2s}
+.tab{flex:1;padding:14px 5px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent}
 .tab.on{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff9}
 .list{padding:15px;overflow-y:auto;height:calc(100vh - 160px)}
 .card{background:white;border-radius:15px;padding:20px;margin-bottom:15px;box-shadow:0 3px 12px rgba(0,0,0,0.08)}
-.card.nc{border-left:5px solid #f44336}
-.card.ac{border-left:5px solid #2196F3}
-.card.dc{border-left:5px solid #4CAF50}
+.card.nc{border-left:5px solid #f44336}.card.ac{border-left:5px solid #2196F3}.card.dc{border-left:5px solid #4CAF50}
 .cid{font-size:11px;color:#bbb;font-weight:600;margin-bottom:6px}
 .cname{font-size:19px;font-weight:700;color:#111;margin-bottom:5px}
 .caddr{color:#555;font-size:14px;margin:8px 0;line-height:1.5}
 .cprob{background:#fff8f0;padding:12px;border-radius:10px;font-size:13px;color:#555;margin:10px 0}
 .chip{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin:3px}
 .cN{background:#ffebee;color:#c62828}.cA{background:#e3f2fd;color:#1565c0}.cD{background:#e8f5e9;color:#2e7d32}.cM{background:#f3e5f5;color:#6a1b9a}
-.abtn{width:100%;padding:16px;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin:5px 0;transition:0.2s}
-.abtn:active{transform:scale(0.97)}
+.abtn{width:100%;padding:16px;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin:5px 0}
 .acc{background:linear-gradient(135deg,#25D366,#128C7E);color:white}
-.don{background:linear-gradient(135deg,#4CAF50,#388E3C);color:white}
+.don{background:linear-gradient(135deg,#ff6b35,#f44336);color:white}
 .cal{background:#2196F3;color:white}
 .empty{text-align:center;padding:60px 20px;color:#ccc}
 .empty div{font-size:55px;margin-bottom:15px}
@@ -58,19 +53,44 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 .pacc{width:100%;padding:18px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:20px;font-weight:700;cursor:pointer;margin-top:12px;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 5px 15px rgba(37,211,102,0.4)}50%{box-shadow:0 5px 35px rgba(37,211,102,0.8)}}
 .pbusy{width:100%;padding:14px;background:#ff9800;color:white;border:none;border-radius:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px}
-#repModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9998;justify-content:flex-end;align-items:flex-end}
-#repModal.on{display:flex;animation:slideUp 0.3s ease}
+#stepModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;justify-content:flex-end;align-items:flex-end}
+#stepModal.on{display:flex;animation:slideUp 0.3s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.rbox{background:white;border-radius:25px 25px 0 0;padding:25px 20px;width:100%;max-height:92vh;overflow-y:auto}
-.rbox h2{color:#25D366;text-align:center;font-size:20px;margin-bottom:15px}
-.rinfo{background:#f0f8ff;padding:14px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:2}
-.rbox label{display:block;font-weight:700;color:#333;margin:12px 0 4px;font-size:14px}
-.rbox input,.rbox select,.rbox textarea{width:100%;padding:13px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;font-family:Arial;box-sizing:border-box}
-.rbox input:focus,.rbox select:focus,.rbox textarea:focus{border-color:#25D366}
-.rsub{width:100%;padding:18px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:15px;font-size:18px;font-weight:700;cursor:pointer;margin-top:15px}
-.rcan{width:100%;padding:14px;background:#f5f5f5;color:#888;border:none;border-radius:15px;font-size:16px;cursor:pointer;margin-top:8px}
+.sbox{background:white;border-radius:25px 25px 0 0;width:100%;max-height:94vh;overflow:hidden;display:flex;flex-direction:column}
+.prog-bar{display:flex;background:#f8f8f8;padding:15px 20px 12px;border-bottom:1px solid #f0f0f0}
+.prog-step{flex:1;text-align:center;font-size:12px;font-weight:700;color:#ccc;position:relative}
+.prog-step.done{color:#25D366}.prog-step.active{color:#128C7E}
+.prog-dot{width:30px;height:30px;border-radius:50%;background:#e0e0e0;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.prog-step.done .prog-dot{background:#25D366}
+.prog-step.active .prog-dot{background:#128C7E;box-shadow:0 0 0 4px rgba(18,140,126,0.2)}
+.prog-line{position:absolute;top:15px;left:55%;width:90%;height:3px;background:#e0e0e0;z-index:-1}
+.prog-step.done .prog-line{background:#25D366}
+.step-content{flex:1;overflow-y:auto;padding:20px}
+.step-title{font-size:18px;font-weight:700;color:#128C7E;margin-bottom:4px}
+.step-sub{font-size:13px;color:#888;margin-bottom:15px}
+.case-chip{background:#f0f8ff;padding:12px;border-radius:12px;margin-bottom:15px;font-size:13px;line-height:1.9;border-left:4px solid #25D366}
+label{display:block;font-weight:700;color:#333;margin:12px 0 4px;font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:2px solid #e8e8e8;border-radius:10px;font-size:15px;outline:none;font-family:Arial;box-sizing:border-box}
+input:focus,select:focus,textarea:focus{border-color:#25D366}
+.cam-box{border:3px dashed #25D366;border-radius:15px;padding:22px;text-align:center;margin:10px 0;cursor:pointer;background:#f0fff4}
+.cam-icon{font-size:48px;margin-bottom:8px}
+.cam-text{color:#25D366;font-weight:700;font-size:16px}
+.cam-sub{color:#aaa;font-size:13px;margin-top:4px}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.photo-thumb{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;background:#f0f0f0}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-del{position:absolute;top:4px;right:4px;background:rgba(244,67,54,0.9);color:white;border:none;border-radius:50%;width:24px;height:24px;font-size:14px;cursor:pointer;font-weight:700}
+.exp-box{background:linear-gradient(135deg,#ff6b35,#f44336);color:white;padding:20px;border-radius:15px;text-align:center;margin:12px 0}
+.exp-box label{color:rgba(255,255,255,0.85);margin-bottom:8px}
+.exp-box input{background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.5);border-radius:0;color:white;font-size:32px;font-weight:700;text-align:center;width:80%;padding:5px}
+.exp-box input::placeholder{color:rgba(255,255,255,0.5)}
+.step-nav{padding:15px 20px;background:white;border-top:1px solid #f0f0f0;display:flex;gap:10px}
+.btn-next{flex:2;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer}
+.btn-prev{flex:1;padding:15px;background:#f0f0f0;color:#666;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-skip{flex:1;padding:15px;background:#fff8e1;color:#e65100;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
 .outbtn{background:rgba(255,255,255,0.2);color:white;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px}
 </style></head><body>
+
 <div id="loginScreen">
 <div class="lico">&#128295;</div>
 <h1>Technician App</h1>
@@ -79,6 +99,7 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 <div id="lerr" class="lerr"></div>
 <button class="lbtn" onclick="doLogin()">&#128640; LOGIN</button>
 </div>
+
 <div id="mainScreen">
 <div class="topbar">
 <div><div style="font-size:12px;opacity:0.8">Welcome &#128075;</div><h2 id="tNm">Tech</h2></div>
@@ -91,10 +112,11 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 </div>
 <div class="list" id="cList"></div>
 </div>
+
 <div id="popup">
 <div class="pbox">
 <div class="pico">&#128276;</div>
-<div class="ptitle">&#9889; NEW CASE ASSIGNED!</div>
+<div class="ptitle">&#9889; NEW CASE!</div>
 <div class="pcust" id="pCust"></div>
 <div class="paddr">&#128205; <span id="pAddr"></span></div>
 <div class="pprob">&#9888; <span id="pProb"></span></div>
@@ -102,33 +124,79 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 <button class="pacc" onclick="accFromPopup()">&#9989; ACCEPT CASE NOW</button>
 <button class="pbusy" onclick="closePopup()">&#9203; Baad Me Dekhunga</button>
 </div></div>
-<div id="repModal">
-<div class="rbox">
-<h2>&#128203; Completion Report</h2>
-<div class="rinfo" id="rInfo"></div>
+
+<div id="stepModal">
+<div class="sbox">
+<div class="prog-bar">
+<div class="prog-step active" id="ps1"><div class="prog-dot">1</div><div>Report</div><div class="prog-line"></div></div>
+<div class="prog-step" id="ps2"><div class="prog-dot">2</div><div>Photos</div><div class="prog-line"></div></div>
+<div class="prog-step" id="ps3"><div class="prog-dot">3</div><div>Expense</div></div>
+</div>
+
+<div id="step1" class="step-content">
+<div class="step-title">&#128203; Work Report</div>
+<div class="step-sub">Case complete karne ki details daalo</div>
+<div class="case-chip" id="cc1"></div>
 <label>&#9989; Kya Kaam Kiya? *</label>
-<textarea id="rWork" rows="3" placeholder="Toner replace, head clean..."></textarea>
+<textarea id="rWork" rows="3" placeholder="Toner replace kiya, drum clean kiya..."></textarea>
 <label>&#128295; Parts Used</label>
 <input id="rParts" placeholder="HP 12A Toner (ya N/A)">
 <label>&#9201; Time Taken</label>
 <select id="rTime"><option>30 minutes</option><option>1 hour</option><option>1.5 hours</option><option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option></select>
-<label>&#128176; Service Charge (&#8377;)</label>
-<input id="rCharge" type="number" placeholder="500">
 <label>&#128512; Customer Feedback</label>
 <select id="rFb"><option>Excellent</option><option>Good</option><option>Average</option><option>Below Average</option></select>
 <label>&#128221; Remarks</label>
-<textarea id="rRem" rows="2" placeholder="Extra information..."></textarea>
-<button class="rsub" onclick="subReport()">&#9989; Submit + Mark DONE</button>
-<button class="rcan" onclick="closeRep()">Cancel</button>
-</div></div>
-<script>
-var db, myKey="", myName="", myCases=[], curTab="New", popKey="", repKey="", firstLoad=true;
-var alertInterval=null, alertCtx=null;
+<textarea id="rRem" rows="2" placeholder="Extra info..."></textarea>
+</div>
 
-// FIREBASE INIT
-function initFirebase() {
-  try {
-    if(!firebase.apps.length) {
+<div id="step2" class="step-content" style="display:none">
+<div class="step-title">&#128247; Job Photos</div>
+<div class="step-sub">Kaam complete hone ki photos lo (optional)</div>
+<div class="case-chip" id="cc2"></div>
+<input type="file" id="jobCamInput" accept="image/*" capture="environment" style="display:none" onchange="addJobPhoto(event)">
+<div class="cam-box" onclick="document.getElementById('jobCamInput').click()">
+<div class="cam-icon">&#128247;</div>
+<div class="cam-text">Camera se Photo Lo</div>
+<div class="cam-sub">Printer / work ka photo capture karo</div>
+</div>
+<div class="photo-grid" id="jobGrid"></div>
+<p style="font-size:12px;color:#aaa;text-align:center">Multiple photos le sakte ho &#128077;</p>
+</div>
+
+<div id="step3" class="step-content" style="display:none">
+<div class="step-title">&#128176; Expense Details</div>
+<div class="step-sub">Is call ka expense daalo</div>
+<div class="case-chip" id="cc3"></div>
+<div class="exp-box">
+<label>Total Expense (&#8377;)</label>
+<input id="expAmt" type="number" placeholder="0" inputmode="numeric">
+</div>
+<label>&#128221; Expense Breakdown</label>
+<textarea id="expDet" rows="3" placeholder="Parts: Rs.300&#10;Travel: Rs.100&#10;Service: Rs.200"></textarea>
+<label>&#128247; Receipt / Bill Photo</label>
+<input type="file" id="rcptInput" accept="image/*" capture="environment" style="display:none" onchange="addReceipt(event)">
+<div class="cam-box" onclick="document.getElementById('rcptInput').click()" style="border-color:#ff6b35;background:#fff8f5">
+<div class="cam-icon">&#129534;</div>
+<div class="cam-text" style="color:#ff6b35">Bill / Receipt Photo Upload</div>
+<div class="cam-sub">Kharidi ka bill capture karo</div>
+</div>
+<div id="rcptPreview" style="margin:10px 0"></div>
+</div>
+
+<div class="step-nav">
+<button class="btn-prev" id="btnPrev" onclick="prevStep()" style="display:none">&#8592; Back</button>
+<button class="btn-skip" id="btnSkip" onclick="skipStep()">Skip &#8594;</button>
+<button class="btn-next" id="btnNext" onclick="nextStep()">Next &#8594;</button>
+</div>
+</div></div>
+
+<script>
+var db,myKey="",myName="",myCases=[],curTab="New",popKey="",repKey="",firstLoad=true;
+var alertInt=null,curStep=1,jobPhotos=[],rcptPhoto=null;
+
+function initFB(){
+  try{
+    if(!firebase.apps.length){
       firebase.initializeApp({
         apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
         authDomain:"tech-b30b8.firebaseapp.com",
@@ -139,264 +207,247 @@ function initFirebase() {
         appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
       });
     }
-    db = firebase.database();
-    return true;
-  } catch(e) {
-    document.getElementById("lerr").textContent = "Firebase Error: " + e.message;
-    return false;
-  }
+    db=firebase.database(); return true;
+  }catch(e){document.getElementById("lerr").textContent="Error: "+e.message; return false;}
 }
 
-// PAGE LOAD
-window.onload = function() {
-  if(!initFirebase()) return;
-  myKey = localStorage.getItem("tk") || "";
-  myName = localStorage.getItem("tn") || "";
-  if(myKey && myName) {
-    startApp();
-  } else {
-    loadTechs();
-  }
+window.onload=function(){
+  if(!initFB()) return;
+  myKey=localStorage.getItem("tk")||"";
+  myName=localStorage.getItem("tn")||"";
+  if(myKey&&myName) startApp(); else loadTechs();
 };
 
-// LOAD TECHS
-function loadTechs() {
-  db.ref("technicians").once("value").then(function(snap) {
-    var sel = document.getElementById("tSel");
-    sel.innerHTML = '<option value="">-- Apna naam select karo --</option>';
-    if(snap.exists()) {
-      snap.forEach(function(c) {
-        var t = c.val();
-        sel.add(new Option(t.name, c.key + "|" + t.name));
-      });
-    } else {
-      sel.innerHTML = '<option value="">Koi technician nahi (Admin se add karwao)</option>';
-    }
-  }).catch(function(e) {
-    document.getElementById("lerr").textContent = "Error: " + e.message + " — Page refresh karo";
-  });
+function loadTechs(){
+  db.ref("technicians").once("value").then(function(s){
+    var sel=document.getElementById("tSel");
+    sel.innerHTML='<option value="">-- Apna naam select karo --</option>';
+    if(s.exists()) s.forEach(function(c){var t=c.val();sel.add(new Option(t.name,c.key+"|"+t.name));});
+    else sel.innerHTML='<option value="">Koi tech nahi</option>';
+  }).catch(function(e){document.getElementById("lerr").textContent="Error: "+e.message;});
 }
 
-function doLogin() {
-  var v = document.getElementById("tSel").value;
-  if(!v || v.indexOf("|") === -1) { alert("Naam select karo!"); return; }
-  var p = v.split("|");
-  myKey = p[0]; myName = p[1];
-  localStorage.setItem("tk", myKey);
-  localStorage.setItem("tn", myName);
+function doLogin(){
+  var v=document.getElementById("tSel").value;
+  if(!v||v.indexOf("|")===-1){alert("Naam select karo!");return;}
+  var p=v.split("|"); myKey=p[0]; myName=p[1];
+  localStorage.setItem("tk",myKey); localStorage.setItem("tn",myName);
   startApp();
 }
+function doLogout(){stopAlert();localStorage.clear();location.reload();}
 
-function doLogout() {
-  stopAlertSound();
-  localStorage.removeItem("tk");
-  localStorage.removeItem("tn");
-  location.reload();
-}
-
-// START APP
-function startApp() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("mainScreen").style.display = "block";
-  document.getElementById("tNm").textContent = myName;
+function startApp(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("mainScreen").style.display="block";
+  document.getElementById("tNm").textContent=myName;
   if("Notification" in window) Notification.requestPermission();
-
-  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value", function(snap) {
-    var prevIds = [];
-    for(var i=0;i<myCases.length;i++) prevIds.push(myCases[i].key);
-
-    myCases = [];
-    if(snap.exists()) snap.forEach(function(c){ var d=c.val(); d.key=c.key; myCases.unshift(d); });
-
-    var newCount = 0;
-    for(var i=0;i<myCases.length;i++){ if(myCases[i].status==="New") newCount++; }
-    document.getElementById("nCnt").textContent = newCount;
-
-    if(!firstLoad) {
-      for(var i=0;i<myCases.length;i++) {
-        var c = myCases[i];
-        var alreadyExisted = false;
-        for(var j=0;j<prevIds.length;j++){ if(prevIds[j]===c.key){ alreadyExisted=true; break; } }
-        if(!alreadyExisted && c.status==="New") {
-          showPopup(c);
-          break;
-        }
+  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){
+    var prev=myCases.map(function(c){return c.key;});
+    myCases=[];
+    if(snap.exists()) snap.forEach(function(c){var d=c.val();d.key=c.key;myCases.unshift(d);});
+    var nc=myCases.filter(function(c){return c.status==="New";}).length;
+    document.getElementById("nCnt").textContent=nc;
+    if(!firstLoad){
+      for(var i=0;i<myCases.length;i++){
+        var c=myCases[i];
+        if(c.status==="New"&&prev.indexOf(c.key)===-1){showPopup(c);break;}
       }
     }
-    firstLoad = false;
-    render();
+    firstLoad=false; render();
   });
 }
 
-// ===== CONTINUOUS AUDIO ALERT =====
-function playAlertSound() {
-  stopAlertSound();
-  function beep() {
-    try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-      var o1 = ctx.createOscillator();
-      var g1 = ctx.createGain();
-      o1.connect(g1); g1.connect(ctx.destination);
-      o1.type="sine"; o1.frequency.value=880;
-      g1.gain.setValueAtTime(0.8, ctx.currentTime);
-      g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.4);
-      o1.start(ctx.currentTime); o1.stop(ctx.currentTime+0.4);
-
-      var o2 = ctx.createOscillator();
-      var g2 = ctx.createGain();
-      o2.connect(g2); g2.connect(ctx.destination);
-      o2.type="sine"; o2.frequency.value=660;
-      g2.gain.setValueAtTime(0.8, ctx.currentTime+0.45);
-      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.85);
-      o2.start(ctx.currentTime+0.45); o2.stop(ctx.currentTime+0.85);
-
-      var o3 = ctx.createOscillator();
-      var g3 = ctx.createGain();
-      o3.connect(g3); g3.connect(ctx.destination);
-      o3.type="sine"; o3.frequency.value=1100;
-      g3.gain.setValueAtTime(1.0, ctx.currentTime+0.9);
-      g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.5);
-      o3.start(ctx.currentTime+0.9); o3.stop(ctx.currentTime+1.5);
-
-    } catch(e){ console.log("Audio:",e); }
+function playAlert(){
+  stopAlert();
+  function beep(){
+    try{
+      var ctx=new(window.AudioContext||window.webkitAudioContext)();
+      [[880,0,0.4],[660,0.45,0.85],[1100,0.9,1.5]].forEach(function(x){
+        var o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type="sine";o.frequency.value=x[0];
+        g.gain.setValueAtTime(0.8,ctx.currentTime+x[1]);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+x[2]);
+        o.start(ctx.currentTime+x[1]);o.stop(ctx.currentTime+x[2]);
+      });
+    }catch(e){}
   }
   beep();
-  alertInterval = setInterval(beep, 2500);
+  alertInt=setInterval(beep,2500);
 }
+function stopAlert(){if(alertInt){clearInterval(alertInt);alertInt=null;}}
 
-function stopAlertSound() {
-  if(alertInterval){ clearInterval(alertInterval); alertInterval=null; }
-}
-
-// ===== POPUP =====
-function showPopup(c) {
-  popKey = c.key;
-  document.getElementById("pCust").textContent = c.customer + " (" + c.mobile + ")";
-  document.getElementById("pAddr").textContent = c.address;
-  document.getElementById("pProb").textContent = c.problem;
-  document.getElementById("pTkt").textContent = c.id;
+function showPopup(c){
+  popKey=c.key;
+  document.getElementById("pCust").textContent=c.customer+" ("+c.mobile+")";
+  document.getElementById("pAddr").textContent=c.address;
+  document.getElementById("pProb").textContent=c.problem;
+  document.getElementById("pTkt").textContent=c.id;
   document.getElementById("popup").classList.add("on");
-  document.title = "NEW CASE! - " + c.customer;
-
-  playAlertSound();
-  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500,200,500]);
-
-  if(Notification.permission==="granted") {
-    new Notification("New Case!", { body: c.customer + " - " + c.address, requireInteraction:true });
-  }
+  document.title="NEW CASE! - "+c.customer;
+  playAlert();
+  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500]);
+  if(Notification.permission==="granted") new Notification("New Case!",{body:c.customer+" - "+c.address,requireInteraction:true});
 }
+function closePopup(){document.getElementById("popup").classList.remove("on");stopAlert();document.title="My Cases";}
+function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accepted"});closePopup();showTab("Accepted");}}
 
-function closePopup() {
-  document.getElementById("popup").classList.remove("on");
-  stopAlertSound();
-  document.title = "My Cases";
-}
-
-function accFromPopup() {
-  if(popKey) {
-    db.ref("cases/" + popKey).update({status:"Accepted"});
-    closePopup();
-    showTab("Accepted");
-  }
-}
-
-// ===== TABS =====
-function showTab(t) {
-  curTab = t;
-  var all = ["New","Accepted","Done"];
-  for(var i=0;i<all.length;i++) {
-    document.getElementById("t-"+all[i]).className = (all[i]===t) ? "tab on" : "tab";
-  }
+function showTab(t){
+  curTab=t;
+  ["New","Accepted","Done"].forEach(function(x){document.getElementById("t-"+x).className=(x===t)?"tab on":"tab";});
   render();
 }
 
-// ===== RENDER =====
-function render() {
-  var list = document.getElementById("cList");
-  var f = [];
-  for(var i=0;i<myCases.length;i++){ if(myCases[i].status===curTab) f.push(myCases[i]); }
-
-  if(!f.length) {
-    var icons = {New:"&#127881;", Accepted:"&#128203;", Done:"&#9989;"};
-    var msgs = {New:"Koi naya case nahi!", Accepted:"Koi accepted case nahi!", Done:"Koi completed case nahi!"};
-    list.innerHTML = '<div class="empty"><div>' + icons[curTab] + '</div><p>' + msgs[curTab] + '</p></div>';
+function render(){
+  var list=document.getElementById("cList");
+  var f=myCases.filter(function(c){return c.status===curTab;});
+  if(!f.length){
+    var ic={New:"&#127881;",Accepted:"&#128203;",Done:"&#9989;"};
+    var ms={New:"Koi naya case nahi!",Accepted:"Accepted case nahi!",Done:"Done case nahi!"};
+    list.innerHTML='<div class="empty"><div>'+ic[curTab]+'</div><p>'+ms[curTab]+'</p></div>';
     return;
   }
+  var h="";
+  f.forEach(function(c){
+    var cls=c.status==="New"?"nc":c.status==="Accepted"?"ac":"dc";
+    var ch=c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
+    h+='<div class="card '+cls+'">';
+    h+='<div class="cid">'+c.id+' &bull; '+(c.date||"")+'</div>';
+    h+='<div class="cname">&#128100; '+c.customer+'</div>';
+    h+='<div class="caddr">&#128222; '+c.mobile+'<br>&#128205; '+c.address+'</div>';
+    h+='<div class="cprob">&#9888; '+c.problem+'</div>';
+    h+='<div><span class="chip cM">&#128247; '+(c.model||"N/A")+'</span><span class="chip '+ch+'">'+c.status+'</span></div>';
+    if(c.status==="New") h+='<button class="abtn acc" onclick="accCase(''+c.key+'')">&#9989; ACCEPT CASE</button>';
+    if(c.status==="Accepted") h+='<button class="abtn don" onclick="openSteps(''+c.key+'')">&#128247; DONE + REPORT + EXPENSE</button>';
+    h+='<button class="abtn cal" onclick="window.location.href='tel:'+c.mobile+''">&#128222; Call Customer</button>';
+    h+='</div>';
+  });
+  list.innerHTML=h;
+}
 
-  var h = "";
-  for(var j=0;j<f.length;j++) {
-    var c = f[j];
-    var cls = c.status==="New"?"nc":c.status==="Accepted"?"ac":"dc";
-    var ch  = c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
-    h += '<div class="card '+cls+'">';
-    h += '<div class="cid">'+c.id+' &bull; '+(c.date||"")+'</div>';
-    h += '<div class="cname">&#128100; '+c.customer+'</div>';
-    h += '<div class="caddr">&#128222; '+c.mobile+'<br>&#128205; '+c.address+'</div>';
-    h += '<div class="cprob">&#9888; '+c.problem+'</div>';
-    h += '<div><span class="chip cM">&#128247; '+(c.model||"N/A")+'</span>';
-    h += '<span class="chip '+ch+'">'+c.status+'</span></div>';
-    if(c.status==="New")      h += '<button class="abtn acc" onclick="accCase(\''+c.key+'\')">&#9989; ACCEPT CASE</button>';
-    if(c.status==="Accepted") h += '<button class="abtn don" onclick="openRep(\''+c.key+'\')">&#128203; DONE + REPORT</button>';
-    h += '<button class="abtn cal" onclick="window.location.href=\'tel:'+c.mobile+'\'">&#128222; Call Customer</button>';
-    h += '</div>';
+function accCase(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+
+function openSteps(k){
+  repKey=k; curStep=1; jobPhotos=[]; rcptPhoto=null;
+  var c=myCases.find(function(x){return x.key===k;});
+  if(!c) return;
+  var info='<strong>'+c.id+'</strong><br>&#128100; '+c.customer+' &mdash; '+c.mobile+'<br>&#128205; '+c.address+'<br>&#9888; '+c.problem;
+  document.getElementById("cc1").innerHTML=info;
+  document.getElementById("cc2").innerHTML=info;
+  document.getElementById("cc3").innerHTML=info;
+  document.getElementById("rWork").value="";
+  document.getElementById("rParts").value="";
+  document.getElementById("rRem").value="";
+  document.getElementById("expAmt").value="";
+  document.getElementById("expDet").value="";
+  document.getElementById("jobGrid").innerHTML="";
+  document.getElementById("rcptPreview").innerHTML="";
+  document.getElementById("stepModal").classList.add("on");
+  updateUI();
+}
+
+function closeSteps(){document.getElementById("stepModal").classList.remove("on");}
+
+function updateUI(){
+  document.getElementById("step1").style.display=curStep===1?"block":"none";
+  document.getElementById("step2").style.display=curStep===2?"block":"none";
+  document.getElementById("step3").style.display=curStep===3?"block":"none";
+  [1,2,3].forEach(function(i){
+    var el=document.getElementById("ps"+i);
+    el.className="prog-step"+(i<curStep?" done":i===curStep?" active":"");
+  });
+  document.getElementById("btnPrev").style.display=curStep>1?"block":"none";
+  document.getElementById("btnSkip").style.display=curStep<3?"block":"none";
+  var nb=document.getElementById("btnNext");
+  if(curStep===3){nb.textContent="&#9989; Submit All";nb.style.background="linear-gradient(135deg,#f44336,#c62828)";}
+  else{nb.textContent="Next &#8594;";nb.style.background="linear-gradient(135deg,#25D366,#128C7E)";}
+}
+
+function nextStep(){
+  if(curStep===1){
+    if(!document.getElementById("rWork").value.trim()){alert("Kya kaam kiya fill karo!");return;}
+    curStep=2; updateUI();
+  } else if(curStep===2){
+    curStep=3; updateUI();
+  } else {
+    submitAll();
   }
-  list.innerHTML = h;
+}
+function prevStep(){if(curStep>1){curStep--;updateUI();}}
+function skipStep(){if(curStep<3){curStep++;updateUI();}}
+
+function compressImg(file,cb){
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var cv=document.createElement("canvas"),MAX=800;
+      var w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      cv.width=w;cv.height=h;
+      cv.getContext("2d").drawImage(img,0,0,w,h);
+      cb(cv.toDataURL("image/jpeg",0.6));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
 }
 
-function accCase(k) {
-  db.ref("cases/"+k).update({status:"Accepted"});
-  showTab("Accepted");
+function addJobPhoto(ev){
+  var f=ev.target.files[0]; if(!f) return;
+  compressImg(f,function(b64){jobPhotos.push(b64);renderJobPhotos();});
+  ev.target.value="";
+}
+function renderJobPhotos(){
+  var h="";
+  jobPhotos.forEach(function(p,i){
+    h+='<div class="photo-thumb"><img src="'+p+'"><button class="photo-del" onclick="jobPhotos.splice('+i+',1);renderJobPhotos()">x</button></div>';
+  });
+  document.getElementById("jobGrid").innerHTML=h;
+}
+function addReceipt(ev){
+  var f=ev.target.files[0]; if(!f) return;
+  compressImg(f,function(b64){
+    rcptPhoto=b64;
+    document.getElementById("rcptPreview").innerHTML='<div class="photo-thumb" style="max-width:180px;margin:0 auto"><img src="'+b64+'"><button class="photo-del" onclick="rcptPhoto=null;document.getElementById('rcptPreview').innerHTML=''">x</button></div>';
+  });
+  ev.target.value="";
 }
 
-// ===== REPORT MODAL =====
-function openRep(k) {
-  repKey = k;
-  var c = null;
-  for(var i=0;i<myCases.length;i++){ if(myCases[i].key===k){ c=myCases[i]; break; } }
+function submitAll(){
+  var w=document.getElementById("rWork").value.trim();
+  if(!w){alert("Report fill karo!");curStep=1;updateUI();return;}
+  var c=myCases.find(function(x){return x.key===repKey;});
   if(!c) return;
-  document.getElementById("rInfo").innerHTML =
-    "<strong>"+c.id+"</strong><br>"+
-    "&#128100; "+c.customer+" &mdash; "+c.mobile+"<br>"+
-    "&#128205; "+c.address+"<br>"+
-    "&#9888; "+c.problem;
-  document.getElementById("rWork").value = "";
-  document.getElementById("rParts").value = "";
-  document.getElementById("rCharge").value = "";
-  document.getElementById("rRem").value = "";
-  document.getElementById("repModal").classList.add("on");
-}
-
-function closeRep() { document.getElementById("repModal").classList.remove("on"); }
-
-function subReport() {
-  var w = document.getElementById("rWork").value.trim();
-  if(!w){ alert("Kya kaam kiya - fill karo!"); return; }
-  var c = null;
-  for(var i=0;i<myCases.length;i++){ if(myCases[i].key===repKey){ c=myCases[i]; break; } }
-  if(!c) return;
-
-  var today = new Date().toLocaleDateString("hi-IN").split("/").join("-");
-  var rep = {
-    caseId:c.id, customer:c.customer, mobile:c.mobile, address:c.address,
-    problem:c.problem, model:c.model||"N/A", techName:myName,
+  var today=new Date().toLocaleDateString("hi-IN").split("/").join("-");
+  var now=new Date().toLocaleString("hi-IN");
+  var rep={
+    caseId:c.id,customer:c.customer,mobile:c.mobile,address:c.address,
+    problem:c.problem,model:c.model||"N/A",techName:myName,
     workDone:w,
     partsUsed:document.getElementById("rParts").value||"N/A",
     timeTaken:document.getElementById("rTime").value,
-    serviceCharge:document.getElementById("rCharge").value||"0",
     customerFeedback:document.getElementById("rFb").value,
     remarks:document.getElementById("rRem").value||"N/A",
-    date:today,
-    completedAt:new Date().toLocaleString("hi-IN")
+    jobPhotos:jobPhotos,
+    expense:{
+      amount:document.getElementById("expAmt").value||"0",
+      details:document.getElementById("expDet").value||"N/A",
+      receiptPhoto:rcptPhoto
+    },
+    date:today,completedAt:now
   };
-
+  var nb=document.getElementById("btnNext");
+  nb.textContent="Saving..."; nb.disabled=true;
   db.ref("reports/"+myName+"/"+today+"/"+c.id).set(rep).then(function(){
-    return db.ref("cases/"+repKey).update({status:"Done", report:rep, completedAt:rep.completedAt});
+    return db.ref("cases/"+repKey).update({status:"Done",completedAt:now,expenseAmt:rep.expense.amount,photoCount:jobPhotos.length});
   }).then(function(){
-    closeRep();
-    showTab("Done");
+    closeSteps(); showTab("Done");
     if(navigator.vibrate) navigator.vibrate([200,100,200]);
-    alert("Report submit! Case DONE!");
-  }).catch(function(e){ alert("Error: "+e.message); });
+    alert("Report + Photos + Expense submit ho gaya!\nCase DONE!");
+  }).catch(function(e){
+    alert("Error: "+e.message);
+    nb.textContent="Submit All"; nb.disabled=false;
+  });
 }
 </script></body></html>

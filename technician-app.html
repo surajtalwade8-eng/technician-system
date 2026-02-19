@@ -75,7 +75,7 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 <div class="lico">&#128295;</div>
 <h1>Technician App</h1>
 <p>Apna naam select karke login karo</p>
-<select id="tSel"><option value="">&#128260; Loading...</option></select>
+<select id="tSel"><option value="">Loading...</option></select>
 <div id="lerr" class="lerr"></div>
 <button class="lbtn" onclick="doLogin()">&#128640; LOGIN</button>
 </div>
@@ -97,7 +97,7 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 <div class="ptitle">&#9889; NEW CASE ASSIGNED!</div>
 <div class="pcust" id="pCust"></div>
 <div class="paddr">&#128205; <span id="pAddr"></span></div>
-<div class="pprob">&#9888;&#65039; <span id="pProb"></span></div>
+<div class="pprob">&#9888; <span id="pProb"></span></div>
 <div class="pid">Ticket: <span id="pTkt"></span></div>
 <button class="pacc" onclick="accFromPopup()">&#9989; ACCEPT CASE NOW</button>
 <button class="pbusy" onclick="closePopup()">&#9203; Baad Me Dekhunga</button>
@@ -110,39 +110,56 @@ body{font-family:Arial,sans-serif;background:#f0f4f8;min-height:100vh}
 <textarea id="rWork" rows="3" placeholder="Toner replace, head clean..."></textarea>
 <label>&#128295; Parts Used</label>
 <input id="rParts" placeholder="HP 12A Toner (ya N/A)">
-<label>&#9201;&#65039; Time Taken</label>
+<label>&#9201; Time Taken</label>
 <select id="rTime"><option>30 minutes</option><option>1 hour</option><option>1.5 hours</option><option>2 hours</option><option>2+ hours</option><option>Half Day</option><option>Full Day</option></select>
 <label>&#128176; Service Charge (&#8377;)</label>
 <input id="rCharge" type="number" placeholder="500">
 <label>&#128512; Customer Feedback</label>
-<select id="rFb"><option>&#11088;&#11088;&#11088;&#11088;&#11088; Excellent</option><option>&#11088;&#11088;&#11088;&#11088; Good</option><option>&#11088;&#11088;&#11088; Average</option><option>&#11088;&#11088; Below Average</option></select>
+<select id="rFb"><option>Excellent</option><option>Good</option><option>Average</option><option>Below Average</option></select>
 <label>&#128221; Remarks</label>
 <textarea id="rRem" rows="2" placeholder="Extra information..."></textarea>
 <button class="rsub" onclick="subReport()">&#9989; Submit + Mark DONE</button>
 <button class="rcan" onclick="closeRep()">Cancel</button>
 </div></div>
-
 <script>
 var db, myKey="", myName="", myCases=[], curTab="New", popKey="", repKey="", firstLoad=true;
+var alertInterval=null, alertCtx=null;
 
-// FIREBASE
-try {
-  firebase.initializeApp({
-    apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-    authDomain:"tech-b30b8.firebaseapp.com",
-    databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId:"tech-b30b8",
-    storageBucket:"tech-b30b8.firebasestorage.app",
-    messagingSenderId:"815434648437",
-    appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
-  });
-  db = firebase.database();
-  loadTechs();
-} catch(e) {
-  document.getElementById("lerr").textContent = "Firebase Error: " + e.message;
+// FIREBASE INIT
+function initFirebase() {
+  try {
+    if(!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
+        authDomain:"tech-b30b8.firebaseapp.com",
+        databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId:"tech-b30b8",
+        storageBucket:"tech-b30b8.firebasestorage.app",
+        messagingSenderId:"815434648437",
+        appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
+      });
+    }
+    db = firebase.database();
+    return true;
+  } catch(e) {
+    document.getElementById("lerr").textContent = "Firebase Error: " + e.message;
+    return false;
+  }
 }
 
-// LOAD TECHS FOR LOGIN
+// PAGE LOAD
+window.onload = function() {
+  if(!initFirebase()) return;
+  myKey = localStorage.getItem("tk") || "";
+  myName = localStorage.getItem("tn") || "";
+  if(myKey && myName) {
+    startApp();
+  } else {
+    loadTechs();
+  }
+};
+
+// LOAD TECHS
 function loadTechs() {
   db.ref("technicians").once("value").then(function(snap) {
     var sel = document.getElementById("tSel");
@@ -150,13 +167,13 @@ function loadTechs() {
     if(snap.exists()) {
       snap.forEach(function(c) {
         var t = c.val();
-        sel.add(new Option(t.name , c.key + "|" + t.name));
+        sel.add(new Option(t.name, c.key + "|" + t.name));
       });
     } else {
-      sel.innerHTML = '<option value="">Koi tech nahi (Admin se add karwao)</option>';
+      sel.innerHTML = '<option value="">Koi technician nahi (Admin se add karwao)</option>';
     }
   }).catch(function(e) {
-    document.getElementById("lerr").textContent = "Load Error: " + e.message + " - Refresh karo";
+    document.getElementById("lerr").textContent = "Error: " + e.message + " — Page refresh karo";
   });
 }
 
@@ -170,32 +187,14 @@ function doLogin() {
   startApp();
 }
 
-window.onload = function() {
-  myKey = localStorage.getItem("tk") || "";
-  myName = localStorage.getItem("tn") || "";
-  if(myKey && myName) {
-    try {
-      firebase.initializeApp({
-        apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-        authDomain:"tech-b30b8.firebaseapp.com",
-        databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-        projectId:"tech-b30b8",
-        storageBucket:"tech-b30b8.firebasestorage.app",
-        messagingSenderId:"815434648437",
-        appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
-      });
-      db = firebase.database();
-    } catch(e) {}
-    startApp();
-  }
-};
-
 function doLogout() {
+  stopAlertSound();
   localStorage.removeItem("tk");
   localStorage.removeItem("tn");
   location.reload();
 }
 
+// START APP
 function startApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("mainScreen").style.display = "block";
@@ -205,19 +204,20 @@ function startApp() {
   db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value", function(snap) {
     var prevIds = [];
     for(var i=0;i<myCases.length;i++) prevIds.push(myCases[i].key);
+
     myCases = [];
     if(snap.exists()) snap.forEach(function(c){ var d=c.val(); d.key=c.key; myCases.unshift(d); });
 
-    var newC = [];
-    for(var i=0;i<myCases.length;i++){ if(myCases[i].status==="New") newC.push(myCases[i]); }
-    document.getElementById("nCnt").textContent = newC.length;
+    var newCount = 0;
+    for(var i=0;i<myCases.length;i++){ if(myCases[i].status==="New") newCount++; }
+    document.getElementById("nCnt").textContent = newCount;
 
     if(!firstLoad) {
       for(var i=0;i<myCases.length;i++) {
         var c = myCases[i];
-        var isNew = true;
-        for(var j=0;j<prevIds.length;j++){ if(prevIds[j]===c.key){ isNew=false; break; } }
-        if(isNew && c.status==="New") {
+        var alreadyExisted = false;
+        for(var j=0;j<prevIds.length;j++){ if(prevIds[j]===c.key){ alreadyExisted=true; break; } }
+        if(!alreadyExisted && c.status==="New") {
           showPopup(c);
           break;
         }
@@ -228,39 +228,48 @@ function startApp() {
   });
 }
 
-// ===== AUDIO ALERT =====
+// ===== CONTINUOUS AUDIO ALERT =====
 function playAlertSound() {
-  try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+  stopAlertSound();
+  function beep() {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    var o1 = ctx.createOscillator();
-    var g1 = ctx.createGain();
-    o1.connect(g1); g1.connect(ctx.destination);
-    o1.type = "sine"; o1.frequency.value = 880;
-    g1.gain.setValueAtTime(0.8, ctx.currentTime);
-    g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    o1.start(ctx.currentTime); o1.stop(ctx.currentTime + 0.4);
+      var o1 = ctx.createOscillator();
+      var g1 = ctx.createGain();
+      o1.connect(g1); g1.connect(ctx.destination);
+      o1.type="sine"; o1.frequency.value=880;
+      g1.gain.setValueAtTime(0.8, ctx.currentTime);
+      g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.4);
+      o1.start(ctx.currentTime); o1.stop(ctx.currentTime+0.4);
 
-    var o2 = ctx.createOscillator();
-    var g2 = ctx.createGain();
-    o2.connect(g2); g2.connect(ctx.destination);
-    o2.type = "sine"; o2.frequency.value = 660;
-    g2.gain.setValueAtTime(0.8, ctx.currentTime + 0.45);
-    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.85);
-    o2.start(ctx.currentTime + 0.45); o2.stop(ctx.currentTime + 0.85);
+      var o2 = ctx.createOscillator();
+      var g2 = ctx.createGain();
+      o2.connect(g2); g2.connect(ctx.destination);
+      o2.type="sine"; o2.frequency.value=660;
+      g2.gain.setValueAtTime(0.8, ctx.currentTime+0.45);
+      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.85);
+      o2.start(ctx.currentTime+0.45); o2.stop(ctx.currentTime+0.85);
 
-    var o3 = ctx.createOscillator();
-    var g3 = ctx.createGain();
-    o3.connect(g3); g3.connect(ctx.destination);
-    o3.type = "sine"; o3.frequency.value = 1100;
-    g3.gain.setValueAtTime(1.0, ctx.currentTime + 0.9);
-    g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-    o3.start(ctx.currentTime + 0.9); o3.stop(ctx.currentTime + 1.5);
+      var o3 = ctx.createOscillator();
+      var g3 = ctx.createGain();
+      o3.connect(g3); g3.connect(ctx.destination);
+      o3.type="sine"; o3.frequency.value=1100;
+      g3.gain.setValueAtTime(1.0, ctx.currentTime+0.9);
+      g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+1.5);
+      o3.start(ctx.currentTime+0.9); o3.stop(ctx.currentTime+1.5);
 
-  } catch(e) { console.log("Audio error:", e); }
+    } catch(e){ console.log("Audio:",e); }
+  }
+  beep();
+  alertInterval = setInterval(beep, 2500);
 }
 
-// ===== BIG POPUP =====
+function stopAlertSound() {
+  if(alertInterval){ clearInterval(alertInterval); alertInterval=null; }
+}
+
+// ===== POPUP =====
 function showPopup(c) {
   popKey = c.key;
   document.getElementById("pCust").textContent = c.customer + " (" + c.mobile + ")";
@@ -270,20 +279,20 @@ function showPopup(c) {
   document.getElementById("popup").classList.add("on");
   document.title = "NEW CASE! - " + c.customer;
 
-  // SOUND + VIBRATE
   playAlertSound();
-  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]);
+  if(navigator.vibrate) navigator.vibrate([500,200,500,200,500,200,500,200,500]);
 
-  // Browser notification
-  if(Notification.permission === "granted") {
-    new Notification("New Case Assigned!", {
-      body: c.customer + " - " + c.address,
-      requireInteraction: true
-    });
+  if(Notification.permission==="granted") {
+    new Notification("New Case!", { body: c.customer + " - " + c.address, requireInteraction:true });
   }
 }
 
-function closePopup() { document.getElementById("popup").classList.remove("on"); }
+function closePopup() {
+  document.getElementById("popup").classList.remove("on");
+  stopAlertSound();
+  document.title = "My Cases";
+}
+
 function accFromPopup() {
   if(popKey) {
     db.ref("cases/" + popKey).update({status:"Accepted"});
@@ -295,14 +304,14 @@ function accFromPopup() {
 // ===== TABS =====
 function showTab(t) {
   curTab = t;
-  var tabs = ["New","Accepted","Done"];
-  for(var i=0;i<tabs.length;i++) {
-    document.getElementById("t-"+tabs[i]).className = (tabs[i]===t) ? "tab on" : "tab";
+  var all = ["New","Accepted","Done"];
+  for(var i=0;i<all.length;i++) {
+    document.getElementById("t-"+all[i]).className = (all[i]===t) ? "tab on" : "tab";
   }
   render();
 }
 
-// ===== RENDER CASES =====
+// ===== RENDER =====
 function render() {
   var list = document.getElementById("cList");
   var f = [];
@@ -319,27 +328,24 @@ function render() {
   for(var j=0;j<f.length;j++) {
     var c = f[j];
     var cls = c.status==="New"?"nc":c.status==="Accepted"?"ac":"dc";
-    var chipCls = c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
-    h += '<div class="card ' + cls + '">';
-    h += '<div class="cid">' + c.id + ' &bull; ' + (c.date||"") + '</div>';
-    h += '<div class="cname">&#128100; ' + c.customer + '</div>';
-    h += '<div class="caddr">&#128222; ' + c.mobile + '<br>&#128205; ' + c.address + '</div>';
-    h += '<div class="cprob">&#9888;&#65039; ' + c.problem + '</div>';
-    h += '<div><span class="chip cM">&#128247; ' + (c.model||"N/A") + '</span><span class="chip ' + chipCls + '">' + c.status + '</span></div>';
-    if(c.status === "New") {
-      h += '<button class="abtn acc" onclick="accCase(\'' + c.key + '\')">&#9989; ACCEPT CASE</button>';
-    }
-    if(c.status === "Accepted") {
-      h += '<button class="abtn don" onclick="openRep(\'' + c.key + '\')">&#128203; DONE + REPORT</button>';
-    }
-    h += '<button class="abtn cal" onclick="window.location.href=\'tel:' + c.mobile + '\'">&#128222; Call Customer</button>';
+    var ch  = c.status==="New"?"cN":c.status==="Accepted"?"cA":"cD";
+    h += '<div class="card '+cls+'">';
+    h += '<div class="cid">'+c.id+' &bull; '+(c.date||"")+'</div>';
+    h += '<div class="cname">&#128100; '+c.customer+'</div>';
+    h += '<div class="caddr">&#128222; '+c.mobile+'<br>&#128205; '+c.address+'</div>';
+    h += '<div class="cprob">&#9888; '+c.problem+'</div>';
+    h += '<div><span class="chip cM">&#128247; '+(c.model||"N/A")+'</span>';
+    h += '<span class="chip '+ch+'">'+c.status+'</span></div>';
+    if(c.status==="New")      h += '<button class="abtn acc" onclick="accCase(\''+c.key+'\')">&#9989; ACCEPT CASE</button>';
+    if(c.status==="Accepted") h += '<button class="abtn don" onclick="openRep(\''+c.key+'\')">&#128203; DONE + REPORT</button>';
+    h += '<button class="abtn cal" onclick="window.location.href=\'tel:'+c.mobile+'\'">&#128222; Call Customer</button>';
     h += '</div>';
   }
   list.innerHTML = h;
 }
 
 function accCase(k) {
-  db.ref("cases/" + k).update({status:"Accepted"});
+  db.ref("cases/"+k).update({status:"Accepted"});
   showTab("Accepted");
 }
 
@@ -350,10 +356,10 @@ function openRep(k) {
   for(var i=0;i<myCases.length;i++){ if(myCases[i].key===k){ c=myCases[i]; break; } }
   if(!c) return;
   document.getElementById("rInfo").innerHTML =
-    "<strong>" + c.id + "</strong><br>" +
-    "&#128100; " + c.customer + " &mdash; " + c.mobile + "<br>" +
-    "&#128205; " + c.address + "<br>" +
-    "&#9888;&#65039; " + c.problem;
+    "<strong>"+c.id+"</strong><br>"+
+    "&#128100; "+c.customer+" &mdash; "+c.mobile+"<br>"+
+    "&#128205; "+c.address+"<br>"+
+    "&#9888; "+c.problem;
   document.getElementById("rWork").value = "";
   document.getElementById("rParts").value = "";
   document.getElementById("rCharge").value = "";
@@ -365,33 +371,32 @@ function closeRep() { document.getElementById("repModal").classList.remove("on")
 
 function subReport() {
   var w = document.getElementById("rWork").value.trim();
-  if(!w) { alert("Kya kaam kiya - fill karo!"); return; }
+  if(!w){ alert("Kya kaam kiya - fill karo!"); return; }
   var c = null;
   for(var i=0;i<myCases.length;i++){ if(myCases[i].key===repKey){ c=myCases[i]; break; } }
   if(!c) return;
 
   var today = new Date().toLocaleDateString("hi-IN").split("/").join("-");
   var rep = {
-    caseId: c.id, customer: c.customer, mobile: c.mobile, address: c.address,
-    problem: c.problem, model: c.model||"N/A", techName: myName,
-    workDone: w,
-    partsUsed: document.getElementById("rParts").value || "N/A",
-    timeTaken: document.getElementById("rTime").value,
-    serviceCharge: document.getElementById("rCharge").value || "0",
-    customerFeedback: document.getElementById("rFb").value,
-    remarks: document.getElementById("rRem").value || "N/A",
-    date: today,
-    completedAt: new Date().toLocaleString("hi-IN")
+    caseId:c.id, customer:c.customer, mobile:c.mobile, address:c.address,
+    problem:c.problem, model:c.model||"N/A", techName:myName,
+    workDone:w,
+    partsUsed:document.getElementById("rParts").value||"N/A",
+    timeTaken:document.getElementById("rTime").value,
+    serviceCharge:document.getElementById("rCharge").value||"0",
+    customerFeedback:document.getElementById("rFb").value,
+    remarks:document.getElementById("rRem").value||"N/A",
+    date:today,
+    completedAt:new Date().toLocaleString("hi-IN")
   };
 
-  db.ref("reports/" + myName + "/" + today + "/" + c.id).set(rep).then(function() {
-    return db.ref("cases/" + repKey).update({status:"Done", report:rep, completedAt:rep.completedAt});
-  }).then(function() {
+  db.ref("reports/"+myName+"/"+today+"/"+c.id).set(rep).then(function(){
+    return db.ref("cases/"+repKey).update({status:"Done", report:rep, completedAt:rep.completedAt});
+  }).then(function(){
     closeRep();
     showTab("Done");
     if(navigator.vibrate) navigator.vibrate([200,100,200]);
-    alert("Report submit ho gaya! Case DONE!");
-  }).catch(function(e) { alert("Error: " + e.message); });
+    alert("Report submit! Case DONE!");
+  }).catch(function(e){ alert("Error: "+e.message); });
 }
-</script>
-</body></html>
+</script></body></html>

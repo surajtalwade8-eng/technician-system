@@ -159,431 +159,199 @@ td{padding:9px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-
 var db, auth, allCases, curFilter, techMap;
 allCases = [];
 curFilter = "All";
 techMap = {};
 
-firebase.initializeApp({
-  apiKey: "AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
-  authDomain: "tech-b30b8.firebaseapp.com",
-  databaseURL: "https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "tech-b30b8",
-  storageBucket: "tech-b30b8.firebasestorage.app",
-  messagingSenderId: "815434648437",
-  appId: "1:815434648437:web:bd11c672f57fc24e1ba13c"
-});
+firebase.initializeApp({apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",authDomain:"tech-b30b8.firebaseapp.com",databaseURL:"https://tech-b30b8-default-rtdb.asia-southeast1.firebasedatabase.app/",projectId:"tech-b30b8",storageBucket:"tech-b30b8.firebasestorage.app",messagingSenderId:"815434648437",appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"});
 db = firebase.database();
 auth = firebase.auth();
 
-function g(id) { return document.getElementById(id); }
+function g(id){return document.getElementById(id);}
 
-function showMsg(id, msg, isErr) {
-  var el = g(id);
-  el.textContent = msg;
-  el.style.display = msg ? "block" : "none";
-}
-
-// LOGIN
-g("LBTN").addEventListener("click", function() {
-  var email = g("AEMAIL").value.trim();
-  var pass = g("APASS").value;
-  var btn = g("LBTN");
-  var err = g("LERR");
-  err.style.display = "none";
-  if (!email || !pass) {
-    err.textContent = "Email aur password daalo!";
-    err.style.display = "block";
-    return;
-  }
-  btn.textContent = "Checking...";
-  btn.disabled = true;
-  auth.signInWithEmailAndPassword(email, pass).then(function() {
-    startMain();
-  }).catch(function(e) {
-    btn.textContent = "LOGIN";
-    btn.disabled = false;
-    var msg = e.message;
-    if (e.code === "auth/wrong-password") { msg = "Password galat hai!"; }
-    if (e.code === "auth/user-not-found") { msg = "Email nahi mila!"; }
-    if (e.code === "auth/invalid-credential") { msg = "Email ya password galat hai!"; }
-    if (e.code === "auth/invalid-email") { msg = "Email format galat hai!"; }
-    err.textContent = msg;
-    err.style.display = "block";
+g("LBTN").addEventListener("click",function(){
+  var email=g("AEMAIL").value.trim();
+  var pass=g("APASS").value;
+  var err=g("LERR");
+  err.style.display="none";
+  if(!email||!pass){err.textContent="Email aur password daalo!";err.style.display="block";return;}
+  g("LBTN").textContent="Checking...";g("LBTN").disabled=true;
+  auth.signInWithEmailAndPassword(email,pass).then(function(){startMain();}).catch(function(e){
+    g("LBTN").textContent="LOGIN";g("LBTN").disabled=false;
+    var m=e.message;
+    if(e.code==="auth/wrong-password"||e.code==="auth/invalid-credential"){m="Email ya password galat hai!";}
+    if(e.code==="auth/user-not-found"){m="Email nahi mila!";}
+    if(e.code==="auth/invalid-email"){m="Email format galat hai!";}
+    err.textContent=m;err.style.display="block";
   });
 });
 
-g("APASS").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") { g("LBTN").click(); }
-});
+g("APASS").addEventListener("keydown",function(e){if(e.key==="Enter"){g("LBTN").click();}});
+g("OBTN").addEventListener("click",function(){auth.signOut().then(function(){location.reload();});});
+auth.onAuthStateChanged(function(user){if(user){startMain();}});
 
-g("OBTN").addEventListener("click", function() {
-  auth.signOut().then(function() { location.reload(); });
-});
+function startMain(){g("LS").style.display="none";g("MS").style.display="block";loadTechs();listenCases();}
 
-auth.onAuthStateChanged(function(user) {
-  if (user) { startMain(); }
-});
-
-function startMain() {
-  g("LS").style.display = "none";
-  g("MS").style.display = "block";
-  loadTechs();
-  listenCases();
-}
-
-// TABS
-document.querySelectorAll(".tab").forEach(function(tab) {
-  tab.addEventListener("click", function() {
-    document.querySelectorAll(".tab").forEach(function(t) { t.className = "tab"; });
-    this.className = "tab on";
-    document.querySelectorAll(".pg").forEach(function(p) { p.className = "pg"; });
-    g(this.getAttribute("data-pg")).className = "pg on";
-    if (this.getAttribute("data-pg") === "PT") { loadTechList(); }
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(t){t.className="tab";});
+    this.className="tab on";
+    document.querySelectorAll(".pg").forEach(function(p){p.className="pg";});
+    g(this.getAttribute("data-pg")).className="pg on";
+    if(this.getAttribute("data-pg")==="PT"){loadTechList();}
   });
 });
 
-// FILTER
-document.querySelectorAll(".fb").forEach(function(btn) {
-  btn.addEventListener("click", function() {
-    document.querySelectorAll(".fb").forEach(function(b) { b.className = "fb"; });
-    this.className = "fb on";
-    curFilter = this.getAttribute("data-f");
+document.querySelectorAll(".fb").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    document.querySelectorAll(".fb").forEach(function(b){b.className="fb";});
+    this.className="fb on";
+    curFilter=this.getAttribute("data-f");
     renderCases();
   });
 });
 
-// LOAD TECHS
-function loadTechs() {
-  db.ref("technicians").on("value", function(snap) {
-    techMap = {};
-    var s1 = g("CTSEL");
-    var s2 = g("RTSEL");
-    s1.innerHTML = "<option value=''>-- Select --</option>";
-    s2.innerHTML = "<option value=''>All Technicians</option>";
-    if (snap.exists()) {
-      snap.forEach(function(c) {
-        var t = c.val();
-        techMap[c.key] = { name: t.name, userId: t.userId || "" };
-        var o1 = document.createElement("option");
-        o1.value = c.key;
-        o1.textContent = t.name;
-        if (t.area) { o1.textContent += " (" + t.area + ")"; }
-        s1.appendChild(o1);
-        var o2 = document.createElement("option");
-        o2.value = t.name;
-        o2.textContent = t.name;
-        s2.appendChild(o2);
-      });
-    }
+function loadTechs(){
+  db.ref("technicians").on("value",function(snap){
+    techMap={};
+    var s1=g("CTSEL");var s2=g("RTSEL");
+    s1.innerHTML="<option value=''>-- Select --</option>";
+    s2.innerHTML="<option value=''>All Technicians</option>";
+    if(snap.exists()){snap.forEach(function(c){
+      var t=c.val();techMap[c.key]={name:t.name,userId:t.userId||""};
+      var o1=document.createElement("option");o1.value=c.key;o1.textContent=t.name+(t.area?" ("+t.area+")":"");s1.appendChild(o1);
+      var o2=document.createElement("option");o2.value=t.name;o2.textContent=t.name;s2.appendChild(o2);
+    });}
   });
 }
 
-// LISTEN CASES
-function listenCases() {
-  db.ref("cases").on("value", function(snap) {
-    allCases = [];
-    if (snap.exists()) {
-      snap.forEach(function(c) {
-        var d = c.val();
-        d.key = c.key;
-        allCases.unshift(d);
-      });
-    }
-    g("ST").textContent = allCases.length;
-    g("SN").textContent = allCases.filter(function(x) { return x.status === "New"; }).length;
-    g("SA").textContent = allCases.filter(function(x) { return x.status === "Accepted"; }).length;
-    g("SD").textContent = allCases.filter(function(x) { return x.status === "Done"; }).length;
+function listenCases(){
+  db.ref("cases").on("value",function(snap){
+    allCases=[];
+    if(snap.exists()){snap.forEach(function(c){var d=c.val();d.key=c.key;allCases.unshift(d);});}
+    g("ST").textContent=allCases.length;
+    g("SN").textContent=allCases.filter(function(x){return x.status==="New";}).length;
+    g("SA").textContent=allCases.filter(function(x){return x.status==="Accepted";}).length;
+    g("SD").textContent=allCases.filter(function(x){return x.status==="Done";}).length;
     renderCases();
   });
 }
 
-// RENDER CASES
-function renderCases() {
-  var tbody = g("CTBL");
-  var list = curFilter === "All" ? allCases : allCases.filter(function(c) { return c.status === curFilter; });
-  if (!list.length) {
-    tbody.innerHTML = "<tr><td colspan='10' class='empty'>Koi case nahi</td></tr>";
-    return;
-  }
-  tbody.innerHTML = "";
-  list.forEach(function(c) {
-    var clsMap = { New: "cN", Accepted: "cA", Done: "cD" };
-    var cls = clsMap[c.status] || "cN";
-    var tn = c.techName || "-";
-    if (!tn && techMap[c.techKey]) { tn = techMap[c.techKey].name; }
-    var tr = document.createElement("tr");
-    tr.innerHTML =
-      "<td>" + (c.id || "-") + "</td>" +
-      "<td>" + (c.date || "-") + "</td>" +
-      "<td><b>" + (c.customer || "-") + "</b><br><small>" + (c.mobile || "") + "</small></td>" +
-      "<td>" + (c.address || "-") + "</td>" +
-      "<td>" + (c.problem || "-") + "</td>" +
-      "<td>" + tn + "</td>" +
-      "<td><span class='" + cls + "'>" + c.status + "</span></td>" +
-      "<td>" + (c.expenseAmt ? "Rs." + c.expenseAmt : "-") + "</td>" +
-      "<td>" + (c.photoCount ? c.photoCount + " pics" : "-") + "</td>" +
-      "<td><button class='delbtn' data-key='" + c.key + "'>Del</button></td>";
+function renderCases(){
+  var tbody=g("CTBL");
+  var list=curFilter==="All"?allCases:allCases.filter(function(c){return c.status===curFilter;});
+  if(!list.length){tbody.innerHTML="<tr><td colspan='10' class='empty'>Koi case nahi</td></tr>";return;}
+  tbody.innerHTML="";
+  list.forEach(function(c){
+    var cls={New:"cN",Accepted:"cA",Done:"cD"}[c.status]||"cN";
+    var tn=c.techName||"-";if(!tn&&techMap[c.techKey]){tn=techMap[c.techKey].name;}
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td>"+(c.id||"-")+"</td><td>"+(c.date||"-")+"</td><td><b>"+(c.customer||"-")+"</b><br><small>"+(c.mobile||"")+"</small></td><td>"+(c.address||"-")+"</td><td>"+(c.problem||"-")+"</td><td>"+tn+"</td><td><span class='"+cls+"'>"+c.status+"</span></td><td>"+(c.expenseAmt?"Rs."+c.expenseAmt:"-")+"</td><td>"+(c.photoCount?c.photoCount+" pics":"-")+"</td><td><button class='delbtn' data-key='"+c.key+"'>Del</button></td>";
     tbody.appendChild(tr);
   });
-  tbody.querySelectorAll(".delbtn").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      if (!confirm("Delete case?")) { return; }
-      db.ref("cases/" + this.getAttribute("data-key")).remove();
-    });
+  tbody.querySelectorAll(".delbtn").forEach(function(btn){
+    btn.addEventListener("click",function(){if(!confirm("Delete case?")){return;}db.ref("cases/"+this.getAttribute("data-key")).remove();});
   });
 }
 
-// ASSIGN CASE
-g("ABTN").addEventListener("click", function() {
-  var name = g("CN").value.trim();
-  var mob = g("CM").value.trim();
-  var addr = g("CA").value.trim();
-  var prob = g("CP").value.trim();
-  var model = g("CMO").value.trim();
-  var techK = g("CTSEL").value;
-  var err = g("CE");
-  err.style.display = "none";
-  if (!name || !mob || !addr || !prob) {
-    err.textContent = "Sab required fields bharo!";
-    err.style.display = "block";
-    return;
-  }
-  if (!techK) {
-    err.textContent = "Technician select karo!";
-    err.style.display = "block";
-    return;
-  }
-  var today = new Date();
-  var dateStr = today.getDate() + "-" + (today.getMonth() + 1) + "-" + today.getFullYear();
-  var tn = techMap[techK] ? techMap[techK].name : "Unknown";
-  var caseId = "CWC-" + Date.now().toString().slice(-6);
-  db.ref("cases").push().set({
-    id: caseId,
-    date: dateStr,
-    customer: name,
-    mobile: mob,
-    address: addr,
-    problem: prob,
-    model: model || "N/A",
-    techKey: techK,
-    techName: tn,
-    status: "New",
-    createdAt: today.toLocaleString()
-  }).then(function() {
-    var waMsg = "New Case! Ticket: " + caseId + " Customer: " + name + " Address: " + addr + " Problem: " + prob;
-    window.open("https://wa.me/?text=" + encodeURIComponent(waMsg), "_blank");
-    g("CN").value = "";
-    g("CM").value = "";
-    g("CA").value = "";
-    g("CP").value = "";
-    g("CMO").value = "";
-    g("CTSEL").value = "";
-  }).catch(function(e) {
-    err.textContent = "Error: " + e.message;
-    err.style.display = "block";
-  });
+g("ABTN").addEventListener("click",function(){
+  var name=g("CN").value.trim();var mob=g("CM").value.trim();var addr=g("CA").value.trim();var prob=g("CP").value.trim();var model=g("CMO").value.trim();var techK=g("CTSEL").value;
+  var err=g("CE");err.style.display="none";
+  if(!name||!mob||!addr||!prob){err.textContent="Sab required fields bharo!";err.style.display="block";return;}
+  if(!techK){err.textContent="Technician select karo!";err.style.display="block";return;}
+  var today=new Date();var dateStr=today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();
+  var tn=techMap[techK]?techMap[techK].name:"Unknown";
+  var caseId="CWC-"+Date.now().toString().slice(-6);
+  db.ref("cases").push().set({id:caseId,date:dateStr,customer:name,mobile:mob,address:addr,problem:prob,model:model||"N/A",techKey:techK,techName:tn,status:"New",createdAt:today.toLocaleString()}).then(function(){
+    var waMsg="New Case! Ticket: "+caseId+" Customer: "+name+" Address: "+addr+" Problem: "+prob;
+    window.open("https://wa.me/?text="+encodeURIComponent(waMsg),"_blank");
+    g("CN").value="";g("CM").value="";g("CA").value="";g("CP").value="";g("CMO").value="";g("CTSEL").value="";
+  }).catch(function(e){err.textContent="Error: "+e.message;err.style.display="block";});
 });
 
-// ADD TECHNICIAN
-g("ATBTN").addEventListener("click", function() {
-  var name = g("TNAME").value.trim();
-  var uid = g("TUID").value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
-  var pass = g("TPASS").value;
-  var mob = g("TMOB").value.trim();
-  var area = g("TAREA").value.trim();
-  var sm = g("TSUCC");
-  var em = g("TERR");
-  sm.style.display = "none";
-  em.style.display = "none";
-  if (!name) { em.textContent = "Name required!"; em.style.display = "block"; return; }
-  if (uid.length < 3) { em.textContent = "User ID min 3 chars!"; em.style.display = "block"; return; }
-  if (pass.length < 6) { em.textContent = "Password min 6 chars!"; em.style.display = "block"; return; }
-  g("TUID").value = uid;
-  db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(snap) {
-    if (snap.exists()) {
-      em.textContent = "User ID already exists!";
-      em.style.display = "block";
-      return Promise.reject("dup");
-    }
-    var key = db.ref("technicians").push().key;
-    return db.ref("technicians/" + key).set({
-      name: name,
-      userId: uid,
-      passHash: btoa(pass + "_cwc_salt_2024"),
-      mobile: mob || "N/A",
-      area: area || "N/A",
-      active: true,
-      createdAt: new Date().toLocaleString()
-    });
-  }).then(function() {
-    sm.textContent = "Added: " + name + " (ID: " + uid + ")";
-    sm.style.display = "block";
-    g("TNAME").value = "";
-    g("TUID").value = "";
-    g("TPASS").value = "";
-    g("TMOB").value = "";
-    g("TAREA").value = "";
+g("ATBTN").addEventListener("click",function(){
+  var name=g("TNAME").value.trim();
+  var uid=g("TUID").value.trim().toLowerCase().replace(/[^a-z0-9_]/g,"");
+  var pass=g("TPASS").value;var mob=g("TMOB").value.trim();var area=g("TAREA").value.trim();
+  var sm=g("TSUCC");var em=g("TERR");
+  sm.style.display="none";em.style.display="none";
+  if(!name){em.textContent="Name required!";em.style.display="block";return;}
+  if(uid.length<3){em.textContent="User ID min 3 chars!";em.style.display="block";return;}
+  if(pass.length<6){em.textContent="Password min 6 chars!";em.style.display="block";return;}
+  g("TUID").value=uid;
+  db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(snap){
+    if(snap.exists()){em.textContent="User ID already exists!";em.style.display="block";return Promise.reject("dup");}
+    var key=db.ref("technicians").push().key;
+    return db.ref("technicians/"+key).set({name:name,userId:uid,passHash:btoa(pass+"_cwc_salt_2024"),mobile:mob||"N/A",area:area||"N/A",active:true,createdAt:new Date().toLocaleString()});
+  }).then(function(){
+    sm.textContent="Added: "+name+" (ID: "+uid+")";sm.style.display="block";
+    g("TNAME").value="";g("TUID").value="";g("TPASS").value="";g("TMOB").value="";g("TAREA").value="";
     loadTechList();
-    setTimeout(function() { sm.style.display = "none"; }, 4000);
-  }).catch(function(e) {
-    if (e === "dup") { return; }
-    em.textContent = "Error: " + e.message;
-    em.style.display = "block";
-  });
+    setTimeout(function(){sm.style.display="none";},4000);
+  }).catch(function(e){if(e==="dup"){return;}em.textContent="Error: "+e.message;em.style.display="block";});
 });
 
-// TECH LIST
-function loadTechList() {
-  var list = g("TLIST");
-  list.innerHTML = "<div class='empty'>Loading...</div>";
-  db.ref("technicians").once("value").then(function(snap) {
-    if (!snap.exists()) {
-      list.innerHTML = "<div class='empty'>Koi technician nahi.</div>";
-      return;
-    }
-    list.innerHTML = "";
-    snap.forEach(function(c) {
-      var t = c.val();
-      var div = document.createElement("div");
-      div.className = "tc";
-      div.innerHTML =
-        "<div class='ti'><h4>" + t.name + "</h4><p>" + (t.mobile || "") + "</p>" +
-        "<span class='bg'>" + (t.area || "N/A") + "</span>" +
-        "<span class='ib'>ID: " + (t.userId || "N/A") + "</span></div>" +
-        "<div class='ta'>" +
-        "<button class='rbtn' data-key='" + c.key + "' data-name='" + t.name + "'>Reset Pass</button>" +
-        "<button class='dlbtn' data-key='" + c.key + "' data-name='" + t.name + "'>Delete</button>" +
-        "</div>";
+function loadTechList(){
+  var list=g("TLIST");list.innerHTML="<div class='empty'>Loading...</div>";
+  db.ref("technicians").once("value").then(function(snap){
+    if(!snap.exists()){list.innerHTML="<div class='empty'>Koi technician nahi.</div>";return;}
+    list.innerHTML="";
+    snap.forEach(function(c){
+      var t=c.val();var div=document.createElement("div");div.className="tc";
+      div.innerHTML="<div class='ti'><h4>"+t.name+"</h4><p>"+(t.mobile||"")+"</p><span class='bg'>"+(t.area||"N/A")+"</span><span class='ib'>ID: "+(t.userId||"N/A")+"</span></div><div class='ta'><button class='rbtn' data-key='"+c.key+"' data-name='"+t.name+"'>Reset Pass</button><button class='dlbtn' data-key='"+c.key+"' data-name='"+t.name+"'>Delete</button></div>";
       list.appendChild(div);
     });
-    list.querySelectorAll(".rbtn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var k = this.getAttribute("data-key");
-        var n = this.getAttribute("data-name");
-        var np = prompt("New password for " + n + " min 6 chars:");
-        if (!np || np.length < 6) { alert("Min 6 chars!"); return; }
-        db.ref("technicians/" + k + "/passHash").set(btoa(np + "_cwc_salt_2024")).then(function() {
-          alert("Password reset. New: " + np);
-        });
-      });
+    list.querySelectorAll(".rbtn").forEach(function(btn){
+      btn.addEventListener("click",function(){var k=this.getAttribute("data-key");var n=this.getAttribute("data-name");var np=prompt("New password for "+n+" min 6 chars:");if(!np||np.length<6){alert("Min 6 chars!");return;}db.ref("technicians/"+k+"/passHash").set(btoa(np+"_cwc_salt_2024")).then(function(){alert("Password reset. New: "+np);});});
     });
-    list.querySelectorAll(".dlbtn").forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var k = this.getAttribute("data-key");
-        var n = this.getAttribute("data-name");
-        if (!confirm("Delete " + n + "?")) { return; }
-        db.ref("technicians/" + k).remove().then(loadTechList);
-      });
+    list.querySelectorAll(".dlbtn").forEach(function(btn){
+      btn.addEventListener("click",function(){var k=this.getAttribute("data-key");var n=this.getAttribute("data-name");if(!confirm("Delete "+n+"?")){return;}db.ref("technicians/"+k).remove().then(loadTechList);});
     });
   });
 }
 
-// LOAD REPORTS
-g("LRBTN").addEventListener("click", function() {
-  var tn = g("RTSEL").value;
-  var dt = g("RDATE").value;
-  var tbody = g("RTBL");
-  tbody.innerHTML = "<tr><td colspan='10' class='empty'>Loading...</td></tr>";
-  var ref = tn ? db.ref("reports/" + tn) : db.ref("reports");
-  ref.once("value").then(function(snap) {
-    var rows = [];
-    if (snap.exists()) {
-      snap.forEach(function(d1) {
-        d1.forEach(function(d2) {
-          var r = d2.val();
-          if (!r || !r.techName) { return; }
-          if (dt) {
-            var rd = r.date || "";
-            var fd = dt.split("-").reverse().join("-");
-            if (rd !== fd && rd !== dt) { return; }
-          }
-          rows.push(r);
-        });
-      });
-    }
-    if (!rows.length) {
-      tbody.innerHTML = "<tr><td colspan='10' class='empty'>No reports found</td></tr>";
-      return;
-    }
-    tbody.innerHTML = "";
-    rows.forEach(function(r) {
-      var ph = "";
-      if (r.jobPhotos) {
-        r.jobPhotos.slice(0, 3).forEach(function(p) {
-          ph += "<img class='imgth' data-src='" + p + "' src='" + p + "'>";
-        });
-      }
-      if (r.expense && r.expense.receiptPhoto) {
-        ph += "<img class='imgth' data-src='" + r.expense.receiptPhoto + "' src='" + r.expense.receiptPhoto + "'>";
-      }
-      var tr = document.createElement("tr");
-      tr.innerHTML =
-        "<td>" + (r.date || "-") + "</td>" +
-        "<td>" + (r.techName || "-") + "</td>" +
-        "<td>" + (r.caseId || "-") + "</td>" +
-        "<td>" + (r.customer || "-") + "</td>" +
-        "<td>" + (r.workDone || "-") + "</td>" +
-        "<td>" + (r.partsUsed || "-") + "</td>" +
-        "<td>" + (r.timeTaken || "-") + "</td>" +
-        "<td>" + (r.customerFeedback || "-") + "</td>" +
-        "<td>" + (r.expense ? "Rs." + r.expense.amount : "-") + "</td>" +
-        "<td>" + (ph || "-") + "</td>";
+g("LRBTN").addEventListener("click",function(){
+  var tn=g("RTSEL").value;var dt=g("RDATE").value;
+  var tbody=g("RTBL");tbody.innerHTML="<tr><td colspan='10' class='empty'>Loading...</td></tr>";
+  var ref=tn?db.ref("reports/"+tn):db.ref("reports");
+  ref.once("value").then(function(snap){
+    var rows=[];
+    if(snap.exists()){snap.forEach(function(d1){d1.forEach(function(d2){var r=d2.val();if(!r||!r.techName){return;}if(dt){var rd=r.date||"";var fd=dt.split("-").reverse().join("-");if(rd!==fd&&rd!==dt){return;}}rows.push(r);});});}
+    if(!rows.length){tbody.innerHTML="<tr><td colspan='10' class='empty'>No reports found</td></tr>";return;}
+    tbody.innerHTML="";
+    rows.forEach(function(r){
+      var ph="";
+      if(r.jobPhotos){r.jobPhotos.slice(0,3).forEach(function(p){ph+="<img class='imgth' data-src='"+p+"' src='"+p+"'>";});}
+      if(r.expense&&r.expense.receiptPhoto){ph+="<img class='imgth' data-src='"+r.expense.receiptPhoto+"' src='"+r.expense.receiptPhoto+"'>";}
+      var tr=document.createElement("tr");
+      tr.innerHTML="<td>"+(r.date||"-")+"</td><td>"+(r.techName||"-")+"</td><td>"+(r.caseId||"-")+"</td><td>"+(r.customer||"-")+"</td><td>"+(r.workDone||"-")+"</td><td>"+(r.partsUsed||"-")+"</td><td>"+(r.timeTaken||"-")+"</td><td>"+(r.customerFeedback||"-")+"</td><td>"+(r.expense?"Rs."+r.expense.amount:"-")+"</td><td>"+(ph||"-")+"</td>";
       tbody.appendChild(tr);
     });
   });
 });
 
-// EXPORT REPORTS CSV
-g("REXBTN").addEventListener("click", function() {
-  var rows = document.querySelectorAll("#RTBL tr");
-  if (!rows.length) { return; }
-  var csv = "Date,Tech,Case,Customer,Work Done,Parts,Time,Feedback,Expense
+g("REXBTN").addEventListener("click",function(){
+  var rows=document.querySelectorAll("#RTBL tr");if(!rows.length){return;}
+  var hdr="Date,Tech,Case,Customer,Work Done,Parts,Time,Feedback,Expense";
+  var csv=hdr+"
 ";
-  rows.forEach(function(row) {
-    var cells = row.querySelectorAll("td");
-    if (cells.length < 9) { return; }
-    var line = [];
-    for (var i = 0; i < 9; i++) {
-      line.push('"' + (cells[i].textContent || "").replace(/"/g, '""') + '"');
-    }
-    csv += line.join(",") + "
-";
-  });
-  var a = document.createElement("a");
-  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  a.download = "reports.csv";
-  a.click();
+  rows.forEach(function(row){var cells=row.querySelectorAll("td");if(cells.length<9){return;}var line=[];for(var i=0;i<9;i++){line.push('"'+(cells[i].textContent||"").replace(/"/g,'""')+'"');}csv+=line.join(",")+"
+";});
+  var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="reports.csv";a.click();
 });
 
-// EXPORT CASES CSV
-g("EXLBTN").addEventListener("click", function() {
-  var csv = "ID,Date,Customer,Mobile,Address,Problem,Model,Tech,Status,Expense
+g("EXLBTN").addEventListener("click",function(){
+  var hdr="ID,Date,Customer,Mobile,Address,Problem,Model,Tech,Status,Expense";
+  var csv=hdr+"
 ";
-  allCases.forEach(function(c) {
-    csv += c.id + "," + c.date + "," + c.customer + "," + c.mobile + ",";
-    csv += '"' + (c.address || "").replace(/"/g, '""') + '",';
-    csv += (c.problem || "") + "," + (c.model || "") + "," + (c.techName || "") + ",";
-    csv += c.status + "," + (c.expenseAmt || "0") + "
-";
-  });
-  var a = document.createElement("a");
-  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  a.download = "cases.csv";
-  a.click();
+  allCases.forEach(function(c){csv+=c.id+","+c.date+","+c.customer+","+c.mobile+","+('"'+(c.address||"").replace(/"/g,'""')+'"')+","+c.problem+","+(c.model||"")+","+(c.techName||"")+","+c.status+","+(c.expenseAmt||"0")+"
+";});
+  var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="cases.csv";a.click();
 });
 
-// IMAGE CLICK
-document.addEventListener("click", function(e) {
-  if (e.target && e.target.classList.contains("imgth")) {
-    g("IIMG").src = e.target.getAttribute("data-src");
-    g("IMOD").style.display = "flex";
-  }
-});
-g("ICLS").addEventListener("click", function() {
-  g("IMOD").style.display = "none";
-});
+document.addEventListener("click",function(e){if(e.target&&e.target.classList.contains("imgth")){g("IIMG").src=e.target.getAttribute("data-src");g("IMOD").style.display="flex";}});
+g("ICLS").addEventListener("click",function(){g("IMOD").style.display="none";});
 
 </script>
 </body>

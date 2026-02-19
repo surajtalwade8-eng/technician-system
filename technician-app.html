@@ -150,7 +150,7 @@ function loadTechs() {
     if(snap.exists()) {
       snap.forEach(function(c) {
         var t = c.val();
-        sel.add(new Option("&#128104; " + t.name + " (" + t.number + ")", c.key + "|" + t.name));
+        sel.add(new Option(t.name , c.key + "|" + t.name));
       });
     } else {
       sel.innerHTML = '<option value="">Koi tech nahi (Admin se add karwao)</option>';

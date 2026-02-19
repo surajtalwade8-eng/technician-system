@@ -6,88 +6,158 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f0f4f8}
-.hdr{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:20px;text-align:center}
-.hdr h1{font-size:22px;margin-bottom:5px}#st{font-size:13px;margin-top:5px}
-.stats{display:flex;gap:10px;padding:15px;flex-wrap:wrap}
-.stat{flex:1;min-width:80px;background:white;padding:15px;border-radius:10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.stat h2{font-size:26px;margin-bottom:3px}.stat p{font-size:12px;color:#888}
-.tabbar{display:flex;background:white;margin:0 15px 15px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
-.tb{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:600;color:#999;border-bottom:3px solid transparent}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8}
+.hdr{background:linear-gradient(135deg,#25D366,#128C7E);color:white;padding:18px 20px;text-align:center}
+.hdr h1{font-size:20px;margin-bottom:4px}
+#st{font-size:12px;opacity:0.85}
+.stats{display:flex;gap:10px;padding:14px;flex-wrap:wrap}
+.stat{flex:1;min-width:70px;background:white;padding:13px;border-radius:10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.stat h2{font-size:24px;margin-bottom:2px}.stat p{font-size:11px;color:#888}
+.tabbar{display:flex;background:white;margin:0 14px 14px;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.tb{flex:1;padding:13px 5px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:#999;border-bottom:3px solid transparent}
 .tb.on{color:#25D366;border-bottom:3px solid #25D366;background:#f0fff4}
-.pg{display:none;padding:0 15px 20px}
-.card{background:white;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:15px}
-.card h3{color:#128C7E;margin-bottom:15px;font-size:15px;padding-bottom:8px;border-bottom:2px solid #e0f7e9}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-input,select,textarea{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:15px;margin:5px 0;font-family:Arial;outline:none;box-sizing:border-box}
+.pg{display:none;padding:0 14px 20px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:14px}
+.card h3{color:#128C7E;margin-bottom:13px;font-size:14px;padding-bottom:7px;border-bottom:2px solid #e0f7e9}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+input,select,textarea{width:100%;padding:11px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;margin:4px 0;font-family:Arial;outline:none;box-sizing:border-box}
 input:focus,select:focus,textarea:focus{border-color:#25D366}
-.btn{padding:13px 18px;border:none;border-radius:8px;cursor:pointer;font-size:15px;font-weight:700;margin:4px 0;width:100%}
-.g{background:#25D366;color:white}.b{background:#2196F3;color:white}.r{background:#f44336;color:white}.wa{background:#00ff88;color:#000}
-.sm{padding:8px 12px;font-size:13px;width:auto;margin:2px}
-.pill{display:inline-flex;align-items:center;gap:8px;background:#e8f5e9;color:#2e7d32;padding:8px 14px;border-radius:20px;font-size:14px;margin:4px}
-.tg{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.btn{padding:13px 16px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;margin:3px 0;width:100%}
+.gr{background:#25D366;color:white}.bl{background:#2196F3;color:white}.rd{background:#f44336;color:white}
+.sm{padding:7px 11px;font-size:12px;width:auto;margin:1px}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#e8f5e9;color:#2e7d32;padding:7px 13px;border-radius:18px;font-size:13px;margin:3px}
+.tg{display:inline-block;padding:4px 10px;border-radius:18px;font-size:11px;font-weight:700}
 .N{background:#fff3cd;color:#856404}.A{background:#cce5ff;color:#0066cc}.D{background:#d4edda;color:#28a745}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#f0fff4;padding:10px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32}
-td{padding:10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
-#toast{display:none;position:fixed;top:15px;right:15px;background:white;border-left:5px solid #25D366;padding:15px 20px;border-radius:10px;box-shadow:0 8px 25px rgba(0,0,0,.15);z-index:9999;max-width:280px;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f0fff4;padding:9px 8px;text-align:left;border-bottom:2px solid #c8e6c9;color:#2e7d32;white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
+#toast{display:none;position:fixed;top:14px;right:14px;background:white;border-left:5px solid #25D366;padding:13px 18px;border-radius:10px;box-shadow:0 8px 25px rgba(0,0,0,.15);z-index:9999;max-width:270px;cursor:pointer}
+
+/* ===== PHOTO VIEWER MODAL ===== */
+#photoModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99999;flex-direction:column;align-items:center;justify-content:flex-start;padding:15px}
+#photoModal.on{display:flex}
+.pm-head{width:100%;max-width:500px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pm-head h3{color:white;font-size:16px}
+.pm-close{background:#f44336;color:white;border:none;border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer;font-weight:700}
+.pm-body{width:100%;max-width:500px;overflow-y:auto;max-height:calc(100vh - 80px)}
+.pm-section{margin-bottom:20px}
+.pm-section h4{color:#25D366;font-size:14px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:7px}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pm-img{width:100%;border-radius:10px;display:block;cursor:pointer}
+.pm-single{max-width:280px;border-radius:10px;display:block;margin:0 auto}
+.pm-info{background:rgba(255,255,255,0.1);padding:12px;border-radius:10px;color:white;font-size:13px;line-height:1.9;margin-bottom:12px}
+.exp-badge{display:inline-block;background:#ff6b35;color:white;padding:6px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:5px 0}
+/* View button */
+.vbtn{background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;padding:5px 10px;border-radius:15px;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap}
+.exp-cell{background:#fff3cd;color:#856404;padding:3px 7px;border-radius:10px;font-size:11px;font-weight:700}
 @media(max-width:600px){.g2{grid-template-columns:1fr}}
 </style></head><body>
-<div class="hdr"><h1>&#128295; Technician Assignment System</h1><div id="st">&#128260; Connecting...</div></div>
+
+<div class="hdr">
+<h1>&#128295; Technician Assignment</h1>
+<div id="st">&#128260; Firebase connecting...</div>
+</div>
+
 <div class="stats">
 <div class="stat"><h2 id="s0" style="color:#25D366">0</h2><p>Total</p></div>
 <div class="stat"><h2 id="s1" style="color:#d67e00">0</h2><p>New</p></div>
 <div class="stat"><h2 id="s2" style="color:#0066cc">0</h2><p>Accepted</p></div>
 <div class="stat"><h2 id="s3" style="color:#28a745">0</h2><p>Done</p></div>
 </div>
+
 <div class="tabbar">
 <div class="tb on" id="tb0" onclick="goTab(0)">&#128203; Cases</div>
 <div class="tb" id="tb1" onclick="goTab(1)">&#128101; Technicians</div>
 <div class="tb" id="tb2" onclick="goTab(2)">&#128202; Reports</div>
 </div>
+
+<!-- PAGE 0: CASES -->
 <div class="pg" id="pg0" style="display:block">
-<div class="card"><h3>&#10133; New Case Assign</h3>
-<div class="g2"><input id="cn" placeholder="Customer Name *"><input id="cm" placeholder="Mobile *"></div>
+<div class="card">
+<h3>&#10133; New Case Assign</h3>
+<div class="g2">
+<input id="cn" placeholder="Customer Name *">
+<input id="cm" placeholder="Mobile *">
+</div>
 <input id="ca" placeholder="Full Address *">
-<div class="g2"><input id="cmod" placeholder="Model (HP 1020)"><select id="ct"><option value="">Select Technician *</option></select></div>
+<div class="g2">
+<input id="cmod" placeholder="Model (HP 1020)">
+<select id="ct"><option value="">Select Technician *</option></select>
+</div>
 <textarea id="cp" placeholder="Problem Details *" rows="3"></textarea>
-<button class="btn g" onclick="addCase()">&#128640; ASSIGN + WhatsApp Notify</button>
+<button class="btn gr" onclick="addCase()">&#128640; ASSIGN + WhatsApp</button>
 </div>
-<div class="card"><h3>&#128203; All Cases</h3>
-<div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+<div class="card">
+<h3>&#128203; All Cases</h3>
+<div style="display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap;align-items:center">
 <input id="srch" placeholder="Search..." style="flex:1;margin:0" onkeyup="showCases()">
-<select id="stf" onchange="showCases()" style="width:auto;flex:none;margin:0;padding:12px"><option value="">All Status</option><option>New</option><option>Accepted</option><option>Done</option></select>
-<button class="btn b sm" onclick="expCases()">&#128202; Excel</button>
+<select id="stf" onchange="showCases()" style="width:auto;flex:none;margin:0;padding:11px"><option value="">All</option><option>New</option><option>Accepted</option><option>Done</option></select>
+<button class="btn bl sm" onclick="expCases()">&#128202; Excel</button>
 </div>
-<div style="overflow-x:auto"><table><thead><tr>
-<th>ID</th><th>Date</th><th>Customer</th><th>Address</th><th>Problem</th><th>Tech</th><th>Status</th><th>Actions</th>
-</tr></thead><tbody id="ctbl"><tr><td colspan="8" style="text-align:center;padding:20px;color:#aaa">No cases yet</td></tr></tbody></table></div>
-</div></div>
+<div style="overflow-x:auto">
+<table><thead><tr>
+<th>ID</th><th>Date</th><th>Customer</th><th>Address</th><th>Problem</th><th>Tech</th><th>Status</th><th>Expense</th><th>Photos</th><th>Actions</th>
+</tr></thead>
+<tbody id="ctbl"><tr><td colspan="10" style="text-align:center;padding:20px;color:#aaa">No cases</td></tr></tbody>
+</table></div></div></div>
+
+<!-- PAGE 1: TECHNICIANS -->
 <div class="pg" id="pg1">
-<div class="card"><h3>&#10133; Technician Add Karo</h3>
-<div class="g2"><input id="tn" placeholder="Name *"><input id="tnum" placeholder="10-digit WhatsApp Number *" maxlength="10" type="tel"></div>
-<button class="btn g" onclick="addTech()">&#10003; Add Technician</button>
+<div class="card">
+<h3>&#10133; Technician Add Karo</h3>
+<div class="g2">
+<input id="tn" placeholder="Name *">
+<input id="tnum" placeholder="WhatsApp (10 digits) *" maxlength="10" type="tel">
 </div>
-<div class="card"><h3>&#128101; Technician List</h3>
-<div id="tlist"><p style="color:#aaa">Koi technician nahi. Upar se add karo.</p></div>
+<button class="btn gr" onclick="addTech()">&#10003; Add Technician</button>
+</div>
+<div class="card">
+<h3>&#128101; Technician List</h3>
+<div id="tlist"><p style="color:#aaa">Koi technician nahi.</p></div>
 </div></div>
+
+<!-- PAGE 2: REPORTS -->
 <div class="pg" id="pg2">
-<div class="card"><h3>&#128202; Reports</h3>
-<div class="g2"><select id="rtf" style="margin:0"><option value="">All Technicians</option></select><input type="date" id="rdf" style="margin:0"></div>
-<div style="margin-top:10px;display:flex;gap:10px">
-<button class="btn b sm" onclick="loadRep()">Load Reports</button>
-<button class="btn g sm" onclick="expRep()">Export Excel</button>
+<div class="card">
+<h3>&#128202; Reports Filter</h3>
+<div class="g2">
+<select id="rtf" style="margin:0"><option value="">All Technicians</option></select>
+<input type="date" id="rdf" style="margin:0">
 </div>
-<div style="overflow-x:auto;margin-top:15px">
-<table><thead><tr><th>Date</th><th>Tech</th><th>Case</th><th>Customer</th><th>Work Done</th><th>Parts</th><th>Time</th><th>&#8377;</th><th>Feedback</th></tr></thead>
-<tbody id="rtbl"><tr><td colspan="9" style="text-align:center;padding:20px;color:#aaa">Filter karke load karo</td></tr></tbody></table>
-</div></div></div>
-<div id="toast" onclick="this.style.display='none'"><div id="ttl" style="font-weight:700;margin-bottom:4px;font-size:15px"></div><div id="tbdy" style="font-size:13px;color:#555"></div></div>
+<div style="margin-top:10px;display:flex;gap:8px">
+<button class="btn bl sm" onclick="loadRep()" style="width:auto">&#128269; Load</button>
+<button class="btn gr sm" onclick="expRep()" style="width:auto">&#128202; Export</button>
+</div>
+</div>
+<div class="card">
+<h3>Report List</h3>
+<div style="overflow-x:auto">
+<table><thead><tr>
+<th>Date</th><th>Tech</th><th>Case</th><th>Customer</th><th>Work Done</th><th>Parts</th><th>Time</th><th>Feedback</th><th>Expense</th><th>View</th>
+</tr></thead>
+<tbody id="rtbl"><tr><td colspan="10" style="text-align:center;padding:20px;color:#aaa">Filter karo</td></tr></tbody>
+</table></div></div></div>
+
+<!-- TOAST -->
+<div id="toast" onclick="this.style.display='none'">
+<div id="ttl" style="font-weight:700;margin-bottom:3px;font-size:14px"></div>
+<div id="tbdy" style="font-size:12px;color:#555"></div>
+</div>
+
+<!-- PHOTO VIEWER MODAL -->
+<div id="photoModal">
+<div class="pm-head">
+<h3 id="pmTitle">&#128247; Photos & Details</h3>
+<button class="pm-close" onclick="closePhotoModal()">&#10005;</button>
+</div>
+<div class="pm-body" id="pmBody"></div>
+</div>
 
 <script>
-var db, techs=[], cases=[], reps=[];
+var db,techs=[],cases=[],reps=[];
 
-try {
+try{
   firebase.initializeApp({
     apiKey:"AIzaSyCmhzQqH60pyOD-qwCcm52nCXmT0n1Buy0",
     authDomain:"tech-b30b8.firebaseapp.com",
@@ -97,57 +167,52 @@ try {
     messagingSenderId:"815434648437",
     appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
   });
-  db = firebase.database();
-  document.getElementById("st").textContent = "✅ Firebase Connected!";
-  init();
-} catch(e) {
-  document.getElementById("st").textContent = "❌ Error: " + e.message;
+  db=firebase.database();
+  document.getElementById("st").textContent="Connected to Firebase!";
+  startListeners();
+}catch(e){
+  document.getElementById("st").textContent="Firebase Error: "+e.message;
 }
 
-function goTab(n) {
+function goTab(n){
   for(var i=0;i<3;i++){
-    document.getElementById("pg"+i).style.display = (i===n)?"block":"none";
-    document.getElementById("tb"+i).className = (i===n)?"tb on":"tb";
+    document.getElementById("pg"+i).style.display=(i===n)?"block":"none";
+    document.getElementById("tb"+i).className=(i===n)?"tb on":"tb";
   }
   if(n===2) loadRep();
 }
 
-function init() {
-  db.ref("technicians").on("value", function(snap) {
+function startListeners(){
+  db.ref("technicians").on("value",function(snap){
     techs=[];
-    var s1=document.getElementById("ct"), s2=document.getElementById("rtf"), tl=document.getElementById("tlist");
+    var s1=document.getElementById("ct"),s2=document.getElementById("rtf"),tl=document.getElementById("tlist");
     s1.innerHTML='<option value="">Select Technician *</option>';
     s2.innerHTML='<option value="">All Technicians</option>';
     if(snap.exists()){
-      snap.forEach(function(c){
-        var t=c.val(); t.key=c.key; techs.push(t);
-        s1.add(new Option(t.name+" ("+t.number+")", c.key));
-        s2.add(new Option(t.name, t.name));
+      snap.forEach(function(c){var t=c.val();t.key=c.key;techs.push(t);
+        s1.add(new Option(t.name+" ("+t.number+")",c.key));
+        s2.add(new Option(t.name,t.name));
       });
-      var html="";
-      for(var i=0;i<techs.length;i++){
-        html+='<span class="pill">&#128104; '+techs[i].name+' &mdash; '+techs[i].number+' <span style="cursor:pointer;color:red" onclick="delTech(\''+techs[i].key+'\')">&#10005;</span></span>';
-      }
-      tl.innerHTML=html;
-    } else {
-      tl.innerHTML='<p style="color:#aaa">Koi technician nahi.</p>';
-    }
+      tl.innerHTML=techs.map(function(t){
+        return '<span class="pill">&#128104; '+t.name+' &mdash; '+t.number+' <span style="cursor:pointer;color:#f44336;font-weight:900" onclick="delTech(\''+t.key+'\')">&#10005;</span></span>';
+      }).join("");
+    }else{tl.innerHTML='<p style="color:#aaa">Koi tech nahi.</p>';}
   });
 
-  db.ref("cases").on("value", function(snap) {
+  db.ref("cases").on("value",function(snap){
     cases=[];
     if(snap.exists()) snap.forEach(function(c){var d=c.val();d.key=c.key;cases.unshift(d);});
     showCases(); updateStats();
   });
 
-  db.ref("cases").on("child_changed", function(snap) {
+  db.ref("cases").on("child_changed",function(snap){
     var c=snap.val();
-    if(c.status==="Accepted") toast("✅ Accepted!",c.techName+" ne accept kiya: "+c.customer);
-    if(c.status==="Done") toast("🎉 Done!",c.techName+" ne done kiya: "+c.customer);
+    if(c.status==="Accepted") toast("&#9989; Accepted!",c.techName+" ne accept kiya: "+c.customer);
+    if(c.status==="Done") toast("&#127881; Done!",c.techName+" ne done kiya: "+c.customer);
   });
 }
 
-function addTech() {
+function addTech(){
   var n=document.getElementById("tn").value.trim();
   var num=document.getElementById("tnum").value.trim();
   if(!n){alert("Name daalo!");return;}
@@ -155,133 +220,236 @@ function addTech() {
   db.ref("technicians").push({name:n,number:num}).then(function(){
     document.getElementById("tn").value="";
     document.getElementById("tnum").value="";
-    toast("✅ Added!",n+" add ho gaya!");
-  }).catch(function(e){alert("Firebase Error: "+e.message);});
+    toast("&#9989; Added!",n+" add ho gaya!");
+  }).catch(function(e){alert("Error: "+e.message);});
 }
-
 function delTech(k){if(confirm("Delete?"))db.ref("technicians/"+k).remove();}
 
-function addCase() {
+function addCase(){
   var n=document.getElementById("cn").value.trim();
   var m=document.getElementById("cm").value.trim();
   var a=document.getElementById("ca").value.trim();
   var p=document.getElementById("cp").value.trim();
   var tk=document.getElementById("ct").value;
-  if(!n||!m||!a||!p||!tk){alert("Sab * fields fill karo!");return;}
+  if(!n||!m||!a||!p||!tk){alert("Sab * fill karo!");return;}
   var tech=null;
   for(var i=0;i<techs.length;i++){if(techs[i].key===tk){tech=techs[i];break;}}
   if(!tech){alert("Tech not found!");return;}
   var id="CASE"+Date.now().toString().slice(-5);
-  var mod=document.getElementById("cmod").value||"N/A";
-  var data={id:id,customer:n,mobile:m,address:a,problem:p,model:mod,techKey:tk,techName:tech.name,techNumber:tech.number,status:"New",date:new Date().toLocaleString("hi-IN"),timestamp:firebase.database.ServerValue.TIMESTAMP};
+  var data={id:id,customer:n,mobile:m,address:a,problem:p,model:document.getElementById("cmod").value||"N/A",techKey:tk,techName:tech.name,techNumber:tech.number,status:"New",date:new Date().toLocaleString("hi-IN"),timestamp:firebase.database.ServerValue.TIMESTAMP};
   db.ref("cases/"+id).set(data).then(function(){
     ["cn","cm","ca","cmod","cp"].forEach(function(x){document.getElementById(x).value="";});
     document.getElementById("ct").value="";
     var lnk="https://surajtalwade8-eng.github.io/technician-system/technician-app.html";
-    var msg="NEW CASE\nCustomer: "+n+"\nMobile: "+m+"\nAddress: "+a+"\nModel: "+mod+"\nProblem: "+p+"\nTicket: "+id+"\nApp: "+lnk;
+    var msg="NEW CASE\nCustomer: "+n+"\nMobile: "+m+"\nAddress: "+a+"\nModel: "+data.model+"\nProblem: "+p+"\nTicket: "+id+"\nApp: "+lnk;
     window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg),"_blank");
-    toast("✅ Assigned!","WhatsApp gaya "+tech.name+" ko!");
+    toast("&#9989; Assigned!","WhatsApp gaya "+tech.name+" ko!");
   }).catch(function(e){alert("Error: "+e.message);});
 }
 
 function showCases(){
   var s=(document.getElementById("srch").value||"").toLowerCase();
   var st=document.getElementById("stf").value;
-  var f=[];
-  for(var i=0;i<cases.length;i++){
-    var c=cases[i];
+  var f=cases.filter(function(c){
     var txt=[(c.customer||""),(c.techName||""),(c.address||""),(c.problem||""),(c.id||""),(c.status||"")].join(" ").toLowerCase();
-    if(txt.indexOf(s)>-1&&(!st||c.status===st)) f.push(c);
-  }
+    return txt.indexOf(s)>-1&&(!st||c.status===st);
+  });
   var tb=document.getElementById("ctbl");
-  if(!f.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:#aaa">No cases</td></tr>';return;}
+  if(!f.length){tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:20px;color:#aaa">No cases</td></tr>';return;}
+  var sc={"New":"N","Accepted":"A","Done":"D"};
   var h="";
-  for(var j=0;j<f.length;j++){
-    var c=f[j];
-    var sc=c.status==="New"?"N":c.status==="Accepted"?"A":"D";
-    h+='<tr><td><b>'+c.id+'</b></td><td style="font-size:11px;white-space:nowrap">'+(c.date||"")+'</td>';
+  f.forEach(function(c){
+    var cls=sc[c.status]||"N";
+    h+='<tr>';
+    h+='<td><b>'+c.id+'</b></td>';
+    h+='<td style="font-size:10px;white-space:nowrap">'+(c.date||"")+'</td>';
     h+='<td>'+c.customer+'<br><small style="color:#888">'+c.mobile+'</small></td>';
-    h+='<td style="font-size:12px">'+c.address+'</td><td style="font-size:12px">'+c.problem+'</td>';
+    h+='<td style="font-size:11px;max-width:100px">'+c.address+'</td>';
+    h+='<td style="font-size:11px;max-width:100px">'+c.problem+'</td>';
     h+='<td>'+c.techName+'</td>';
-    h+='<td><span class="tg '+sc+'">'+c.status+'</span></td>';
+    h+='<td><span class="tg '+cls+'">'+c.status+'</span></td>';
+    // Expense column
+    h+='<td>'+(c.expenseAmt&&c.expenseAmt!=="0"?'<span class="exp-cell">&#8377;'+c.expenseAmt+'</span>':'<span style="color:#ccc">-</span>')+'</td>';
+    // Photos column
+    h+='<td>'+(c.photoCount&&c.photoCount>0?'<span style="color:#25D366;font-weight:700">&#128247;'+c.photoCount+'</span>':'<span style="color:#ccc">-</span>')+'</td>';
     h+='<td style="white-space:nowrap">';
-    h+='<button class="btn wa sm" onclick="waCase(\''+c.key+'\')">&#128241;</button> ';
-    h+='<button class="btn b sm" onclick="setS(\''+c.key+'\',\'Accepted\')">Accept</button> ';
-    h+='<button class="btn sm" style="background:#4CAF50;color:white" onclick="setS(\''+c.key+'\',\'Done\')">Done</button> ';
-    h+='<button class="btn r sm" onclick="delC(\''+c.key+'\')">&#128465;</button>';
+    h+='<button class="btn bl sm" onclick="waCase(\''+c.key+'\')">&#128241;</button>';
+    h+='<button class="btn sm" style="background:#4CAF50;color:white" onclick="setS(\''+c.key+'\',\'Done\')">Done</button>';
+    h+='<button class="btn rd sm" onclick="delC(\''+c.key+'\')">&#128465;</button>';
+    if(c.status==="Done") h+='<button class="vbtn" onclick="viewReport(\''+c.id+'\',\''+c.techName+'\',\''+c.date.split(",")[0]+'\')">&#128247; View</button>';
     h+='</td></tr>';
-  }
+  });
   tb.innerHTML=h;
 }
 
 function setS(k,s){db.ref("cases/"+k).update({status:s});}
 function delC(k){if(confirm("Delete?"))db.ref("cases/"+k).remove();}
 function waCase(k){
-  var c=null; for(var i=0;i<cases.length;i++){if(cases[i].key===k){c=cases[i];break;}}
-  if(!c)return;
+  var c=cases.find(function(x){return x.key===k;});if(!c)return;
   var msg="REMINDER\nCustomer: "+c.customer+"\nStatus: "+c.status+"\nTicket: "+c.id;
   window.open("https://wa.me/91"+c.techNumber+"?text="+encodeURIComponent(msg),"_blank");
 }
 function updateStats(){
-  var t=cases.length,n=0,a=0,d=0;
-  for(var i=0;i<cases.length;i++){if(cases[i].status==="New")n++;else if(cases[i].status==="Accepted")a++;else if(cases[i].status==="Done")d++;}
-  document.getElementById("s0").textContent=t;
-  document.getElementById("s1").textContent=n;
-  document.getElementById("s2").textContent=a;
-  document.getElementById("s3").textContent=d;
+  document.getElementById("s0").textContent=cases.length;
+  document.getElementById("s1").textContent=cases.filter(function(c){return c.status==="New";}).length;
+  document.getElementById("s2").textContent=cases.filter(function(c){return c.status==="Accepted";}).length;
+  document.getElementById("s3").textContent=cases.filter(function(c){return c.status==="Done";}).length;
 }
 
+// ===== REPORTS =====
 function loadRep(){
   var tn=document.getElementById("rtf").value;
   var dt=document.getElementById("rdf").value;
   var ref=tn?db.ref("reports/"+tn):db.ref("reports");
   ref.once("value",function(snap){
     reps=[];
-    if(snap.exists()){snap.forEach(function(a){a.forEach(function(b){b.forEach(function(c){reps.push(c.val());});});});}
+    if(snap.exists()){
+      snap.forEach(function(a){
+        a.forEach(function(b){
+          b.forEach(function(c){reps.push(c.val());});
+        });
+      });
+    }
     var f=reps;
     if(dt){
       var ds=new Date(dt).toLocaleDateString("hi-IN").split("/").join("-");
-      f=[];for(var i=0;i<reps.length;i++){if(reps[i].date===ds)f.push(reps[i]);}
+      f=reps.filter(function(r){return r.date===ds;});
     }
     var tb=document.getElementById("rtbl");
-    if(!f.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:#aaa">No reports</td></tr>';return;}
+    if(!f.length){tb.innerHTML='<tr><td colspan="10" style="text-align:center;padding:20px;color:#aaa">No reports</td></tr>';return;}
     var h="";
-    for(var j=0;j<f.length;j++){
-      var r=f[j];
-      h+='<tr><td>'+(r.date||"")+'</td><td>'+(r.techName||"")+'</td><td><b>'+(r.caseId||"")+'</b></td><td>'+(r.customer||"")+'</td><td>'+(r.workDone||"")+'</td><td>'+(r.partsUsed||"")+'</td><td>'+(r.timeTaken||"")+'</td><td>&#8377;'+(r.serviceCharge||"0")+'</td><td>'+(r.customerFeedback||"")+'</td></tr>';
-    }
+    f.forEach(function(r){
+      var hasPhotos=(r.jobPhotos&&r.jobPhotos.length>0);
+      var hasReceipt=(r.expense&&r.expense.receiptPhoto);
+      var expAmt=(r.expense&&r.expense.amount&&r.expense.amount!=="0")?r.expense.amount:"0";
+      h+='<tr>';
+      h+='<td style="white-space:nowrap">'+(r.date||"")+'</td>';
+      h+='<td><b>'+(r.techName||"")+'</b></td>';
+      h+='<td>'+(r.caseId||"")+'</td>';
+      h+='<td>'+(r.customer||"")+'</td>';
+      h+='<td style="font-size:11px;max-width:120px">'+(r.workDone||"")+'</td>';
+      h+='<td style="font-size:11px">'+(r.partsUsed||"")+'</td>';
+      h+='<td>'+(r.timeTaken||"")+'</td>';
+      h+='<td>'+(r.customerFeedback||"")+'</td>';
+      h+='<td>'+(expAmt!=="0"?'<span class="exp-cell">&#8377;'+expAmt+'</span>':'<span style="color:#ccc">-</span>')+'</td>';
+      h+='<td>';
+      if(hasPhotos||hasReceipt||expAmt!=="0"){
+        h+='<button class="vbtn" onclick="openPhotoModal('+JSON.stringify(r).replace(/"/g,"&quot;")+')">';
+        if(hasPhotos) h+='&#128247;'+(r.jobPhotos.length)+' ';
+        if(hasReceipt) h+='&#129534; ';
+        if(expAmt!=="0") h+='&#8377;'+expAmt;
+        h+='</button>';
+      }else{
+        h+='<span style="color:#ccc;font-size:11px">-</span>';
+      }
+      h+='</td></tr>';
+    });
     tb.innerHTML=h;
   });
 }
 
+// ===== PHOTO MODAL =====
+function openPhotoModal(r){
+  var body=document.getElementById("pmBody");
+  document.getElementById("pmTitle").textContent="Case: "+(r.caseId||"")+" — "+(r.techName||"");
+  var h="";
+
+  // Case Info
+  h+='<div class="pm-info">';
+  h+='<strong>&#128100; '+(r.customer||"")+'</strong> &mdash; '+(r.mobile||"")+'<br>';
+  h+='&#128205; '+(r.address||"")+'<br>';
+  h+='&#9888; '+(r.problem||"")+'<br>';
+  h+='&#128295; Work: '+(r.workDone||"")+'<br>';
+  h+='&#128247; Parts: '+(r.partsUsed||"")+'<br>';
+  h+='&#9201; Time: '+(r.timeTaken||"")+'<br>';
+  h+='&#128512; Feedback: '+(r.customerFeedback||"")+'<br>';
+  h+='&#128221; Remarks: '+(r.remarks||"");
+  h+='</div>';
+
+  // Expense
+  if(r.expense){
+    h+='<div class="pm-section">';
+    h+='<h4>&#128176; Expense Details</h4>';
+    h+='<div class="pm-info">';
+    h+='<div class="exp-badge">&#8377; '+(r.expense.amount||"0")+'</div><br>';
+    h+='Details: '+(r.expense.details||"N/A");
+    h+='</div>';
+
+    if(r.expense.receiptPhoto){
+      h+='<h4 style="color:#ff6b35;margin-top:10px">&#129534; Receipt Photo</h4>';
+      h+='<img class="pm-single" src="'+r.expense.receiptPhoto+'" alt="Receipt" onclick="fullView(this.src)">';
+    }
+    h+='</div>';
+  }
+
+  // Job Photos
+  if(r.jobPhotos&&r.jobPhotos.length>0){
+    h+='<div class="pm-section">';
+    h+='<h4>&#128247; Job Photos ('+r.jobPhotos.length+')</h4>';
+    body.innerHTML=h;
+    // Use DOM for photos to avoid base64 in HTML string
+    var grid=document.createElement("div");
+    grid.className="pm-grid";
+    r.jobPhotos.forEach(function(b64,i){
+      var img=document.createElement("img");
+      img.className="pm-img";
+      img.src=b64;
+      img.alt="Job "+(i+1);
+      img.onclick=function(){fullView(this.src);};
+      grid.appendChild(img);
+    });
+    body.appendChild(grid);
+    var closeDiv=document.createElement("div");
+    closeDiv.innerHTML='</div>';
+    body.appendChild(closeDiv);
+  }else{
+    body.innerHTML=h;
+  }
+
+  document.getElementById("photoModal").classList.add("on");
+}
+
+function fullView(src){
+  var w=window.open("","_blank");
+  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh"></body></html>');
+}
+
+function viewReport(caseId,techName,date){
+  var tn=techName;
+  db.ref("reports/"+tn+"/"+date+"/"+caseId).once("value",function(snap){
+    if(snap.exists()) openPhotoModal(snap.val());
+    else alert("Report nahi mila Firebase me. Pehle load karo.");
+  });
+}
+
+function closePhotoModal(){document.getElementById("photoModal").classList.remove("on");}
+
+// ===== EXPORT =====
 function expCases(){
   if(!cases.length){alert("No cases!");return;}
-  var rows=[["ID","Date","Customer","Mobile","Address","Problem","Tech","Status"]];
-  for(var i=0;i<cases.length;i++){var c=cases[i];rows.push([c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status]);}
+  var rows=[["ID","Date","Customer","Mobile","Address","Problem","Tech","Status","Expense","Photos"]];
+  cases.forEach(function(c){rows.push([c.id,c.date,c.customer,c.mobile,c.address,c.problem,c.techName,c.status,c.expenseAmt||"0",c.photoCount||"0"]);});
   dlCSV(rows,"cases.csv");
 }
 function expRep(){
   if(!reps.length){alert("Pehle load karo!");return;}
-  var rows=[["Date","Tech","Case","Customer","Mobile","Work","Parts","Time","Charge","Feedback"]];
-  for(var i=0;i<reps.length;i++){var r=reps[i];rows.push([r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.serviceCharge,r.customerFeedback]);}
+  var rows=[["Date","Tech","Case","Customer","Mobile","Work","Parts","Time","Feedback","Expense Amount","Expense Details"]];
+  reps.forEach(function(r){rows.push([r.date,r.techName,r.caseId,r.customer,r.mobile,r.workDone,r.partsUsed,r.timeTaken,r.customerFeedback,(r.expense&&r.expense.amount)||"0",(r.expense&&r.expense.details)||""]);});
   dlCSV(rows,"reports.csv");
 }
 function dlCSV(rows,name){
   var csv="";
-  for(var i=0;i<rows.length;i++){
-    var row=[];
-    for(var j=0;j<rows[i].length;j++){row.push('"'+(String(rows[i][j]||"")).replace(/"/g,'""')+'"');}
-    csv+=row.join(",")+"\n";
-  }
+  rows.forEach(function(r){
+    csv+=r.map(function(v){return'"'+(String(v||"")).replace(/"/g,'""')+'"';}).join(",")+"\n";
+  });
   var a=document.createElement("a");
   a.href="data:text/csv;charset=utf-8,\uFEFF"+encodeURIComponent(csv);
-  a.download=name; a.click();
+  a.download=name;a.click();
 }
 function toast(t,b){
-  document.getElementById("ttl").textContent=t;
+  document.getElementById("ttl").innerHTML=t;
   document.getElementById("tbdy").textContent=b;
   document.getElementById("toast").style.display="block";
   setTimeout(function(){document.getElementById("toast").style.display="none";},5000);
 }
-</script>
-</body></html>
+</script></body></html>

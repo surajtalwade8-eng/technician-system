@@ -64,7 +64,6 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 #aLErr{background:#ffebee;color:#c62828;padding:9px;border-radius:8px;font-size:13px;margin-top:8px;display:none;text-align:left}
 </style></head><body>
 
-<!-- ADMIN LOGIN -->
 <div id="adminLogin">
   <div class="aLCard">
     <div style="width:65px;height:65px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px">&#128274;</div>
@@ -77,7 +76,6 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
   </div>
 </div>
 
-<!-- MAIN PANEL -->
 <div id="mainPanel" style="display:none">
 <div class="hdr">
 <h1>&#128295; Technician Assignment</h1>
@@ -189,6 +187,7 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 <script>
 var db, auth, techs=[], cases=[], reps=[];
 
+// AUTH FUNCTIONS - defined first so they are always available
 function aLLogin(){
   var email=document.getElementById("aLEmail").value.trim();
   var pass=document.getElementById("aLPass").value;
@@ -201,16 +200,19 @@ function aLLogin(){
     showPanel();
   }).catch(function(e){
     btn.textContent="LOGIN";btn.disabled=false;
-    var m=e.message;
+    var m="Login failed!";
     if(e.code==="auth/wrong-password"||e.code==="auth/invalid-credential")m="Password galat hai!";
-    if(e.code==="auth/user-not-found")m="Email nahi mila!";
-    if(e.code==="auth/invalid-email")m="Email format galat hai!";
+    else if(e.code==="auth/user-not-found")m="Email nahi mila!";
+    else if(e.code==="auth/invalid-email")m="Email format galat hai!";
     err.textContent=m;err.style.display="block";
   });
 }
 function showPanel(){
   document.getElementById("adminLogin").style.display="none";
   document.getElementById("mainPanel").style.display="block";
+}
+function doLogout(){
+  if(auth)auth.signOut().then(function(){location.reload();});
 }
 
 var db, techs=[], cases=[], reps=[];
@@ -228,12 +230,16 @@ try{
   db = firebase.database();
   auth = firebase.auth();
   document.getElementById("st").textContent = "Connected!";
+  // Wire buttons via addEventListener - no onclick in HTML needed
   document.getElementById("aLBtn").addEventListener("click", aLLogin);
   document.getElementById("aLPass").addEventListener("keydown", function(e){if(e.key==="Enter")aLLogin();});
-  document.getElementById("logoutBtn").addEventListener("click", function(){auth.signOut().then(function(){location.reload();});});
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
   auth.onAuthStateChanged(function(user){
-    if(user){showPanel();startListeners();}
-    else{document.getElementById("adminLogin").style.display="flex";document.getElementById("mainPanel").style.display="none";}
+    if(user){showPanel();if(techs.length===0)startListeners();}
+    else{
+      document.getElementById("adminLogin").style.display="flex";
+      document.getElementById("mainPanel").style.display="none";
+    }
   });
 }catch(e){
   document.getElementById("st").textContent = "Error: "+e.message;
@@ -248,7 +254,8 @@ function goTab(n){
 }
 
 function startListeners(){
-  document.getElementById("addTechBtn").addEventListener("click", addTech);
+  var atb=document.getElementById("addTechBtn");
+  if(atb)atb.addEventListener("click",addTech);
   db.ref("technicians").on("value",function(snap){
     techs=[];
     var s1=document.getElementById("ct"), s2=document.getElementById("rtf"), tl=document.getElementById("tlist");
@@ -558,10 +565,9 @@ function openPhotoModal(r){
 }
 
 function fullView(src){
-   var html='<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>';
+  var html='<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>';
   var blob=new Blob([html],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  window.open(url,'_blank');
+  window.open(URL.createObjectURL(blob),'_blank');
 }
 function closePhotoModal(){document.getElementById("photoModal").classList.remove("on");}
 

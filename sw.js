@@ -1,39 +1,40 @@
-const CACHE_NAME = 'cwctech-v2';
-const ASSETS = [
-  '/technician-system/technician-app.html',
-  '/technician-system/manifest.json',
-  '/technician-system/icon-192.png',
-  '/technician-system/icon-512.png'
+const CACHE = "cwc-tech-v5";
+const FILES = [
+  "./",
+  "./technician-app.html",
+  "./manifest.json",
+  "./icon-192.png"
 ];
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
+self.addEventListener("install", function(e) {
+  e.waitUntil(
+    caches.open(CACHE).then(function(c) {
+      return c.addAll(FILES);
     })
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    caches.keys().then(function(keyList) {
+self.addEventListener("activate", function(e) {
+  e.waitUntil(
+    caches.keys().then(function(keys) {
       return Promise.all(
-        keyList.map(function(key) {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
+        keys.filter(function(k) { return k !== CACHE; })
+            .map(function(k) { return caches.delete(k); })
       );
     })
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(cached) {
-      return cached || fetch(event.request).catch(function() {
-        return cached;
-      });
+self.addEventListener("fetch", function(e) {
+  e.respondWith(
+    fetch(e.request).then(function(res) {
+      var clone = res.clone();
+      caches.open(CACHE).then(function(c) { c.put(e.request, clone); });
+      return res;
+    }).catch(function() {
+      return caches.match(e.request);
     })
   );
 });

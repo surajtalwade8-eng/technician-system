@@ -230,8 +230,11 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
   </div>
 </div>
 
+<!-- Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+
 <script>
 var db=null,myKey="",myName="",myCases=[],curTab="New",popKey="",repKey="",firstLoad=true;
 var alertInt=null,audioCtx=null,curStep=1,jobPhotos=[],rcptPhoto=null;
@@ -261,19 +264,16 @@ window.addEventListener("load",function(){
   document.getElementById("jobCam").addEventListener("change",addJobPhoto);
   document.getElementById("rcptCam").addEventListener("change",addReceipt);
 
-  // ✅ FIX 1: Touch se audio unlock karo — page load hote hi
-  document.body.addEventListener("touchstart", function(){
-    if(!audioCtx) initAudio();
-    else resumeAudio();
-  }, {once:true});
-  document.body.addEventListener("click", function(){
-    if(!audioCtx) initAudio();
-    else resumeAudio();
-  }, {once:true});
+  document.body.addEventListener("touchstart",function(){
+    if(!audioCtx)initAudio();else resumeAudio();
+  },{once:true});
+  document.body.addEventListener("click",function(){
+    if(!audioCtx)initAudio();else resumeAudio();
+  },{once:true});
 
-  myKey = localStorage.getItem("cwc_tk")||"";
-  myName = localStorage.getItem("cwc_tn")||"";
-  if(myKey && myName){ startApp(); }
+  myKey=localStorage.getItem("cwc_tk")||"";
+  myName=localStorage.getItem("cwc_tn")||"";
+  if(myKey&&myName){startApp();}
 });
 
 function togglePass(){
@@ -282,7 +282,6 @@ function togglePass(){
   if(p.type==="password"){p.type="text";btn.textContent="🙈";}
   else{p.type="password";btn.textContent="👁️";}
 }
-
 function showErr(msg){
   var e=document.getElementById("lerr");
   e.textContent=msg;
@@ -290,33 +289,28 @@ function showErr(msg){
 }
 
 function doLogin(){
-  // ✅ FIX 2: Login button click pe audio unlock
-  if(!audioCtx) initAudio();
-  else resumeAudio();
-
+  if(!audioCtx)initAudio();else resumeAudio();
   var userId=document.getElementById("loginId").value.trim().toLowerCase();
   var pass=document.getElementById("loginPass").value;
   showErr("");
   if(!userId){showErr("User ID daalo!");return;}
   if(!pass){showErr("Password daalo!");return;}
-
   db.ref("technicians").orderByChild("userId").equalTo(userId).once("value").then(function(snap){
-    if(!snap.exists()){showErr("❌ User ID galat hai! Admin se check karo.");return;}
+    if(!snap.exists()){showErr("❌ User ID galat hai!");return;}
     var found=false;
     snap.forEach(function(c){
       var t=c.val();
       var inputHash=btoa(pass+"_cwc_salt_2024");
       if(t.passHash===inputHash){
         found=true;
-        myKey=c.key;
-        myName=t.name;
+        myKey=c.key;myName=t.name;
         localStorage.setItem("cwc_tk",myKey);
         localStorage.setItem("cwc_tn",myName);
         initAudio();
         startApp();
       }
     });
-    if(!found){showErr("❌ Password galat hai! Dobara try karo.");}
+    if(!found)showErr("❌ Password galat hai!");
   }).catch(function(e){showErr("Error: "+e.message);});
 }
 
@@ -329,17 +323,13 @@ function doLogout(){
 
 function initAudio(){
   try{
-    if(!audioCtx){
-      audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-      keepAlive();
-    }
-    if(audioCtx.state==="suspended") audioCtx.resume();
+    if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();keepAlive();}
+    if(audioCtx.state==="suspended")audioCtx.resume();
   }catch(e){}
 }
 function keepAlive(){if(!audioCtx)return;var b=audioCtx.createBuffer(1,audioCtx.sampleRate,audioCtx.sampleRate);var s=audioCtx.createBufferSource();s.buffer=b;s.connect(audioCtx.destination);s.start(0);s.onended=function(){if(audioCtx)keepAlive();};}
 function resumeAudio(){if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();}
 function beepOnce(){
-  // ✅ FIX 3: Audio init + resume har baar
   initAudio();
   if(!audioCtx)return;
   try{
@@ -358,12 +348,39 @@ function playAlert(){stopAlert();beepOnce();alertInt=setInterval(beepOnce,2500);
 function stopAlert(){if(alertInt){clearInterval(alertInt);alertInt=null;}}
 function testSound(){initAudio();setTimeout(beepOnce,100);}
 
+// ✅ FCM Token Save Function
+function saveFcmToken(){
+  try{
+    var messaging=firebase.messaging();
+    navigator.serviceWorker.ready.then(function(reg){
+      return messaging.getToken({
+        serviceWorkerRegistration:reg,
+        vapidKey:"BKi85qDjwwfYudtFyvlBlKYDr-7G_a1U-WbqaQRN3SzJCS12ynqj1hincrZT-eh4yZeqIv5dCXJ9TvpACI74RZA"
+      });
+    }).then(function(token){
+      if(token){
+        db.ref("technicians/"+myKey+"/fcmToken").set(token);
+        console.log("✅ FCM Token saved!");
+      }
+    }).catch(function(e){console.log("FCM Error: "+e.message);});
+  }catch(e){console.log("Messaging error: "+e.message);}
+}
+
 function startApp(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("mainScreen").style.display="block";
   document.getElementById("tNm").textContent=myName;
-  if("Notification" in window)Notification.requestPermission();
-  document.addEventListener("visibilitychange",function(){if(!document.hidden){resumeAudio();}});
+
+  // ✅ Notification permission + FCM Token
+  if("Notification" in window){
+    Notification.requestPermission().then(function(perm){
+      if(perm==="granted"){
+        saveFcmToken();
+      }
+    });
+  }
+
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeAudio();});
 
   db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){
     var prev=myCases.map(function(c){return c.key;});
@@ -375,19 +392,16 @@ function startApp(){
     if(!firstLoad){
       for(var i=0;i<myCases.length;i++){
         if(myCases[i].status==="New"&&prev.indexOf(myCases[i].key)===-1){
-          showPopup(myCases[i]);
-          break;
+          showPopup(myCases[i]);break;
         }
       }
     }
-    firstLoad=false;
-    render();
+    firstLoad=false;render();
   });
 }
 
-// ✅ FIX 4: showPopup mein audio resume sabse pehle
 function showPopup(c){
-  initAudio(); // Audio unlock
+  initAudio();
   popKey=c.key;
   document.getElementById("pCust").textContent=c.customer+" ("+c.mobile+")";
   document.getElementById("pAddr").textContent=c.address;
@@ -395,14 +409,12 @@ function showPopup(c){
   document.getElementById("pTkt").textContent=c.id;
   document.getElementById("popup").classList.add("on");
   document.title="🔔 NEW CASE!";
-  // ✅ FIX 5: Thoda delay de audio ke liye
   setTimeout(function(){playAlert();},300);
   if(navigator.vibrate)navigator.vibrate([600,200,600,200,600]);
   if("Notification" in window&&Notification.permission==="granted"){
     new Notification("🔔 New Case!",{body:c.customer+" - "+c.address,requireInteraction:true});
   }
 }
-
 function closePopup(){document.getElementById("popup").classList.remove("on");stopAlert();document.title="CWC Tech";}
 function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accepted"});closePopup();showTab("Accepted");}}
 function showTab(t){curTab=t;["New","Accepted","Pending","Done"].forEach(function(x){var el=document.getElementById("t-"+x);if(el)el.className=(x===t)?"tab on":"tab";});render();}
@@ -461,9 +473,7 @@ function submitAll(){
   db.ref("reports/"+myName+"/"+dateStr+"/"+c.id).set(rep).then(function(){
     return db.ref("cases/"+repKey).update({status:"Done",completedAt:now,expenseAmt:rep.expense.amount,photoCount:jobPhotos.length,serialNumber:rep.serialNumber});
   }).then(function(){
-    closeSteps();
-    beepOnce(); // ✅ Done pe sound
-    showTab("Done");
+    closeSteps();beepOnce();showTab("Done");
     if(navigator.vibrate)navigator.vibrate([200,100,200]);
     alert("✅ Report submit ho gaya! Case DONE!");
   }).catch(function(e){alert("Error: "+e.message);nb.textContent="Submit Report";nb.disabled=false;});

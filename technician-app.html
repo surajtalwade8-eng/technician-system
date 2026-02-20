@@ -151,7 +151,7 @@ input:focus,select:focus,textarea:focus{border-color:#25D366}
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <span class="ncnt" id="nCnt">0</span>
-      <button class="sndBtn" onclick="testSound()">Sound</button>
+      <button class="sndBtn" onclick="testSound()">🔔 Sound</button>
       <button class="outbtn" onclick="doLogout()">Logout</button>
     </div>
   </div>
@@ -260,60 +260,64 @@ window.addEventListener("load",function(){
   document.getElementById("rcptBox").addEventListener("click",function(){document.getElementById("rcptCam").click();});
   document.getElementById("jobCam").addEventListener("change",addJobPhoto);
   document.getElementById("rcptCam").addEventListener("change",addReceipt);
-  // Check saved session
+
+  // ✅ FIX 1: Touch se audio unlock karo — page load hote hi
+  document.body.addEventListener("touchstart", function(){
+    if(!audioCtx) initAudio();
+    else resumeAudio();
+  }, {once:true});
+  document.body.addEventListener("click", function(){
+    if(!audioCtx) initAudio();
+    else resumeAudio();
+  }, {once:true});
+
   myKey = localStorage.getItem("cwc_tk")||"";
   myName = localStorage.getItem("cwc_tn")||"";
   if(myKey && myName){ startApp(); }
 });
 
 function togglePass(){
-  var p = document.getElementById("loginPass");
-  var btn = document.getElementById("eyeBtn");
+  var p=document.getElementById("loginPass");
+  var btn=document.getElementById("eyeBtn");
   if(p.type==="password"){p.type="text";btn.textContent="🙈";}
   else{p.type="password";btn.textContent="👁️";}
 }
 
 function showErr(msg){
-  var e = document.getElementById("lerr");
-  e.textContent = msg;
-  e.style.display = msg ? "block" : "none";
+  var e=document.getElementById("lerr");
+  e.textContent=msg;
+  e.style.display=msg?"block":"none";
 }
 
-// ===== LOGIN WITH USER ID + PASSWORD =====
 function doLogin(){
-  var userId = document.getElementById("loginId").value.trim().toLowerCase();
-  var pass = document.getElementById("loginPass").value;
+  // ✅ FIX 2: Login button click pe audio unlock
+  if(!audioCtx) initAudio();
+  else resumeAudio();
+
+  var userId=document.getElementById("loginId").value.trim().toLowerCase();
+  var pass=document.getElementById("loginPass").value;
   showErr("");
   if(!userId){showErr("User ID daalo!");return;}
   if(!pass){showErr("Password daalo!");return;}
 
-  // Find technician by userId in Firebase
   db.ref("technicians").orderByChild("userId").equalTo(userId).once("value").then(function(snap){
-    if(!snap.exists()){
-      showErr("❌ User ID galat hai! Admin se check karo.");
-      return;
-    }
-    var found = false;
+    if(!snap.exists()){showErr("❌ User ID galat hai! Admin se check karo.");return;}
+    var found=false;
     snap.forEach(function(c){
-      var t = c.val();
-      // Check password hash
-      var inputHash = btoa(pass + "_cwc_salt_2024");
-      if(t.passHash === inputHash){
-        found = true;
-        myKey = c.key;
-        myName = t.name;
-        localStorage.setItem("cwc_tk", myKey);
-        localStorage.setItem("cwc_tn", myName);
+      var t=c.val();
+      var inputHash=btoa(pass+"_cwc_salt_2024");
+      if(t.passHash===inputHash){
+        found=true;
+        myKey=c.key;
+        myName=t.name;
+        localStorage.setItem("cwc_tk",myKey);
+        localStorage.setItem("cwc_tn",myName);
         initAudio();
         startApp();
       }
     });
-    if(!found){
-      showErr("❌ Password galat hai! Dobara try karo.");
-    }
-  }).catch(function(e){
-    showErr("Error: "+e.message);
-  });
+    if(!found){showErr("❌ Password galat hai! Dobara try karo.");}
+  }).catch(function(e){showErr("Error: "+e.message);});
 }
 
 function doLogout(){
@@ -323,20 +327,44 @@ function doLogout(){
   location.reload();
 }
 
-function initAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();keepAlive();}catch(e){}}
+function initAudio(){
+  try{
+    if(!audioCtx){
+      audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+      keepAlive();
+    }
+    if(audioCtx.state==="suspended") audioCtx.resume();
+  }catch(e){}
+}
 function keepAlive(){if(!audioCtx)return;var b=audioCtx.createBuffer(1,audioCtx.sampleRate,audioCtx.sampleRate);var s=audioCtx.createBufferSource();s.buffer=b;s.connect(audioCtx.destination);s.start(0);s.onended=function(){if(audioCtx)keepAlive();};}
 function resumeAudio(){if(audioCtx&&audioCtx.state==="suspended")audioCtx.resume();}
-function beepOnce(){resumeAudio();if(!audioCtx)return;try{var t=audioCtx.currentTime;[[880,t,t+0.4],[660,t+0.45,t+0.85],[1100,t+0.9,t+1.5]].forEach(function(x){var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type="sine";o.frequency.value=x[0];g.gain.setValueAtTime(0.7,x[1]);g.gain.exponentialRampToValueAtTime(0.001,x[2]);o.start(x[1]);o.stop(x[2]);});}catch(e){}}
+function beepOnce(){
+  // ✅ FIX 3: Audio init + resume har baar
+  initAudio();
+  if(!audioCtx)return;
+  try{
+    var t=audioCtx.currentTime;
+    [[880,t,t+0.4],[660,t+0.45,t+0.85],[1100,t+0.9,t+1.5]].forEach(function(x){
+      var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.type="sine";o.frequency.value=x[0];
+      g.gain.setValueAtTime(0.7,x[1]);
+      g.gain.exponentialRampToValueAtTime(0.001,x[2]);
+      o.start(x[1]);o.stop(x[2]);
+    });
+  }catch(e){}
+}
 function playAlert(){stopAlert();beepOnce();alertInt=setInterval(beepOnce,2500);}
 function stopAlert(){if(alertInt){clearInterval(alertInt);alertInt=null;}}
-function testSound(){beepOnce();}
+function testSound(){initAudio();setTimeout(beepOnce,100);}
 
 function startApp(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("mainScreen").style.display="block";
   document.getElementById("tNm").textContent=myName;
   if("Notification" in window)Notification.requestPermission();
-  document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeAudio();});
+  document.addEventListener("visibilitychange",function(){if(!document.hidden){resumeAudio();}});
+
   db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){
     var prev=myCases.map(function(c){return c.key;});
     myCases=[];
@@ -344,12 +372,37 @@ function startApp(){
     var nc=myCases.filter(function(c){return c.status==="New";}).length;
     var np=myCases.filter(function(c){return c.status==="Pending";}).length;
     document.getElementById("nCnt").textContent=nc+(np>0?"+"+np:"");
-    if(!firstLoad){for(var i=0;i<myCases.length;i++){if(myCases[i].status==="New"&&prev.indexOf(myCases[i].key)===-1){showPopup(myCases[i]);break;}}}
-    firstLoad=false;render();
+    if(!firstLoad){
+      for(var i=0;i<myCases.length;i++){
+        if(myCases[i].status==="New"&&prev.indexOf(myCases[i].key)===-1){
+          showPopup(myCases[i]);
+          break;
+        }
+      }
+    }
+    firstLoad=false;
+    render();
   });
 }
 
-function showPopup(c){popKey=c.key;document.getElementById("pCust").textContent=c.customer+" ("+c.mobile+")";document.getElementById("pAddr").textContent=c.address;document.getElementById("pProb").textContent=c.problem;document.getElementById("pTkt").textContent=c.id;document.getElementById("popup").classList.add("on");document.title="NEW CASE!";playAlert();if(navigator.vibrate)navigator.vibrate([600,200,600,200,600]);if("Notification" in window&&Notification.permission==="granted")new Notification("New Case!",{body:c.customer+" - "+c.address,requireInteraction:true});}
+// ✅ FIX 4: showPopup mein audio resume sabse pehle
+function showPopup(c){
+  initAudio(); // Audio unlock
+  popKey=c.key;
+  document.getElementById("pCust").textContent=c.customer+" ("+c.mobile+")";
+  document.getElementById("pAddr").textContent=c.address;
+  document.getElementById("pProb").textContent=c.problem;
+  document.getElementById("pTkt").textContent=c.id;
+  document.getElementById("popup").classList.add("on");
+  document.title="🔔 NEW CASE!";
+  // ✅ FIX 5: Thoda delay de audio ke liye
+  setTimeout(function(){playAlert();},300);
+  if(navigator.vibrate)navigator.vibrate([600,200,600,200,600]);
+  if("Notification" in window&&Notification.permission==="granted"){
+    new Notification("🔔 New Case!",{body:c.customer+" - "+c.address,requireInteraction:true});
+  }
+}
+
 function closePopup(){document.getElementById("popup").classList.remove("on");stopAlert();document.title="CWC Tech";}
 function accFromPopup(){if(popKey){db.ref("cases/"+popKey).update({status:"Accepted"});closePopup();showTab("Accepted");}}
 function showTab(t){curTab=t;["New","Accepted","Pending","Done"].forEach(function(x){var el=document.getElementById("t-"+x);if(el)el.className=(x===t)?"tab on":"tab";});render();}
@@ -358,24 +411,32 @@ function makeBtn(label,cls,key,fn){var btn=document.createElement("button");btn.
 function render(){
   var list=document.getElementById("cList");list.innerHTML="";
   var f=myCases.filter(function(c){return c.status===curTab;});
-  if(!f.length){var msgs={New:"Koi naya case nahi!",Accepted:"Koi active case nahi!",Pending:"Koi pending nahi!",Done:"Koi done nahi!"};var e=document.createElement("div");e.className="empty";e.textContent=msgs[curTab]||"";list.appendChild(e);return;}
+  if(!f.length){
+    var msgs={New:"Koi naya case nahi!",Accepted:"Koi active case nahi!",Pending:"Koi pending nahi!",Done:"Koi done nahi!"};
+    var e=document.createElement("div");e.className="empty";e.textContent=msgs[curTab]||"";list.appendChild(e);return;
+  }
   f.forEach(function(c){
-    var clsM={New:"nc",Accepted:"ac",Pending:"pc",Done:"dc"};var chipM={New:"cN",Accepted:"cA",Pending:"cP",Done:"cD"};
+    var clsM={New:"nc",Accepted:"ac",Pending:"pc",Done:"dc"};
+    var chipM={New:"cN",Accepted:"cA",Pending:"cP",Done:"cD"};
     var card=document.createElement("div");card.className="card "+(clsM[c.status]||"dc");
     var cid=document.createElement("div");cid.className="cid";cid.textContent=c.id+" - "+(c.date||"");card.appendChild(cid);
     var cn=document.createElement("div");cn.className="cname";cn.textContent=c.customer;card.appendChild(cn);
     var ca=document.createElement("div");ca.className="caddr";ca.textContent=c.mobile+" | "+c.address;card.appendChild(ca);
     var cp=document.createElement("div");cp.className="cprob";cp.textContent=c.problem;card.appendChild(cp);
-    var chips=document.createElement("div");var mc=document.createElement("span");mc.className="chip cM";mc.textContent=c.model||"N/A";var sc=document.createElement("span");sc.className="chip "+(chipM[c.status]||"cN");sc.textContent=c.status;chips.appendChild(mc);chips.appendChild(sc);card.appendChild(chips);
-    if(c.status==="New")card.appendChild(makeBtn("Accept Case","abtn acc",c.key,accCase));
-    if(c.status==="Accepted"){card.appendChild(makeBtn("Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Mark Pending","abtn pnd",c.key,setPending));}
-    if(c.status==="Pending"){card.appendChild(makeBtn("Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Resume Work","abtn acc",c.key,setAccepted));}
-    var cb=document.createElement("button");cb.className="abtn cal";cb.textContent="Call Customer";cb.addEventListener("click",function(){window.location.href="tel:"+c.mobile;});card.appendChild(cb);
+    var chips=document.createElement("div");
+    var mc=document.createElement("span");mc.className="chip cM";mc.textContent=c.model||"N/A";
+    var sc=document.createElement("span");sc.className="chip "+(chipM[c.status]||"cN");sc.textContent=c.status;
+    chips.appendChild(mc);chips.appendChild(sc);card.appendChild(chips);
+    if(c.status==="New")card.appendChild(makeBtn("✅ Accept Case","abtn acc",c.key,accCase));
+    if(c.status==="Accepted"){card.appendChild(makeBtn("✔ Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Mark Pending","abtn pnd",c.key,setPending));}
+    if(c.status==="Pending"){card.appendChild(makeBtn("✔ Case Done - Report","abtn don",c.key,openSteps));card.appendChild(makeBtn("Resume Work","abtn acc",c.key,setAccepted));}
+    var cb=document.createElement("button");cb.className="abtn cal";cb.textContent="📞 Call Customer";
+    cb.addEventListener("click",function(){window.location.href="tel:"+c.mobile;});card.appendChild(cb);
     list.appendChild(card);
   });
 }
 
-function accCase(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
+function accCase(k){beepOnce();db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
 function setPending(k){db.ref("cases/"+k).update({status:"Pending"});showTab("Pending");}
 function setAccepted(k){db.ref("cases/"+k).update({status:"Accepted"});showTab("Accepted");}
 
@@ -397,7 +458,15 @@ function submitAll(){
   var today=new Date();var dateStr=today.getDate()+"-"+(today.getMonth()+1)+"-"+today.getFullYear();var now=today.toLocaleString("hi-IN");
   var rep={caseId:c.id,customer:c.customer,mobile:c.mobile,address:c.address,problem:c.problem,model:c.model||"N/A",techName:myName,serialNumber:document.getElementById("rSerial").value||"N/A",workDone:w,partsUsed:document.getElementById("rParts").value||"N/A",timeTaken:document.getElementById("rTime").value,customerFeedback:document.getElementById("rFb").value,remarks:document.getElementById("rRem").value||"N/A",jobPhotos:jobPhotos,expense:{amount:document.getElementById("expAmt").value||"0",details:document.getElementById("expDet").value||"N/A",receiptPhoto:rcptPhoto},date:dateStr,completedAt:now};
   var nb=document.getElementById("btnNext");nb.textContent="Saving...";nb.disabled=true;
-  db.ref("reports/"+myName+"/"+dateStr+"/"+c.id).set(rep).then(function(){return db.ref("cases/"+repKey).update({status:"Done",completedAt:now,expenseAmt:rep.expense.amount,photoCount:jobPhotos.length,serialNumber:rep.serialNumber});}).then(function(){closeSteps();showTab("Done");if(navigator.vibrate)navigator.vibrate([200,100,200]);alert("Report submit ho gaya! Case DONE!");}).catch(function(e){alert("Error: "+e.message);nb.textContent="Submit Report";nb.disabled=false;});
+  db.ref("reports/"+myName+"/"+dateStr+"/"+c.id).set(rep).then(function(){
+    return db.ref("cases/"+repKey).update({status:"Done",completedAt:now,expenseAmt:rep.expense.amount,photoCount:jobPhotos.length,serialNumber:rep.serialNumber});
+  }).then(function(){
+    closeSteps();
+    beepOnce(); // ✅ Done pe sound
+    showTab("Done");
+    if(navigator.vibrate)navigator.vibrate([200,100,200]);
+    alert("✅ Report submit ho gaya! Case DONE!");
+  }).catch(function(e){alert("Error: "+e.message);nb.textContent="Submit Report";nb.disabled=false;});
 }
 </script>
 </body>

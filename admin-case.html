@@ -69,11 +69,11 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
   <div class="aLCard">
     <div style="width:65px;height:65px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px">&#128274;</div>
     <h2>CWC Admin Panel</h2>
-    <p>Admin email aur password se login karo</p>
+    <p>Admin email aur password daalo</p>
     <input class="aLInp" type="email" id="aLEmail" placeholder="admin@cwctech.com">
-    <input class="aLInp" type="password" id="aLPass" placeholder="Password" onkeydown="if(event.key==='Enter')aLLogin()">
+    <input class="aLInp" type="password" id="aLPass" placeholder="Password">
     <div id="aLErr"></div>
-    <button id="aLBtn" onclick="aLLogin()">LOGIN</button>
+    <button id="aLBtn">LOGIN</button>
   </div>
 </div>
 
@@ -81,7 +81,7 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 <div id="mainPanel" style="display:none">
 <div class="hdr">
 <h1>&#128295; Technician Assignment</h1>
-<div style="display:flex;align-items:center;gap:8px"><div id="st">&#128260; Connecting...</div><button onclick="aLLogout()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:5px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700">Logout</button></div>
+<div style="display:flex;align-items:center;gap:8px"><div id="st">&#128260; Connecting...</div><button id="logoutBtn" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:5px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700">Logout</button></div>
 </div>
 
 <div class="stats">
@@ -136,12 +136,12 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 <input id="tnum" placeholder="WhatsApp (10 digits) *" maxlength="10" type="tel">
 </div>
 <div class="g2" style="margin-top:8px">
-<input id="tuid" placeholder="User ID * (login ke liye: ram01)">
+<input id="tuid" placeholder="User ID * (login: ram01)">
 <input type="password" id="tpwd" placeholder="Password * (min 6 chars)">
 </div>
-<p style="color:#aaa;font-size:11px;margin:3px 0 6px">User ID: sirf small letters / numbers / underscore</p>
+<p style="color:#aaa;font-size:11px;margin:3px 0 6px">User ID: sirf small letters/numbers/underscore</p>
 <div id="tAddErr" style="background:#ffebee;color:#c62828;padding:8px;border-radius:8px;font-size:12px;display:none;margin-bottom:6px"></div>
-<button class="btn gr" onclick="addTech()">&#10003; Add Technician</button>
+<button class="btn gr" id="addTechBtn">&#10003; Add Technician</button>
 </div>
 <div class="card">
 <h3>&#128101; Technician List</h3>
@@ -189,7 +189,6 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 <script>
 var db, auth, techs=[], cases=[], reps=[];
 
-// ===== ADMIN AUTH =====
 function aLLogin(){
   var email=document.getElementById("aLEmail").value.trim();
   var pass=document.getElementById("aLPass").value;
@@ -209,13 +208,12 @@ function aLLogin(){
     err.textContent=m;err.style.display="block";
   });
 }
-function aLLogout(){
-  auth.signOut().then(function(){location.reload();});
-}
 function showPanel(){
   document.getElementById("adminLogin").style.display="none";
   document.getElementById("mainPanel").style.display="block";
 }
+
+var db, techs=[], cases=[], reps=[];
 
 try{
   firebase.initializeApp({
@@ -230,9 +228,12 @@ try{
   db = firebase.database();
   auth = firebase.auth();
   document.getElementById("st").textContent = "Connected!";
+  document.getElementById("aLBtn").addEventListener("click", aLLogin);
+  document.getElementById("aLPass").addEventListener("keydown", function(e){if(e.key==="Enter")aLLogin();});
+  document.getElementById("logoutBtn").addEventListener("click", function(){auth.signOut().then(function(){location.reload();});});
   auth.onAuthStateChanged(function(user){
-    if(user){ showPanel(); startListeners(); }
-    else{ document.getElementById("adminLogin").style.display="flex"; document.getElementById("mainPanel").style.display="none"; }
+    if(user){showPanel();startListeners();}
+    else{document.getElementById("adminLogin").style.display="flex";document.getElementById("mainPanel").style.display="none";}
   });
 }catch(e){
   document.getElementById("st").textContent = "Error: "+e.message;
@@ -247,6 +248,7 @@ function goTab(n){
 }
 
 function startListeners(){
+  document.getElementById("addTechBtn").addEventListener("click", addTech);
   db.ref("technicians").on("value",function(snap){
     techs=[];
     var s1=document.getElementById("ct"), s2=document.getElementById("rtf"), tl=document.getElementById("tlist");
@@ -284,12 +286,12 @@ function addTech(){
   var eEl=document.getElementById("tAddErr");
   eEl.style.display="none";
   if(!n){eEl.textContent="Name daalo!";eEl.style.display="block";return;}
-  if(num.length!==10||isNaN(num)){eEl.textContent="10 digit WhatsApp number daalo!";eEl.style.display="block";return;}
+  if(num.length!==10||isNaN(num)){eEl.textContent="10 digit number daalo!";eEl.style.display="block";return;}
   if(uid.length<3){eEl.textContent="User ID min 3 chars!";eEl.style.display="block";return;}
   if(pwd.length<6){eEl.textContent="Password min 6 chars!";eEl.style.display="block";return;}
   document.getElementById("tuid").value=uid;
   db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(s2){
-    if(s2.exists()){eEl.textContent="Ye User ID already exist karta hai!";eEl.style.display="block";return Promise.reject("dup");}
+    if(s2.exists()){eEl.textContent="User ID already exists!";eEl.style.display="block";return Promise.reject("dup");}
     return db.ref("technicians").push({name:n,number:num,userId:uid,passHash:btoa(pwd+"_cwc_salt_2024")});
   }).then(function(){
     document.getElementById("tn").value="";
@@ -557,7 +559,7 @@ function openPhotoModal(r){
 
 function fullView(src){
   var w=window.open("","_blank");
-  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></div><!-- /mainPanel -->
+  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></div>
 </body></html>');
 }
 function closePhotoModal(){document.getElementById("photoModal").classList.remove("on");}

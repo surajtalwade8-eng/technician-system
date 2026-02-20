@@ -12,9 +12,16 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>CWC Technician App</title>
 <script>
+<script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
+    navigator.serviceWorker.register('firebase-messaging-sw.js')
+      .then(function(reg){
+        console.log("✅ FCM SW Registered!");
+      }).catch(function(err){
+        console.log("❌ FCM SW Error:", err);
+      });
   });
 }
 </script>

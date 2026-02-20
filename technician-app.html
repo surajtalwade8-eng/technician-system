@@ -385,7 +385,29 @@ function startApp(){
       }
     });
   }
+  
+ // ✅ FOREGROUND MESSAGE HANDLER - YAHAN ADD KARO
+  try{
+    var messaging = firebase.messaging();
+    messaging.onMessage(function(payload){
+      console.log("Foreground message:", payload);
+      beepOnce();
+      if(Notification.permission==="granted"){
+        new Notification(payload.notification?.title || "🔔 New Case!", {
+          body: payload.notification?.body || "Naya case aaya!",
+          icon: 'icon-192.png',
+          requireInteraction: true
+        });
+      }
+    });
+  }catch(e){ console.log("onMessage error:", e.message); }
 
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeAudio();});
+
+  db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){
+    // ... baaki same code
+  });
+}
   document.addEventListener("visibilitychange",function(){if(!document.hidden)resumeAudio();});
 
   db.ref("cases").orderByChild("techKey").equalTo(myKey).on("value",function(snap){

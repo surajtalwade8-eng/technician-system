@@ -1,17 +1,17 @@
-var CACHE = 'cwc-v3';
-var FILES = ['/', '/technician-app.html', '/manifest.json', '/icon-192.png'];
+var CACHE = 'cwc-v4';
 
 self.addEventListener('install', function(e){
-  e.waitUntil(
-    caches.open(CACHE).then(function(c){ return c.addAll(FILES); })
-  );
+  // Cache list hatao — addAll fail karta hai GitHub Pages pe
   self.skipWaiting();
 });
 
 self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
-      return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));
+      return Promise.all(
+        keys.filter(function(k){return k!==CACHE;})
+            .map(function(k){return caches.delete(k);})
+      );
     })
   );
   self.clients.claim();
@@ -19,6 +19,8 @@ self.addEventListener('activate', function(e){
 
 self.addEventListener('fetch', function(e){
   e.respondWith(
-    caches.match(e.request).then(function(r){ return r || fetch(e.request); })
+    caches.match(e.request).then(function(r){
+      return r || fetch(e.request);
+    })
   );
 });

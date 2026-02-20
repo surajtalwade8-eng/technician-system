@@ -328,7 +328,10 @@ function addCase(){
     var lnk="https://surajtalwade8-eng.github.io/technician-system/technician-app.html";
     var msg="NEW CASE\nCustomer: "+n+"\nMobile: "+m+"\nAddress: "+a+"\nModel: "+data.model+"\nProblem: "+p+"\nTicket: "+id+"\nApp: "+lnk;
     window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg),"_blank");
-    toast("&#9989; Assigned!","WhatsApp gaya "+tech.name+" ko!");
+    var custMsg="✅ *CWC Tech Support*\n\nAapka complaint register ho gaya!\n\n📋 *Ticket ID:* "+id+"\n👨‍🔧 *Technician:* "+tech.name+"\n📞 *Tech Contact:* "+tech.number+"\n🔧 *Problem:* "+p+"\n\nJald hi contact karenge. Dhanyawad! 🙏";
+window.open("https://wa.me/91"+m+"?text="+encodeURIComponent(custMsg),"_blank");
+
+toast("&#9989; Assigned!","WhatsApp gaya Tech aur Customer dono ko!");
   });
 }
 

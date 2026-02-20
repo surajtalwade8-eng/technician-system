@@ -558,9 +558,10 @@ function openPhotoModal(r){
 }
 
 function fullView(src){
-  var w=window.open("","_blank");
-  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></div>
-</body></html>');
+   var html='<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>';
+  var blob=new Blob([html],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  window.open(url,'_blank');
 }
 function closePhotoModal(){document.getElementById("photoModal").classList.remove("on");}
 

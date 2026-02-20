@@ -13,15 +13,37 @@ firebase.initializeApp({
 
 var messaging = firebase.messaging();
 
+// Background notification
 messaging.onBackgroundMessage(function(payload){
-  console.log('Background message:', payload);
-  var title = payload.notification?.title || "CWC - New Case!";
-  var options = {
-    body: payload.notification?.body || "Naya case aaya hai!",
-    icon: 'icon-192.png',
-    badge: 'icon-192.png',
-    vibrate: [500, 200, 500],
-    requireInteraction: true
-  };
-  return self.registration.showNotification(title, options);
+  return self.registration.showNotification(
+    payload.notification?.title || "🔔 CWC New Case!",
+    {
+      body: payload.notification?.body || "Naya case aaya hai!",
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      requireInteraction: true,
+      vibrate: [500, 200, 500],
+      data: {
+        url: 'https://surajtalwade8-eng.github.io/technician-system/technician-app.html'
+      }
+    }
+  );
+});
+
+// ✅ Notification tap karne pe app khulega!
+self.addEventListener('notificationclick', function(event){
+  event.notification.close();
+  var appUrl = 'https://surajtalwade8-eng.github.io/technician-system/technician-app.html';
+  event.waitUntil(
+    clients.matchAll({type:'window', includeUncontrolled:true}).then(function(list){
+      // Agar app already khuli hai to focus karo
+      for(var i=0; i<list.length; i++){
+        if(list[i].url.indexOf('technician-app') !== -1){
+          return list[i].focus();
+        }
+      }
+      // Nahi hai to naya tab kholo
+      return clients.openWindow(appUrl);
+    })
+  );
 });

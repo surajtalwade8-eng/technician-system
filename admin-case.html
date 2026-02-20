@@ -110,12 +110,12 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 <input id="tn" placeholder="Name *">
 <input id="tnum" placeholder="WhatsApp (10 digits) *" maxlength="10" type="tel">
 </div>
-<div class="g2">
+<div class="g2" style="margin-top:8px">
 <input id="tuid" placeholder="User ID * (login ke liye: ram01)">
 <input type="password" id="tpwd" placeholder="Password * (min 6 chars)">
 </div>
-<p style="color:#aaa;font-size:11px;margin:4px 0 8px">User ID: sirf small letters/numbers/underscore</p>
-<div id="tAddErr" style="background:#ffebee;color:#c62828;padding:8px;border-radius:8px;font-size:13px;display:none;margin-bottom:8px"></div>
+<p style="color:#aaa;font-size:11px;margin:3px 0 6px">User ID: sirf small letters / numbers / underscore</p>
+<div id="tAddErr" style="background:#ffebee;color:#c62828;padding:8px;border-radius:8px;font-size:12px;display:none;margin-bottom:6px"></div>
 <button class="btn gr" onclick="addTech()">&#10003; Add Technician</button>
 </div>
 <div class="card">
@@ -224,15 +224,15 @@ function addTech(){
   var num=document.getElementById("tnum").value.trim();
   var uid=document.getElementById("tuid").value.trim().toLowerCase().replace(/[^a-z0-9_]/g,"");
   var pwd=document.getElementById("tpwd").value;
-  var errEl=document.getElementById("tAddErr");
-  errEl.style.display="none";
-  if(!n){errEl.textContent="Name daalo!";errEl.style.display="block";return;}
-  if(num.length!==10||isNaN(num)){errEl.textContent="10 digit number daalo!";errEl.style.display="block";return;}
-  if(uid.length<3){errEl.textContent="User ID min 3 chars (sirf letters/numbers/underscore)!";errEl.style.display="block";return;}
-  if(pwd.length<6){errEl.textContent="Password min 6 characters!";errEl.style.display="block";return;}
+  var eEl=document.getElementById("tAddErr");
+  eEl.style.display="none";
+  if(!n){eEl.textContent="Name daalo!";eEl.style.display="block";return;}
+  if(num.length!==10||isNaN(num)){eEl.textContent="10 digit WhatsApp number daalo!";eEl.style.display="block";return;}
+  if(uid.length<3){eEl.textContent="User ID min 3 chars (letters/numbers/underscore)!";eEl.style.display="block";return;}
+  if(pwd.length<6){eEl.textContent="Password min 6 chars!";eEl.style.display="block";return;}
   document.getElementById("tuid").value=uid;
-  db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(snap){
-    if(snap.exists()){errEl.textContent="Ye User ID already exist karta hai!";errEl.style.display="block";return Promise.reject("dup");}
+  db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(s2){
+    if(s2.exists()){eEl.textContent="Ye User ID already exist karta hai!";eEl.style.display="block";return Promise.reject("dup");}
     return db.ref("technicians").push({name:n,number:num,userId:uid,passHash:btoa(pwd+"_cwc_salt_2024")});
   }).then(function(){
     document.getElementById("tn").value="";
@@ -240,15 +240,9 @@ function addTech(){
     document.getElementById("tuid").value="";
     document.getElementById("tpwd").value="";
     toast("&#9989; Added!",n+" ("+uid+") add ho gaya!");
-  }).catch(function(e){if(e==="dup")return;errEl.textContent="Error: "+e.message;errEl.style.display="block";});
+  }).catch(function(e){if(e==="dup")return;eEl.textContent="Error: "+e.message;eEl.style.display="block";});
 }
 function delTech(k){if(confirm("Delete?"))db.ref("technicians/"+k).remove();}
-function resetTechPass(k,n){
-  var np=prompt("New password for "+n+" (min 6 chars):");
-  if(!np||np.length<6){alert("Min 6 chars!");return;}
-  db.ref("technicians/"+k+"/passHash").set(btoa(np+"_cwc_salt_2024")).then(function(){alert("Password reset!
-New: "+np);});
-}
 
 function addCase(){
   var n=document.getElementById("cn").value.trim();
@@ -439,7 +433,7 @@ function loadRep(){
 function openPhotoModal(r){
   var modal=document.getElementById("photoModal");
   var body=document.getElementById("pmBody");
-  document.getElementById("pmTitle").textContent=(r.caseId||"")+" — "+(r.techName||"");
+  document.getElementById("pmTitle").textContent=(r.caseId||"")+" - "+(r.techName||"");
   body.innerHTML="";
 
   // Case info
@@ -482,7 +476,7 @@ function openPhotoModal(r){
     }
   }
 
-  // Job Photos — DOM se render
+  // Job Photos - DOM se render
   if(r.jobPhotos && r.jobPhotos.length>0){
     var photoSec=document.createElement("div");
     photoSec.className="pm-sec";

@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -52,11 +53,35 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 .exp-cell{background:#fff3cd;color:#856404;padding:3px 7px;border-radius:10px;font-size:11px;font-weight:700}
 .loading-rep{color:#128C7E;font-size:14px;padding:15px;text-align:center}
 @media(max-width:600px){.g2{grid-template-columns:1fr}}
+
+#adminLogin{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg,#128C7E,#25D366);padding:20px}
+.aLCard{background:white;border-radius:20px;padding:32px 24px;width:100%;max-width:360px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
+.aLCard h2{color:#128C7E;font-size:22px;margin-bottom:4px}
+.aLCard p{color:#999;font-size:13px;margin-bottom:20px}
+.aLInp{width:100%;padding:13px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;margin:5px 0;display:block;font-family:Arial}
+.aLInp:focus{border-color:#25D366}
+#aLBtn{width:100%;padding:15px;background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px}
+#aLErr{background:#ffebee;color:#c62828;padding:9px;border-radius:8px;font-size:13px;margin-top:8px;display:none;text-align:left}
 </style></head><body>
 
+<!-- ADMIN LOGIN -->
+<div id="adminLogin">
+  <div class="aLCard">
+    <div style="width:65px;height:65px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px">&#128274;</div>
+    <h2>CWC Admin Panel</h2>
+    <p>Admin email aur password se login karo</p>
+    <input class="aLInp" type="email" id="aLEmail" placeholder="admin@cwctech.com">
+    <input class="aLInp" type="password" id="aLPass" placeholder="Password" onkeydown="if(event.key==='Enter')aLLogin()">
+    <div id="aLErr"></div>
+    <button id="aLBtn" onclick="aLLogin()">LOGIN</button>
+  </div>
+</div>
+
+<!-- MAIN PANEL -->
+<div id="mainPanel" style="display:none">
 <div class="hdr">
 <h1>&#128295; Technician Assignment</h1>
-<div id="st">&#128260; Connecting...</div>
+<div style="display:flex;align-items:center;gap:8px"><div id="st">&#128260; Connecting...</div><button onclick="aLLogout()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:5px 12px;border-radius:12px;cursor:pointer;font-size:12px;font-weight:700">Logout</button></div>
 </div>
 
 <div class="stats">
@@ -162,7 +187,35 @@ td{padding:9px 8px;border-bottom:1px solid #f5f5f5;vertical-align:top}
 </div>
 
 <script>
-var db, techs=[], cases=[], reps=[];
+var db, auth, techs=[], cases=[], reps=[];
+
+// ===== ADMIN AUTH =====
+function aLLogin(){
+  var email=document.getElementById("aLEmail").value.trim();
+  var pass=document.getElementById("aLPass").value;
+  var err=document.getElementById("aLErr");
+  var btn=document.getElementById("aLBtn");
+  err.style.display="none";
+  if(!email||!pass){err.textContent="Email aur password daalo!";err.style.display="block";return;}
+  btn.textContent="Checking...";btn.disabled=true;
+  auth.signInWithEmailAndPassword(email,pass).then(function(){
+    showPanel();
+  }).catch(function(e){
+    btn.textContent="LOGIN";btn.disabled=false;
+    var m=e.message;
+    if(e.code==="auth/wrong-password"||e.code==="auth/invalid-credential")m="Password galat hai!";
+    if(e.code==="auth/user-not-found")m="Email nahi mila!";
+    if(e.code==="auth/invalid-email")m="Email format galat hai!";
+    err.textContent=m;err.style.display="block";
+  });
+}
+function aLLogout(){
+  auth.signOut().then(function(){location.reload();});
+}
+function showPanel(){
+  document.getElementById("adminLogin").style.display="none";
+  document.getElementById("mainPanel").style.display="block";
+}
 
 try{
   firebase.initializeApp({
@@ -175,8 +228,12 @@ try{
     appId:"1:815434648437:web:bd11c672f57fc24e1ba13c"
   });
   db = firebase.database();
+  auth = firebase.auth();
   document.getElementById("st").textContent = "Connected!";
-  startListeners();
+  auth.onAuthStateChanged(function(user){
+    if(user){ showPanel(); startListeners(); }
+    else{ document.getElementById("adminLogin").style.display="flex"; document.getElementById("mainPanel").style.display="none"; }
+  });
 }catch(e){
   document.getElementById("st").textContent = "Error: "+e.message;
 }
@@ -228,7 +285,7 @@ function addTech(){
   eEl.style.display="none";
   if(!n){eEl.textContent="Name daalo!";eEl.style.display="block";return;}
   if(num.length!==10||isNaN(num)){eEl.textContent="10 digit WhatsApp number daalo!";eEl.style.display="block";return;}
-  if(uid.length<3){eEl.textContent="User ID min 3 chars (letters/numbers/underscore)!";eEl.style.display="block";return;}
+  if(uid.length<3){eEl.textContent="User ID min 3 chars!";eEl.style.display="block";return;}
   if(pwd.length<6){eEl.textContent="Password min 6 chars!";eEl.style.display="block";return;}
   document.getElementById("tuid").value=uid;
   db.ref("technicians").orderByChild("userId").equalTo(uid).once("value").then(function(s2){
@@ -500,7 +557,8 @@ function openPhotoModal(r){
 
 function fullView(src){
   var w=window.open("","_blank");
-  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>');
+  w.document.write('<html><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;min-height:100vh"><img src="'+src+'" style="max-width:100%;max-height:100vh;object-fit:contain"></div><!-- /mainPanel -->
+</body></html>');
 }
 function closePhotoModal(){document.getElementById("photoModal").classList.remove("on");}
 

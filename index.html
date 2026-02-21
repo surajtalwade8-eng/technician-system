@@ -325,7 +325,7 @@ function addCase(){
   db.ref("cases/"+id).set(data).then(function(){
     ["cn","cm","ca","cmod","cp"].forEach(function(x){document.getElementById(x).value="";});
     document.getElementById("ct").value="";
-    var lnk="https://surajtalwade8-eng.github.io/technician-system/technician-app.html";
+    var lnk="https://cwc-technician.netlify.app/technician-app.html";
     var msg="NEW CASE\nCustomer: "+n+"\nMobile: "+m+"\nAddress: "+a+"\nModel: "+data.model+"\nProblem: "+p+"\nTicket: "+id+"\nApp: "+lnk;
     window.open("https://wa.me/91"+tech.number+"?text="+encodeURIComponent(msg),"_blank");
     var custMsg="✅ *CWC Tech Support*\n\nAapka complaint register ho gaya!\n\n📋 *Ticket ID:* "+id+"\n👨‍🔧 *Technician:* "+tech.name+"\n📞 *Tech Contact:* "+tech.number+"\n🔧 *Problem:* "+p+"\n\nJald hi contact karenge. Dhanyawad! 🙏";
